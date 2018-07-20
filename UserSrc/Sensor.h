@@ -9,10 +9,13 @@
 #define SENSOR_H_
 
 #include "typedef.h"
+#include "Log.h"
 
 void SSR_Init(void);
 
 LOG_StrSensorData *SSR_GetSensor(void);
-void SSR_TaskCalcSensor(void);
+void SSR_TaskStartReadGyro(void);
+
+LOG_StrSensorData *SSR_TaskCalcSensor(void);
 
 #endif /* SENSOR_H_ */

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for RSPI module.
-* Creation Date: 2018/07/15
+* Creation Date: 2018/07/18
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -67,7 +67,7 @@ static void r_rspi0_transmit_interrupt(void)
 {
     uint16_t frame_cnt;
         
-    for (frame_cnt = 0U; frame_cnt < (_02_RSPI_FRAMES_3 + 1U); frame_cnt++)
+    for (frame_cnt = 0U; frame_cnt < (_00_RSPI_FRAMES_1 + 1U); frame_cnt++)
     {
         if (g_rspi0_tx_count > 0U)
         {
@@ -102,7 +102,7 @@ static void r_rspi0_receive_interrupt(void)
 {
     uint16_t frame_cnt;
     
-    for (frame_cnt = 0U; frame_cnt < (_02_RSPI_FRAMES_3 + 1U); frame_cnt++)
+    for (frame_cnt = 0U; frame_cnt < (_00_RSPI_FRAMES_1 + 1U); frame_cnt++)
     {
         if (g_rspi0_rx_length > g_rspi0_rx_count)
         {

@@ -8,6 +8,8 @@
 #include "Test.h"
 #include "Switch.h"
 #include "FunctionTimer.h"
+#include "Log.h"
+#include "Led.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -420,15 +422,26 @@ static void st_SensorTest(void)
 
 static void st_GyroTest(void)
 {
+	LOG_StrSensorData *sensor;
+
 	st_Decision = SWT_DECISION_FALSE;
 
 	R_SCI2_Start();
+	SSR_Init();
 
 	while(1)
 	{
+		LED_On(LED_2);
+		sensor = SSR_TaskCalcSensor();
+		LED_Off(LED_2);
+
 		sprintf(st_SendBuf, "test\r\n");
 
 		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+
+		LED_On(LED_1);
+		SSR_TaskStartReadGyro();
+		LED_Off(LED_1);
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
