@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CGC module.
-* Creation Date: 2018/07/18
+* Creation Date: 2018/07/20
 ***********************************************************************************************************************/
 #ifndef CGC_H
 #define CGC_H
@@ -226,7 +226,7 @@ Macro definitions (Register bit)
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-#define _5C_CGC_MOSCWTCR_VALUE              (0x5CU) /* Main Clock Oscillator Wait Time */
+#define _A6_CGC_MOSCWTCR_VALUE              (0xA6U) /* Main Clock Oscillator Wait Time */
 
 /***********************************************************************************************************************
 Typedef definitions

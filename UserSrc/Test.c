@@ -69,6 +69,7 @@ void TST_TestMode(void)
 	SWT_Init(SWT_RL_MIN, SWT_RL_MAX, MODE_LEVEL_MIN, MODE_LEVEL_MAX);
 	st_ModeLevel = CASE_SCI_TEST;
 	st_Decision = SWT_DECISION_FALSE;
+	st_Swt = SWT_GetSwitch();
 
 	while(1)
 	{
