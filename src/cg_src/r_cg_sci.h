@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for SCI module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 #ifndef SCI_H
 #define SCI_H
@@ -304,7 +304,6 @@ MD_STATUS R_SCI2_Serial_Send(uint8_t * const tx_buf, uint16_t tx_num);
 MD_STATUS R_SCI2_Serial_Receive(uint8_t * const rx_buf, uint16_t rx_num);
 static void r_sci2_callback_transmitend(void);
 static void r_sci2_callback_receiveend(void);
-static void r_sci2_callback_receiveerror(void);
 
 /* Start user code for function. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */

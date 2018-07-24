@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for SCI module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -129,8 +129,6 @@ void r_sci2_receiveerror_interrupt(void)
 {
     uint8_t err_type;
 
-    r_sci2_callback_receiveerror();
-
     /* Clear overrun, framing and parity error flags */
     err_type = SCI2.SSR.BYTE;
     err_type &= 0xC7U;
@@ -155,17 +153,6 @@ static void r_sci2_callback_transmitend(void)
 * Return Value : None
 ***********************************************************************************************************************/
 static void r_sci2_callback_receiveend(void)
-{
-    /* Start user code. Do not edit comment generated here */
-    /* End user code. Do not edit comment generated here */
-}
-/***********************************************************************************************************************
-* Function Name: r_sci2_callback_receiveerror
-* Description  : This function is a callback function when SCI2 reception encounters error.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void r_sci2_callback_receiveerror(void)
 {
     /* Start user code. Do not edit comment generated here */
     /* End user code. Do not edit comment generated here */

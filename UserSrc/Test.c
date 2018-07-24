@@ -424,6 +424,7 @@ static void st_SensorTest(void)
 static void st_GyroTest(void)
 {
 	LOG_StrSensorData *sensor;
+	uint32_t length;
 
 	st_Decision = SWT_DECISION_FALSE;
 
@@ -436,9 +437,12 @@ static void st_GyroTest(void)
 		sensor = SSR_TaskCalcSensor();
 		LED_Off(LED_2);
 
-		sprintf(st_SendBuf, "test\r\n");
+		length = sprintf(st_SendBuf, "test\r\n");
 
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+//		R_SCI2_Stop();
+		R_SCI2_Start();
+		R_SCI2_Serial_Send(st_SendBuf, length);
+
 
 		LED_On(LED_1);
 		SSR_TaskStartReadGyro();

@@ -8,6 +8,9 @@
 #ifndef TYPEDEF_H_
 #define TYPEDEF_H_
 
+#include <stdio.h>
+
+
 #ifndef __TYPEDEF__
 typedef signed char _SBYTE;
 typedef unsigned char _UBYTE;

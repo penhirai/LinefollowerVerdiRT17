@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for ICU module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -61,6 +61,18 @@ void R_ICU_Create(void)
     ICU.IER[0x09].BYTE = _00_ICU_IRQ8_DISABLE | _00_ICU_IRQ9_DISABLE | _00_ICU_IRQ10_DISABLE | _00_ICU_IRQ11_DISABLE |
                          _00_ICU_IRQ12_DISABLE | _00_ICU_IRQ13_DISABLE | _00_ICU_IRQ14_DISABLE | _00_ICU_IRQ15_DISABLE;
 
+    /* Disable group interrupts */
+    IEN(ICU,GROUPBL0) = 0U;
+    IEN(ICU,GROUPAL0) = 0U;
+
+    /* Set IRQ0~7 digital filter */
+    ICU.IRQFLTE0.BYTE = _20_ICU_IRQ5_FILTER_ENABLE | _40_ICU_IRQ6_FILTER_ENABLE | _80_ICU_IRQ7_FILTER_ENABLE;
+    ICU.IRQFLTC0.WORD = _0C00_ICU_IRQ5_FILTER_PCLK_64 | _3000_ICU_IRQ6_FILTER_PCLK_64 | _C000_ICU_IRQ7_FILTER_PCLK_64;
+
+    /* Set IRQ8~15 digital filter */
+    ICU.IRQFLTE1.BYTE = _01_ICU_IRQ8_FILTER_ENABLE | _02_ICU_IRQ9_FILTER_ENABLE;
+    ICU.IRQFLTC1.WORD = _0003_ICU_IRQ8_FILTER_PCLK_64 | _000C_ICU_IRQ9_FILTER_PCLK_64;
+
     /* Set IRQ settings */
     ICU.IRQCR[5].BYTE = _00_ICU_IRQ_EDGE_LOW_LEVEL;
     ICU.IRQCR[6].BYTE = _00_ICU_IRQ_EDGE_LOW_LEVEL;
@@ -82,6 +94,18 @@ void R_ICU_Create(void)
 
     /* Set IRQ9 priority level */
     IPR(ICU,IRQ9) = _0F_ICU_PRIORITY_LEVEL15;
+
+    /* Set Group BL0 priority level */
+    IPR(ICU,GROUPBL0) = _0D_ICU_PRIORITY_LEVEL13;
+
+    /* Set Group AL0 priority level */
+    IPR(ICU,GROUPAL0) = _0E_ICU_PRIORITY_LEVEL14;
+
+    /* Enable group BL0 interrupt */
+    IEN(ICU,GROUPBL0) = 1U;
+
+    /* Enable group AL0 interrupt */
+    IEN(ICU,GROUPAL0) = 1U;
 
     /* Set IRQ5 pin */
     MPC.P15PFS.BYTE = 0x40U;

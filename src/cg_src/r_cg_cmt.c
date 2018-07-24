@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CMT module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -95,6 +95,55 @@ void R_CMT0_Stop(void)
 
     /* Stop CMT0 count */
     CMT.CMSTR0.BIT.STR0 = 0U;
+}
+/***********************************************************************************************************************
+* Function Name: R_CMT1_Create
+* Description  : This function initializes the CMT1 channel.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_CMT1_Create(void)
+{
+    /* Disable CMI interrupt */
+    IEN(CMT1, CMI1) = 0U;
+
+    /* Cancel CMT stop state in LPC */
+    MSTP(CMT1) = 0U;
+
+    /* Set control registers */
+    CMT1.CMCR.WORD = _0001_CMT_CMCR_CKS_PCLK32 | _0040_CMT_CMCR_CMIE_ENABLE | _0080_CMT_CMCR_DEFAULT;
+    CMT1.CMCOR = _927B_CMT1_CMCOR_VALUE;
+
+    /* Set CMI1 priority level */
+    IPR(CMT1,CMI1) = _0A_CMT_PRIORITY_LEVEL10;
+}
+/***********************************************************************************************************************
+* Function Name: R_CMT1_Start
+* Description  : This function starts the CMT1 channel counter.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_CMT1_Start(void)
+{
+    /* Enable CMI1 interrupt in ICU */
+    IEN(CMT1,CMI1) = 1U;
+
+    /* Start CMT1 count */
+    CMT.CMSTR0.BIT.STR1 = 1U;
+}
+/***********************************************************************************************************************
+* Function Name: R_CMT1_Stop
+* Description  : This function stops the CMT1 channel counter.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_CMT1_Stop(void)
+{
+    /* Disable CMI1 interrupt in ICU */
+    IEN(CMT1,CMI1) = 0U;
+
+    /* Stop CMT1 count */
+    CMT.CMSTR0.BIT.STR1 = 0U;
 }
 
 /* Start user code for adding. Do not edit comment generated here */

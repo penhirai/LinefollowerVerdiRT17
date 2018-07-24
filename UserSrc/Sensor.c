@@ -145,7 +145,7 @@ static void st_StartReadGyro(void)
 {
 	EnmComm rwFlag = READ;
 
-	st_Tx.Context.Address = rwFlag & GYRO_ADDR_GYRO_Z;
+	st_Tx.Context.Address = rwFlag | GYRO_ADDR_GYRO_Z;
 
 	R_RSPI0_Send_Receive(st_Tx.Buff, GYRO_BUFF_SIZE, st_Rx.Buff);
 

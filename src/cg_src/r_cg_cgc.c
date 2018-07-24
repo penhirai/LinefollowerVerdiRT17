@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CGC module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -68,10 +68,10 @@ void R_CGC_Create(void)
     /* Set system clock */
     SYSTEM.SCKCR.LONG = _00000002_CGC_PCLKD_DIV_4 | _00000020_CGC_PCLKC_DIV_4 | _00000200_CGC_PCLKB_DIV_4 | 
                         _00002000_CGC_PCLKA_DIV_4 | _00020000_CGC_BCLK_DIV_4 | _02000000_CGC_ICLK_DIV_4 | 
-                        _20000000_CGC_FCLK_DIV_4;
+                        _30000000_CGC_FCLK_DIV_8;
 
     /* Set PLL circuit */
-    SYSTEM.PLLCR.WORD = _0001_CGC_PLL_FREQ_DIV_2 | _0000_CGC_PLL_SOURCE_MAIN | _1300_CGC_PLL_FREQ_MUL_10_0;
+    SYSTEM.PLLCR.WORD = _0000_CGC_PLL_FREQ_DIV_1 | _0000_CGC_PLL_SOURCE_MAIN | _1300_CGC_PLL_FREQ_MUL_10_0;
     SYSTEM.PLLCR2.BIT.PLLEN = 0U;
 
     /* Wait for PLL wait counter overflow */

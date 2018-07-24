@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for ICU module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -63,6 +63,8 @@ static void r_icu_irq5_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	SWT_CallDown();
+	R_ICU_IRQ5_Stop();
+	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************
@@ -80,6 +82,8 @@ static void r_icu_irq6_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	SWT_CallRight();
+	R_ICU_IRQ6_Stop();
+	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************
@@ -97,6 +101,8 @@ static void r_icu_irq7_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	SWT_CallUp();
+	R_ICU_IRQ7_Stop();
+	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************
@@ -114,6 +120,8 @@ static void r_icu_irq8_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	SWT_CallLeft();
+	R_ICU_IRQ8_Stop();
+	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************
@@ -131,6 +139,8 @@ static void r_icu_irq9_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	SWT_CallCenter();
+	R_ICU_IRQ9_Stop();
+	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
 

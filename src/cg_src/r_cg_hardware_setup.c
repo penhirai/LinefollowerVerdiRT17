@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements system initializing function.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -87,6 +87,7 @@ void R_Systeminit(void)
     R_PORT_Create();
     R_MTU3_Create();
     R_CMT0_Create();
+    R_CMT1_Create();
     R_SCI2_Create();
     R_RSPI0_Create();
     R_S12AD0_Create();

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CMT module.
-* Creation Date: 2018/07/20
+* Creation Date: 2018/07/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -63,6 +63,27 @@ static void r_cmt_cmi0_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	TSK_Main();
+    /* End user code. Do not edit comment generated here */
+}
+/***********************************************************************************************************************
+* Function Name: r_cmt_cmi1_interrupt
+* Description  : This function is CMI1 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+#if FAST_INTERRUPT_VECTOR == VECT_CMT1_CMI1
+#pragma interrupt r_cmt_cmi1_interrupt(vect=VECT(CMT1,CMI1),fint)
+#else
+#pragma interrupt r_cmt_cmi1_interrupt(vect=VECT(CMT1,CMI1))
+#endif
+static void r_cmt_cmi1_interrupt(void)
+{
+    /* Start user code. Do not edit comment generated here */
+	R_ICU_IRQ5_Start();
+	R_ICU_IRQ6_Start();
+	R_ICU_IRQ7_Start();
+	R_ICU_IRQ8_Start();
+	R_ICU_IRQ9_Start();
     /* End user code. Do not edit comment generated here */
 }
 
