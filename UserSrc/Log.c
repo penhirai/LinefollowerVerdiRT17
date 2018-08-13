@@ -7,4 +7,8 @@
 
 #include "Log.h"
 
-//static StrSensorData
+
+void LOG_Init(void)
+{
+
+}

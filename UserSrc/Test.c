@@ -395,7 +395,7 @@ static void st_EncoderTest(void)
 
 static void st_SensorTest(void)
 {
-	LOG_StrSensorData *sensor;
+	SSR_StrSensorData *sensor;
 
 	st_Decision = SWT_DECISION_FALSE;
 
@@ -404,7 +404,7 @@ static void st_SensorTest(void)
 
 	while(1)
 	{
-		sensor = SSR_GetSensor();
+		sensor = SSR_GetAnalogSensor();
 
 		sprintf(st_SendBuf, "L M:%d, L C:%d,R C:%d, R M:%d, Pow:%d, Pot:%d \r\n", sensor->LeftMarker, sensor->LeftCenter, sensor->RightCenter, sensor->RightMarker, sensor->Power, sensor->Potentio);
 
@@ -423,7 +423,7 @@ static void st_SensorTest(void)
 
 static void st_GyroTest(void)
 {
-	LOG_StrSensorData *sensor;
+	SSR_StrSensorData *sensor;
 	uint32_t length;
 
 	st_Decision = SWT_DECISION_FALSE;

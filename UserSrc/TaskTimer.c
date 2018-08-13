@@ -33,7 +33,8 @@ static void st_Task6(void);
 static void st_Task7(void);
 static void st_Task8(void);
 static void st_Task9(void);
-static void st_Task10(void);
+static void st_Task10_StartCalc(void);
+static void st_Task10_StartComm(void);
 
 
 void TSK_Init(void)
@@ -56,7 +57,7 @@ void TSK_Main(void)
 	// execute every interrupt
 	if(st_TaskSchedule[TSK_TASKEACH0_SENSOR] == TASK_ON)
 	{
-		st_Task10();
+		st_Task10_StartCalc();
 	}
 
 	// execute 1/10 interrupt
@@ -134,6 +135,11 @@ void TSK_Main(void)
 			break;
 	}
 
+	if(st_TaskSchedule[TSK_TASKEACH0_SENSOR] == TASK_ON)
+	{
+		st_Task10_StartComm();
+	}
+
 	LED_Off(LED_3);
 }
 
@@ -200,7 +206,15 @@ static void st_Task9(void)
 
 }
 
-static void st_Task10(void)
+static void st_Task10_StartCalc(void)
 {
 	SSR_TaskCalcSensor();
+	SSR_TaskStopSensorGate();
+}
+
+static void st_Task10_StartComm(void)
+{
+	SSR_GetAnalogSensor();
+	SSR_TaskStartReadGyro();
+	SSR_TaskStartSensorGate();
 }

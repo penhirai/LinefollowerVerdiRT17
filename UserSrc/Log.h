@@ -13,17 +13,6 @@
 #define CONTROL_LOG_MAX	1000
 #define COURCE_LOG_MAX	1000
 
-typedef struct strSensorData
-{
-	uint16_t LeftMarker;
-	uint16_t LeftCenter;
-	uint16_t RightCenter;
-	uint16_t RightMarker;
-	uint16_t Potentio;
-	uint16_t Power;
-	uint16_t Gyro;
-}LOG_StrSensorData;
-
 typedef struct strControlFactor
 {
 	float32_t ff;
@@ -75,5 +64,8 @@ typedef struct strCourceLogArray
 	StrCourceLog_t CourceLog[COURCE_LOG_MAX];
 	uint32_t ArrayMax;
 }StrCourceLogArray_t;
+
+
+void LOG_Init(void);
 
 #endif /* LOG_H_ */
