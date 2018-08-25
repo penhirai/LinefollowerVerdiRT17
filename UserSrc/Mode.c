@@ -9,6 +9,7 @@
 #include "Switch.h"
 #include "Led.h"
 #include "Test.h"
+#include "FunctionTimer.h"
 
 #define MODE_KIND_MIN 0
 
@@ -31,6 +32,7 @@ static SWT_EnmDecision st_Decision;
 void MDE_InitMode(void)
 {
 	st_ModeKind  = CASE_SEARCH_MODE;
+	FTR_Init();
 }
 
 

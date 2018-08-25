@@ -17,25 +17,25 @@ typedef struct strDuty
 static StrDuty st_BuzzerDuty;
 static StrDuty st_RightMotorDuty;
 static StrDuty st_LeftMotorDuty;
-static StrDuty st_SteerMotorDuty;
+static StrDuty st_SensorMotorDuty;
 
 void FTR_Init(void)
 {
 	st_BuzzerDuty.Duty = 0;
-	st_BuzzerDuty.TgrxMax = R_MTU0_GetTGRA();
+	st_BuzzerDuty.TgrxMax = R_MTU0_GetTGRD();
 	st_BuzzerDuty.DivideValue = 100;
 
 	st_RightMotorDuty.Duty = 0;
-	st_RightMotorDuty.TgrxMax = R_MTU3_GetTGRB();
+	st_RightMotorDuty.TgrxMax = R_MTU4_GetTGRB();
 	st_RightMotorDuty.DivideValue = 100;
 
 	st_LeftMotorDuty.Duty = 0;
-	st_LeftMotorDuty.TgrxMax = R_MTU3_GetTGRD();
+	st_LeftMotorDuty.TgrxMax = R_MTU4_GetTGRD();
 	st_LeftMotorDuty.DivideValue = 100;
 
-	st_SteerMotorDuty.Duty = 0;
-	st_SteerMotorDuty.TgrxMax = R_MTU4_GetTGRB();
-	st_SteerMotorDuty.DivideValue = 100;
+	st_SensorMotorDuty.Duty = 0;
+	st_SensorMotorDuty.TgrxMax = R_MTU3_GetTGRD();
+	st_SensorMotorDuty.DivideValue = 100;
 }
 
 
@@ -57,7 +57,7 @@ void FTR_SetBuzzerDuty(uint16_t duty)
 	}
 
 	st_BuzzerDuty.Duty = temp;
-	R_MTU0_SetTGRA(temp);
+	R_MTU0_SetTGRC(temp);
 }
 
 
@@ -85,7 +85,7 @@ uint16_t FTR_GetLeftEncoderCount(void)
 
 void FTR_StartRightMotorTimer(void)
 {
-	R_MTU3_C3_Start();
+	R_MTU3_C4_Start();
 }
 
 void FTR_SetRightMotorDuty(uint16_t duty)
@@ -101,7 +101,7 @@ void FTR_SetRightMotorDuty(uint16_t duty)
 	}
 
 	st_RightMotorDuty.Duty = temp;
-	R_MTU3_SetTGRA(temp);
+	R_MTU4_SetTGRA(temp);
 }
 
 uint16_t FTR_GetRightMotorDuty(void)
@@ -112,7 +112,7 @@ uint16_t FTR_GetRightMotorDuty(void)
 
 void FTR_StartLeftMotorTimer(void)
 {
-	R_MTU3_C3_Start();
+	R_MTU3_C4_Start();
 }
 
 void FTR_SetLeftMotorDuty(uint16_t duty)
@@ -128,7 +128,7 @@ void FTR_SetLeftMotorDuty(uint16_t duty)
 	}
 
 	st_LeftMotorDuty.Duty = temp;
-	R_MTU3_SetTGRC(temp);
+	R_MTU4_SetTGRC(temp);
 }
 
 uint16_t FTR_GetLeftMotorDuty(void)
@@ -139,26 +139,26 @@ uint16_t FTR_GetLeftMotorDuty(void)
 
 void FTR_StartSensorMotorTimer(void)
 {
-	R_MTU3_C4_Start();
+	R_MTU3_C3_Start();
 }
 
 void FTR_SetSensorMotorDuty(uint16_t duty)
 {
 	uint32_t temp;
 
-	temp = st_SteerMotorDuty.TgrxMax * duty;
-	temp /= st_SteerMotorDuty.DivideValue;
+	temp = st_SensorMotorDuty.TgrxMax * duty;
+	temp /= st_SensorMotorDuty.DivideValue;
 
-	if(temp > st_SteerMotorDuty.TgrxMax)
+	if(temp > st_SensorMotorDuty.TgrxMax)
 	{
-		temp = st_SteerMotorDuty.TgrxMax;
+		temp = st_SensorMotorDuty.TgrxMax;
 	}
 
-	st_SteerMotorDuty.Duty = temp;
-	R_MTU4_SetTGRA(temp);
+	st_SensorMotorDuty.Duty = temp;
+	R_MTU3_SetTGRC(temp);
 }
 
 uint16_t FTR_GetSensorMotorDuty(void)
 {
-	return st_SteerMotorDuty.Duty;
+	return st_SensorMotorDuty.Duty;
 }

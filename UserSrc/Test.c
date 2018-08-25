@@ -10,6 +10,7 @@
 #include "FunctionTimer.h"
 #include "Log.h"
 #include "Led.h"
+#include "sensor.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -261,6 +262,7 @@ static void st_PwmTest(void)
 {
 	uint16_t rightMotorDuty;
 	uint16_t leftMotorDuty;
+	uint16_t sensorMotorDuty;
 
 	SWT_Init(0, 9, 0, 9);
 
@@ -269,16 +271,19 @@ static void st_PwmTest(void)
 	R_SCI2_Start();
 	FTR_StartRightMotorTimer();
 	FTR_StartLeftMotorTimer();
+	FTR_StartSensorMotorTimer();
 
 	while(1)
 	{
 		rightMotorDuty = 10 * st_Swt->RL_Dif;
 		leftMotorDuty  = 10 * st_Swt->UD_Dif;
+		sensorMotorDuty = 10;
 
 		FTR_SetRightMotorDuty(rightMotorDuty);
 		FTR_SetLeftMotorDuty(leftMotorDuty);
+		FTR_SetSensorMotorDuty(sensorMotorDuty);
 
-		sprintf(st_SendBuf, "Right: %d, Left: %d \r\n", rightMotorDuty, leftMotorDuty);
+//		sprintf(st_SendBuf, "Right: %d, Left: %d sensor: %d \r\n", rightMotorDuty, leftMotorDuty, sensorMotorDuty);
 
 		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
@@ -404,11 +409,17 @@ static void st_SensorTest(void)
 
 	while(1)
 	{
+		SSR_GetAnalogSensor();
+
+		SSR_PrintAllSensor();
+
+		/*
 		sensor = SSR_GetAnalogSensor();
 
 		sprintf(st_SendBuf, "L M:%d, L C:%d,R C:%d, R M:%d, Pow:%d, Pot:%d \r\n", sensor->LeftMarker, sensor->LeftCenter, sensor->RightCenter, sensor->RightMarker, sensor->Power, sensor->Potentio);
 
 		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		 */
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -434,14 +445,17 @@ static void st_GyroTest(void)
 	while(1)
 	{
 		LED_On(LED_2);
-		sensor = SSR_TaskCalcSensor();
+		//sensor = SSR_TaskCalcSensor();
+		SSR_TaskCalcSensor();
 		LED_Off(LED_2);
 
-		length = sprintf(st_SendBuf, "test\r\n");
+		SSR_PrintAllSensor();
+
+		//length = sprintf(st_SendBuf, "test\r\n");
 
 //		R_SCI2_Stop();
-		R_SCI2_Start();
-		R_SCI2_Serial_Send(st_SendBuf, length);
+//		R_SCI2_Start();
+	//	R_SCI2_Serial_Send(st_SendBuf, length);
 
 
 		LED_On(LED_1);

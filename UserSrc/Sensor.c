@@ -11,11 +11,24 @@
 #include "TaskTimer.h"
 #include "r_cg_rspi.h"
 
+#define SEND_BUF_SIZE 20
+
 #define LINESENSOR_BUFF_SIZE 2
 #define SENSOR_BUFF_SIZE 10
-#define GYRO_BUFF_SIZE 3
-#define GYRO_ADDR_WHO_AM_I 0x75
+#define GYRO_BUFF_SIZE 1
+
+#define GYRO_ADDR_GYRO_CONFIG 0x1B
 #define GYRO_ADDR_GYRO_Z 0x47
+//#define GYRO_ADDR_GYRO_Z 0x41
+#define GYRO_ADDR_SIG_PATH_RESET 0x68
+#define GYRO_ADDR_PWR_MGMT_1 0x6B
+#define GYRO_ADDR_PWR_MGMT_2 0x6C
+#define GYRO_ADDR_WHO_AM_I 0x75
+
+#define GYRO_DATA_FULLSCALE_250  0x00
+#define GYRO_DATA_FULLSCALE_500  0x08
+#define GYRO_DATA_FULLSCALE_1000 0x10
+#define GYRO_DATA_FULLSCALE_2000 0x18
 
 typedef struct strLineSensor
 {
@@ -34,26 +47,39 @@ typedef enum enmLine
 
 typedef enum enmComm
 {
-	READ = 0,
-	WRITE
+	WRITE = 0,
+	READ
 }EnmComm;
 
 
+typedef struct strComm
+{
+	uint32_t Buff;
+	uint8_t Address;
+	int16_t Data;
+}StrComm;
+
+/*
 typedef union unComm
 {
-	uint8_t Buff[GYRO_BUFF_SIZE];
+	uint32_t Buff;//[GYRO_BUFF_SIZE];
 	struct
 	{
+		uint8_t dummy;
+		int16_t Data;
 		uint8_t Address;
-		uint16_t Data;
 	}Context;
 }UnComm;
+*/
+
+
+static uint8_t st_SendBuf[SEND_BUF_SIZE];
 
 static StrLineSensor st_LineSensor[LINESENSOR_BUFF_SIZE];
 static SSR_StrSensorDataArray st_SensorData;
 //static SSR_StrSensorData st_SensorData[SENSOR_BUFF_SIZE];
-static UnComm st_Tx;
-static UnComm st_Rx;
+static StrComm st_Tx;
+static StrComm st_Rx;
 //static uint8_t st_Tx[GYRO_BUFF_SIZE];
 //static uint8_t st_Rx[GYRO_BUFF_SIZE];
 
@@ -67,10 +93,12 @@ static void st_CalcLineSensor(void);
 
 static void st_InitGyro(void);
 static void st_StartReadGyro(void);
+static void st_CommunicateGyro(EnmComm rwFlag, uint8_t address, uint8_t data);
+static void st_ParseGyro(void);
 
 void SSR_Init(void)
 {
-	for(int32_t i; i < SSR_SENSOR_BUFF_SIZE; ++i)
+	for(int32_t i = 0; i < SSR_SENSOR_BUFF_SIZE; ++i)
 	{
 		st_SensorData.ArrayTemp[i].LeftMarker  = 0;
 		st_SensorData.ArrayTemp[i].LeftCenter  = 0;
@@ -102,7 +130,7 @@ void SSR_TaskStartSensorGate(void)
 
 }
 
-void SSR_TaskStopsensorGate(void)
+void SSR_TaskStopSensorGate(void)
 {
 
 }
@@ -138,7 +166,8 @@ void SSR_TaskCalcSensor(void)
 	st_ReadLightSensor();
 	st_CalcLineSensor();
 
-	st_SensorData.ArrayTemp[st_SensorData.Index].Gyro = st_Rx.Context.Data;
+	st_ParseGyro();
+	st_SensorData.ArrayTemp[st_SensorData.Index].Gyro = st_Rx.Data;//st_Rx.Context.Data;
 
 	// execute filter
 	st_SensorData.Result.LeftMarker  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker;
@@ -156,6 +185,15 @@ void SSR_TaskCalcSensor(void)
 
 //	return &st_SensorData;
 }
+
+
+void SSR_PrintAllSensor(void)
+{
+	sprintf(st_SendBuf, "L M:%d, L C:%d,R C:%d, R M:%d, Pow:%d, Pot:%d, Gyro:%d \r\n", st_SensorData.Result.LeftMarker, st_SensorData.Result.LeftCenter, st_SensorData.Result.RightCenter, st_SensorData.Result.RightMarker, st_SensorData.Result.Power, st_SensorData.Result.Potentio, st_SensorData.Result.Gyro);
+
+	R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+}
+
 
 
 static void st_ReadLineSensor(EnmLine kind)
@@ -252,27 +290,86 @@ static void st_CalcLineSensor(void)
 static void st_InitGyro(void)
 {
 	EnmComm rwFlag = READ;
+	uint8_t data = 0x00;
 
+	/*
 	for(int32_t i = 0; i < GYRO_BUFF_SIZE; ++i)
 	{
 		st_Tx.Buff[i] = 0;
-		st_Tx.Buff[i] = 0;
+		st_Rx.Buff[i] = 0;
 	}
+	*/
+	st_Tx.Buff = 0;
+	st_Rx.Buff = 0;
 
+	R_RSPI0_Start();
+
+	// MPU6500: 0x70
+	rwFlag = READ;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_WHO_AM_I, 0x00);
+
+	//
+	rwFlag = WRITE;
+	data = 0x00 | GYRO_DATA_FULLSCALE_2000;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, data);
+
+	rwFlag = READ;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, 0x00);
+
+	// 加速度，GYRO Enable
+	rwFlag = WRITE;
+	data = 0x00;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, data);
+
+	rwFlag = READ;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, 0x00);
+//	rwFlag = WRITE;
+//	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_1, 0x81);
+
+//	rwFlag = WRITE;
+//	st_CommunicateGyro(rwFlag, GYRO_ADDR_SIG_PATH_RESET, 0x03);
+
+	/*
 	st_Tx.Context.Address = rwFlag & GYRO_ADDR_WHO_AM_I;
 
 	R_RSPI0_Send_Receive(st_Tx.Buff, GYRO_BUFF_SIZE, st_Rx.Buff);
 
 	R_RSPI0_Start();
+	*/
 }
 
 static void st_StartReadGyro(void)
 {
+
 	EnmComm rwFlag = READ;
 
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_Z, 0x00);
+	/*
 	st_Tx.Context.Address = rwFlag | GYRO_ADDR_GYRO_Z;
 
 	R_RSPI0_Send_Receive(st_Tx.Buff, GYRO_BUFF_SIZE, st_Rx.Buff);
 
 	R_RSPI0_Start();
+	*/
+}
+
+
+static void st_CommunicateGyro(EnmComm rwFlag, uint8_t address, uint8_t data)
+{
+	st_Tx.Address = (rwFlag << 7) | address;
+	st_Tx.Data = data;
+
+	st_Tx.Buff = (st_Tx.Address << 16) | (st_Tx.Data);
+
+	R_RSPI0_Send_Receive(&st_Tx.Buff, GYRO_BUFF_SIZE, &st_Rx.Buff);
+
+//	R_RSPI0_Start();
+}
+
+static void st_ParseGyro(void)
+{
+	uint16_t temp;
+
+	temp = st_Rx.Buff & 0xFFFF;
+	st_Rx.Data = temp;
 }

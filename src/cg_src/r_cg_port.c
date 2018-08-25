@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for Port module.
-* Creation Date: 2018/07/24
+* Creation Date: 2018/08/25
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -55,18 +55,18 @@ Global variables and functions
 ***********************************************************************************************************************/
 void R_PORT_Create(void)
 {
-    PORT0.DSCR.BYTE = _20_Pm5_HIDRV_ON | _80_Pm7_HIDRV_ON;
     PORTB.DSCR.BYTE = _00_Pm0_HIDRV_OFF | _00_Pm2_HIDRV_OFF | _00_Pm4_HIDRV_OFF;
     PORTC.DSCR.BYTE = _00_Pm0_HIDRV_OFF | _00_Pm1_HIDRV_OFF | _00_Pm2_HIDRV_OFF | _00_Pm3_HIDRV_OFF;
+    PORTD.DSCR.BYTE = _00_Pm0_HIDRV_OFF | _00_Pm1_HIDRV_OFF;
     PORTE.DSCR.BYTE = _00_Pm0_HIDRV_OFF | _00_Pm3_HIDRV_OFF | _00_Pm4_HIDRV_OFF;
-    PORT0.PMR.BYTE = 0x00U;
-    PORT0.PDR.BYTE = _20_Pm5_MODE_OUTPUT | _80_Pm7_MODE_OUTPUT | _0F_PDR0_DEFAULT;
     PORT1.PMR.BYTE = 0x00U;
     PORT1.PDR.BYTE = _10_Pm4_MODE_OUTPUT | _03_PDR1_DEFAULT;
     PORTB.PMR.BYTE = 0x00U;
     PORTB.PDR.BYTE = _01_Pm0_MODE_OUTPUT | _04_Pm2_MODE_OUTPUT | _10_Pm4_MODE_OUTPUT;
     PORTC.PMR.BYTE = 0x00U;
     PORTC.PDR.BYTE = _01_Pm0_MODE_OUTPUT | _02_Pm1_MODE_OUTPUT | _04_Pm2_MODE_OUTPUT | _08_Pm3_MODE_OUTPUT;
+    PORTD.PMR.BYTE = 0x00U;
+    PORTD.PDR.BYTE = _01_Pm0_MODE_OUTPUT | _02_Pm1_MODE_OUTPUT;
     PORTE.PMR.BYTE = 0x00U;
     PORTE.PDR.BYTE = _01_Pm0_MODE_OUTPUT | _08_Pm3_MODE_OUTPUT | _10_Pm4_MODE_OUTPUT;
 }
@@ -120,6 +120,16 @@ void R_PORT_SetPC2(R_PORT_EnmPort state)
 void R_PORT_SetPC3(R_PORT_EnmPort state)
 {
 	PORTC.PODR.BIT.B3 = (uint8_t)state;
+}
+
+void R_PORT_SetPD0(R_PORT_EnmPort state)
+{
+	PORTD.PODR.BIT.B0 = (uint8_t)state;
+}
+
+void R_PORT_SetPD1(R_PORT_EnmPort state)
+{
+	PORTD.PODR.BIT.B1 = (uint8_t)state;
 }
 
 void R_PORT_SetPE0(R_PORT_EnmPort state)

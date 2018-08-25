@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CMT module.
-* Creation Date: 2018/07/24
+* Creation Date: 2018/08/25
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -111,8 +111,8 @@ void R_CMT1_Create(void)
     MSTP(CMT1) = 0U;
 
     /* Set control registers */
-    CMT1.CMCR.WORD = _0001_CMT_CMCR_CKS_PCLK32 | _0040_CMT_CMCR_CMIE_ENABLE | _0080_CMT_CMCR_DEFAULT;
-    CMT1.CMCOR = _927B_CMT1_CMCOR_VALUE;
+    CMT1.CMCR.WORD = _0003_CMT_CMCR_CKS_PCLK512 | _0040_CMT_CMCR_CMIE_ENABLE | _0080_CMT_CMCR_DEFAULT;
+    CMT1.CMCOR = _5B8D_CMT1_CMCOR_VALUE;
 
     /* Set CMI1 priority level */
     IPR(CMT1,CMI1) = _0A_CMT_PRIORITY_LEVEL10;

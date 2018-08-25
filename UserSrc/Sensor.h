@@ -15,13 +15,13 @@
 
 typedef struct strSensorData
 {
-	uint16_t LeftMarker;
-	uint16_t LeftCenter;
-	uint16_t RightCenter;
-	uint16_t RightMarker;
-	uint16_t Potentio;
-	uint16_t Power;
-	uint16_t Gyro;
+	int16_t LeftMarker;
+	int16_t LeftCenter;
+	int16_t RightCenter;
+	int16_t RightMarker;
+	int16_t Potentio;
+	int16_t Power;
+	int16_t Gyro;
 }SSR_StrSensorData;
 
 typedef struct strSensorDataArray
@@ -34,10 +34,13 @@ typedef struct strSensorDataArray
 void SSR_Init(void);
 
 void SSR_TaskStartSensorGate(void);
-void SSR_TaskStopsensorGate(void);
+void SSR_TaskStopSensorGate(void);
 void SSR_GetAnalogSensor(void);
 void SSR_TaskStartReadGyro(void);
 
 void SSR_TaskCalcSensor(void);
+
+
+void SSR_PrintAllSensor(void);
 
 #endif /* SENSOR_H_ */

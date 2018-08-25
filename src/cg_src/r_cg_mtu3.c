@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/07/24
+* Creation Date: 2018/08/25
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -69,15 +69,15 @@ void R_MTU3_Create(void)
     MTU.TSTRB.BYTE = _00_MTU_CST6_OFF | _00_MTU_CST7_OFF;
 
     /* Channel 0 is used as PWM1 mode */
-    MTU0.TCR.BYTE = _00_MTU_PCLK_1 | _00_MTU_CKEG_RISE | _40_MTU_CKCL_B;
+    MTU0.TCR.BYTE = _00_MTU_PCLK_1 | _00_MTU_CKEG_RISE | _C0_MTU_CKCL_D;
     MTU0.TCR2.BYTE = _00_MTU_PCLK_1;
     MTU.TSYRA.BIT.SYNC0 = 0U;
     MTU0.TMDR1.BYTE = _02_MTU_PWM1;
     MTU0.TIORH.BYTE = _00_MTU_IOA_DISABLE;
-    MTU0.TIORL.BYTE = _00_MTU_IOC_DISABLE;
+    MTU0.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
     MTU0.TGRA = _7530_TGRA_VALUE;
     MTU0.TGRB = _EA5F_TGRB_VALUE;
-    MTU0.TGRC = _0064_TGRC_VALUE;
+    MTU0.TGRC = _0000_TGRC_VALUE;
     MTU0.TGRD = _EA5F_TGRD_VALUE;
     MTU0.TGRE = _0064_TGRE_VALUE;
     MTU0.TGRF = _0064_TGRF_VALUE;
@@ -111,23 +111,24 @@ void R_MTU3_Create(void)
     MTU.TSYRA.BIT.SYNC3 = 0U;
     MTU3.TMDR1.BYTE = _02_MTU_PWM1;
     MTU3.TIORH.BYTE = _00_MTU_IOA_DISABLE;
-    MTU3.TIORL.BYTE = _00_MTU_IOC_DISABLE;
+    MTU3.TIORL.BYTE = _60_MTU_IOD_HH | _05_MTU_IOC_HL;
     MTU3.TGRA = _0064_TGRA_VALUE;
-    MTU3.TGRB = _0064_TGRB_VALUE;
+    MTU3.TGRB = _0257_TGRB_VALUE;
     MTU3.TGRC = _0064_TGRC_VALUE;
     MTU3.TGRD = _0257_TGRD_VALUE;
     MTU3.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
                      _00_MTU_TCIEV_DISABLE | _00_MTU_TTGE_DISABLE;
 
     /* Channel 4 is used as PWM1 mode */
+    MTU.TOERA.BYTE |= _D0_MTU_OE4C_ENABLE | _C2_MTU_OE4A_ENABLE;
     MTU4.TCR.BYTE = _00_MTU_PCLK_1 | _00_MTU_CKEG_RISE | _C0_MTU_CKCL_D;
     MTU4.TCR2.BYTE = _00_MTU_PCLK_1;
     MTU.TSYRA.BIT.SYNC4 = 0U;
     MTU4.TMDR1.BYTE = _02_MTU_PWM1;
     MTU4.TCNT = 0x0000U;
     MTU4.TADCR.WORD = _0000_MTU_UT4AE_DISABLE | _0000_MTU_UT4BE_DISABLE | _0000_MTU_BF_DISABLE;
-    MTU4.TIORH.BYTE = _00_MTU_IOA_DISABLE;
-    MTU4.TIORL.BYTE = _00_MTU_IOC_DISABLE;
+    MTU4.TIORH.BYTE = _60_MTU_IOB_HH | _01_MTU_IOA_LL;
+    MTU4.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
     MTU4.TGRA = _0064_TGRA_VALUE;
     MTU4.TGRB = _0257_TGRB_VALUE;
     MTU4.TGRC = _0064_TGRC_VALUE;
@@ -139,6 +140,18 @@ void R_MTU3_Create(void)
     MTU.TRWERA.BYTE = _00_MTU_RWE_DISABLE;
     MTU.TRWERB.BYTE = _00_MTU_RWE_DISABLE;
 
+    /* Set MTIOC0C pin */
+    MPC.PB1PFS.BYTE = 0x01U;
+    PORTB.PMR.BYTE |= 0x02U;
+    /* Set MTIOC3C pin */
+    MPC.PC6PFS.BYTE = 0x01U;
+    PORTC.PMR.BYTE |= 0x40U;
+    /* Set MTIOC4A pin */
+    MPC.PE2PFS.BYTE = 0x01U;
+    PORTE.PMR.BYTE |= 0x04U;
+    /* Set MTIOC4C pin */
+    MPC.PE1PFS.BYTE = 0x01U;
+    PORTE.PMR.BYTE |= 0x02U;
 }
 /***********************************************************************************************************************
 * Function Name: R_MTU3_C0_Start

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for RSPI module.
-* Creation Date: 2018/07/24
+* Creation Date: 2018/08/25
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -185,6 +185,7 @@ void r_rspi0_idle_interrupt(void)
 static void r_rspi0_callback_transmitend(void)
 {
     /* Start user code. Do not edit comment generated here */
+	//R_RSPI0_Stop();
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for ICU module.
-* Creation Date: 2018/07/24
+* Creation Date: 2018/08/25
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -62,8 +62,8 @@ Global variables and functions
 static void r_icu_irq5_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	SWT_CallDown();
 	R_ICU_IRQ5_Stop();
+	SWT_CallDown();
 	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
@@ -81,8 +81,8 @@ static void r_icu_irq5_interrupt(void)
 static void r_icu_irq6_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	SWT_CallRight();
 	R_ICU_IRQ6_Stop();
+	SWT_CallRight();
 	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
@@ -100,8 +100,8 @@ static void r_icu_irq6_interrupt(void)
 static void r_icu_irq7_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	SWT_CallUp();
 	R_ICU_IRQ7_Stop();
+	SWT_CallUp();
 	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
@@ -119,8 +119,8 @@ static void r_icu_irq7_interrupt(void)
 static void r_icu_irq8_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	SWT_CallLeft();
 	R_ICU_IRQ8_Stop();
+	SWT_CallLeft();
 	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
@@ -138,8 +138,8 @@ static void r_icu_irq8_interrupt(void)
 static void r_icu_irq9_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	SWT_CallCenter();
 	R_ICU_IRQ9_Stop();
+	SWT_CallCenter();
 	R_CMT1_Start();
     /* End user code. Do not edit comment generated here */
 }
