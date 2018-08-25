@@ -630,7 +630,7 @@ Macro definitions
 /* PWM1 TGRB value */
 #define _EA5F_TGRB_VALUE                (0xEA5FU)
 /* PWM1 TGRC value */
-#define _0000_TGRC_VALUE                (0x0000U)
+#define _0064_TGRC_VALUE                (0x0064U)
 /* PWM1 TGRD value */
 #define _EA5F_TGRD_VALUE                (0xEA5FU)
 /* PWM1 TGRE value */

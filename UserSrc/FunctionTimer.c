@@ -22,18 +22,22 @@ static StrDuty st_SensorMotorDuty;
 void FTR_Init(void)
 {
 	st_BuzzerDuty.Duty = 0;
+	R_MTU0_SetTGRC(st_BuzzerDuty.Duty);
 	st_BuzzerDuty.TgrxMax = R_MTU0_GetTGRD();
 	st_BuzzerDuty.DivideValue = 100;
 
 	st_RightMotorDuty.Duty = 0;
+	R_MTU4_SetTGRA(st_RightMotorDuty.Duty);
 	st_RightMotorDuty.TgrxMax = R_MTU4_GetTGRB();
 	st_RightMotorDuty.DivideValue = 100;
 
 	st_LeftMotorDuty.Duty = 0;
+	R_MTU4_SetTGRC(st_LeftMotorDuty.Duty);
 	st_LeftMotorDuty.TgrxMax = R_MTU4_GetTGRD();
 	st_LeftMotorDuty.DivideValue = 100;
 
 	st_SensorMotorDuty.Duty = 0;
+	R_MTU3_SetTGRC(st_SensorMotorDuty.Duty);
 	st_SensorMotorDuty.TgrxMax = R_MTU3_GetTGRD();
 	st_SensorMotorDuty.DivideValue = 100;
 }
