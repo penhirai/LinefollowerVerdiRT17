@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CGC module.
-* Creation Date: 2018/08/25
+* Creation Date: 2018/09/03
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -56,7 +56,7 @@ Global variables and functions
 void R_CGC_Create(void)
 {
     /* Set main clock control registers */
-    SYSTEM.MOFCR.BYTE = _00_CGC_MAINOSC_RESONATOR | _00_CGC_MAINOSC_UNDER24M;
+    SYSTEM.MOFCR.BYTE = _00_CGC_MAINOSC_RESONATOR | _20_CGC_MAINOSC_UNDER16M;
     SYSTEM.MOSCWTCR.BYTE = _A6_CGC_MOSCWTCR_VALUE;
 
     /* Set main clock operation */

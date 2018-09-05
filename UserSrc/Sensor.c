@@ -10,6 +10,7 @@
 #include "r_cg_s12ad.h"
 #include "TaskTimer.h"
 #include "r_cg_rspi.h"
+#include <r_cg_port.h>
 
 #define SEND_BUF_SIZE 20
 
@@ -83,7 +84,8 @@ static StrComm st_Rx;
 //static uint8_t st_Tx[GYRO_BUFF_SIZE];
 //static uint8_t st_Rx[GYRO_BUFF_SIZE];
 
-
+static void st_SetSensorGateOn(void);
+static void st_SetSensorGateOff(void);
 static void st_ReadLineSensor(EnmLine kind);
 static void st_ReadOtherSensor(void);
 static void st_ReadAllAnalog(void);
@@ -98,6 +100,8 @@ static void st_ParseGyro(void);
 
 void SSR_Init(void)
 {
+	st_SetSensorGateOff();
+
 	for(int32_t i = 0; i < SSR_SENSOR_BUFF_SIZE; ++i)
 	{
 		st_SensorData.ArrayTemp[i].LeftMarker  = 0;
@@ -127,12 +131,12 @@ void SSR_Init(void)
 
 void SSR_TaskStartSensorGate(void)
 {
-
+	st_SetSensorGateOn();
 }
 
 void SSR_TaskStopSensorGate(void)
 {
-
+	st_SetSensorGateOff();
 }
 
 
@@ -194,6 +198,20 @@ void SSR_PrintAllSensor(void)
 	R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 }
 
+
+static void st_SetSensorGateOn(void)
+{
+	R_PORT_EnmPort state = R_PORT_HIGH;
+
+	R_PORT_SetP14(state);
+}
+
+static void st_SetSensorGateOff(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetP14(state);
+}
 
 
 static void st_ReadLineSensor(EnmLine kind)

@@ -350,11 +350,12 @@ static void st_IntBuzzerTest(void)
 		if(st_Swt->RL_Dif > 0)
 		{
 			BZR_SetBeepCount((uint8_t)beepCount);
+			st_Swt->RL_Dif = 0;
 		}
 
-		sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
+		//sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
 
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -374,15 +375,15 @@ static void st_EncoderTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	rightEncoder = FTR_GetRightEncoderCount();
-	leftEncoder = FTR_GetLeftEncoderCount();
-
 	R_SCI2_Start();
 	FTR_StartRightEncoderTimer();
 	FTR_StartLeftEncoderTimer();
 
 	while(1)
 	{
+		rightEncoder = FTR_GetRightEncoderCount();
+		leftEncoder = FTR_GetLeftEncoderCount();
+
 		sprintf(st_SendBuf, "Right: %d, Left: %d \r\n", rightEncoder, leftEncoder);
 
 		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
