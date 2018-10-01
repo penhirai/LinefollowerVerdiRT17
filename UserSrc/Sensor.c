@@ -201,14 +201,14 @@ void SSR_PrintAllSensor(void)
 
 static void st_SetSensorGateOn(void)
 {
-	R_PORT_EnmPort state = R_PORT_HIGH;
+	R_PORT_EnmPort state = R_PORT_LOW;
 
 	R_PORT_SetP14(state);
 }
 
 static void st_SetSensorGateOff(void)
 {
-	R_PORT_EnmPort state = R_PORT_LOW;
+	R_PORT_EnmPort state = R_PORT_HIGH;
 
 	R_PORT_SetP14(state);
 }

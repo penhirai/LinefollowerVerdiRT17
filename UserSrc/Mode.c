@@ -10,6 +10,7 @@
 #include "Led.h"
 #include "Test.h"
 #include "FunctionTimer.h"
+#include "SciFifo.h"
 
 #define MODE_KIND_MIN 0
 

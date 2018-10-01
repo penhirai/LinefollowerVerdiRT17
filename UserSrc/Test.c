@@ -11,6 +11,7 @@
 #include "Log.h"
 #include "Led.h"
 #include "sensor.h"
+#include "SciFifo.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -48,6 +49,7 @@ static SWT_StrSwitch *st_Swt;
 static EnmModeTestLevel st_ModeLevel;
 static SWT_EnmDecision st_Decision;
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
+static uint8_t st_BufSize;
 
 
 static void st_SciTest(void);
@@ -162,16 +164,15 @@ void TST_TestMode(void)
 
 static void st_SciTest(void)
 {
-
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
-		sprintf(st_SendBuf, "test\r\n");
+		st_BufSize = sprintf(st_SendBuf, "test  \r\n");
+		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -180,7 +181,7 @@ static void st_SciTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -188,12 +189,13 @@ static void st_IrqTest(void)
 {
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
-		sprintf(st_SendBuf, "C:%d, R:%d, L:%d, U:%d, D:%d\r\n", st_Swt->Center, st_Swt->Right, st_Swt->Left, st_Swt->Up, st_Swt->Down);
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "C:%d, R:%d, L:%d, U:%d, D:%d\r\n", st_Swt->Center, st_Swt->Right, st_Swt->Left, st_Swt->Up, st_Swt->Down);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -202,7 +204,7 @@ static void st_IrqTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -213,7 +215,7 @@ static void st_LedTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
@@ -243,9 +245,9 @@ static void st_LedTest(void)
 
 		LED_binaryOn(ledValue);
 
-		sprintf(st_SendBuf, "kind:%d, value:%d \r\n", ledKind, ledValue);
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "kind:%d, value:%d \r\n", ledKind, ledValue);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -254,7 +256,7 @@ static void st_LedTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -268,7 +270,7 @@ static void st_PwmTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 	FTR_StartRightMotorTimer();
 	FTR_StartLeftMotorTimer();
 	FTR_StartSensorMotorTimer();
@@ -283,9 +285,9 @@ static void st_PwmTest(void)
 		FTR_SetLeftMotorDuty(leftMotorDuty);
 		FTR_SetSensorMotorDuty(sensorMotorDuty);
 
-//		sprintf(st_SendBuf, "Right: %d, Left: %d sensor: %d \r\n", rightMotorDuty, leftMotorDuty, sensorMotorDuty);
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "Right: %d, Left: %d sensor: %d \r\n", rightMotorDuty, leftMotorDuty, sensorMotorDuty);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -294,7 +296,7 @@ static void st_PwmTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -306,7 +308,7 @@ static void st_BuzzerTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
@@ -320,9 +322,9 @@ static void st_BuzzerTest(void)
 			BZR_BuzzerOff();
 		}
 
-		sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -331,7 +333,7 @@ static void st_BuzzerTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 static void st_IntBuzzerTest(void)
@@ -342,7 +344,7 @@ static void st_IntBuzzerTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
@@ -353,8 +355,8 @@ static void st_IntBuzzerTest(void)
 			st_Swt->RL_Dif = 0;
 		}
 
-		//sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
-
+		st_BufSize = sprintf(st_SendBuf, "Count: %d \r\n", beepCount);
+		SCF_WriteData(st_SendBuf, st_BufSize);
 		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
@@ -364,7 +366,7 @@ static void st_IntBuzzerTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -375,7 +377,7 @@ static void st_EncoderTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 	FTR_StartRightEncoderTimer();
 	FTR_StartLeftEncoderTimer();
 
@@ -384,9 +386,9 @@ static void st_EncoderTest(void)
 		rightEncoder = FTR_GetRightEncoderCount();
 		leftEncoder = FTR_GetLeftEncoderCount();
 
-		sprintf(st_SendBuf, "Right: %d, Left: %d \r\n", rightEncoder, leftEncoder);
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "Right: %d, Left: %d \r\n", rightEncoder, leftEncoder);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -395,7 +397,7 @@ static void st_EncoderTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -405,7 +407,7 @@ static void st_SensorTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 	SSR_Init();
 
 	while(1)
@@ -429,7 +431,7 @@ static void st_SensorTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -440,7 +442,7 @@ static void st_GyroTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 	SSR_Init();
 
 	while(1)
@@ -470,7 +472,7 @@ static void st_GyroTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -478,13 +480,13 @@ static void st_StraightTest(void)
 {
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
-		sprintf(st_SendBuf, "test\r\n");
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "test\r\n");
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -493,7 +495,7 @@ static void st_StraightTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -501,13 +503,13 @@ static void st_RotationTest(void)
 {
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
-		sprintf(st_SendBuf, "test\r\n");
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "test\r\n");
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -516,7 +518,7 @@ static void st_RotationTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }
 
 
@@ -524,13 +526,13 @@ static void st_LogTest(void)
 {
 	st_Decision = SWT_DECISION_FALSE;
 
-	R_SCI2_Start();
+	//R_SCI2_Start();
 
 	while(1)
 	{
-		sprintf(st_SendBuf, "test\r\n");
-
-		R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		st_BufSize = sprintf(st_SendBuf, "test\r\n");
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -539,5 +541,5 @@ static void st_LogTest(void)
 		}
 	}
 
-	R_SCI2_Stop();
+	//R_SCI2_Stop();
 }

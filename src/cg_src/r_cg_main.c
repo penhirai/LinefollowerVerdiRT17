@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements main function.
-* Creation Date: 2018/09/03
+* Creation Date: 2018/10/01
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -47,6 +47,7 @@ Includes
 /* Start user code for include. Do not edit comment generated here */
 #include "Mode.h"
 #include "Buzzer.h"
+#include "SciFifo.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -86,6 +87,8 @@ void R_MAIN_UserInit(void)
 	MDE_InitMode();
 	TSK_Init();
 	BZR_Init();
+	SSR_Init();
+	SCF_Init();
     /* End user code. Do not edit comment generated here */
 }
 

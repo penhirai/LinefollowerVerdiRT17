@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for CMT module.
-* Creation Date: 2018/09/03
+* Creation Date: 2018/10/01
 ***********************************************************************************************************************/
 #ifndef CMT_H
 #define CMT_H

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/09/03
+* Creation Date: 2018/10/01
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -68,6 +68,9 @@ void R_MTU3_Create(void)
     MTU5.TSTR.BYTE = _00_MTU_CSTW5_OFF | _00_MTU_CSTV5_OFF | _00_MTU_CSTU5_OFF;
     MTU.TSTRB.BYTE = _00_MTU_CST6_OFF | _00_MTU_CST7_OFF;
 
+    /* Set external clock noise filter */
+    MTU0.NFCRC.BYTE = _01_MTU_NFCRC_NFAEN | _02_MTU_NFCRC_NFBEN | _04_MTU_NFCRC_NFCEN | _08_MTU_NFCRC_NFDEN | _00_MTU_NFCSC_PCLK_1;
+
     /* Channel 0 is used as PWM1 mode */
     MTU0.TCR.BYTE = _00_MTU_PCLK_1 | _00_MTU_CKEG_RISE | _C0_MTU_CKCL_D;
     MTU0.TCR2.BYTE = _00_MTU_PCLK_1;
@@ -78,7 +81,7 @@ void R_MTU3_Create(void)
     MTU0.TGRA = _7530_TGRA_VALUE;
     MTU0.TGRB = _EA5F_TGRB_VALUE;
     MTU0.TGRC = _0064_TGRC_VALUE;
-    MTU0.TGRD = _EA5F_TGRD_VALUE;
+    MTU0.TGRD = _752F_TGRD_VALUE;
     MTU0.TGRE = _0064_TGRE_VALUE;
     MTU0.TGRF = _0064_TGRF_VALUE;
     MTU0.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
@@ -115,7 +118,7 @@ void R_MTU3_Create(void)
     MTU3.TGRA = _0064_TGRA_VALUE;
     MTU3.TGRB = _0257_TGRB_VALUE;
     MTU3.TGRC = _0064_TGRC_VALUE;
-    MTU3.TGRD = _0257_TGRD_VALUE;
+    MTU3.TGRD = _012B_TGRD_VALUE;
     MTU3.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
                      _00_MTU_TCIEV_DISABLE | _00_MTU_TTGE_DISABLE;
 
@@ -132,7 +135,7 @@ void R_MTU3_Create(void)
     MTU4.TGRA = _0064_TGRA_VALUE;
     MTU4.TGRB = _0257_TGRB_VALUE;
     MTU4.TGRC = _0064_TGRC_VALUE;
-    MTU4.TGRD = _0257_TGRD_VALUE;
+    MTU4.TGRD = _012B_TGRD_VALUE;
     MTU4.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
                      _00_MTU_TCIEV_DISABLE | _00_MTU_TTGE_DISABLE;
     
@@ -152,6 +155,19 @@ void R_MTU3_Create(void)
     /* Set MTIOC4C pin */
     MPC.PE1PFS.BYTE = 0x01U;
     PORTE.PMR.BYTE |= 0x02U;
+
+    /* Set MTCLKA pin */
+    MPC.P24PFS.BYTE = 0x02U;
+    PORT2.PMR.BYTE |= 0x10U;
+    /* Set MTCLKB pin */
+    MPC.P25PFS.BYTE = 0x02U;
+    PORT2.PMR.BYTE |= 0x20U;
+    /* Set MTCLKC pin */
+    MPC.P22PFS.BYTE = 0x02U;
+    PORT2.PMR.BYTE |= 0x04U;
+    /* Set MTCLKD pin */
+    MPC.P23PFS.BYTE = 0x02U;
+    PORT2.PMR.BYTE |= 0x08U;
 }
 /***********************************************************************************************************************
 * Function Name: R_MTU3_C0_Start
