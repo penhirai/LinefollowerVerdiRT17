@@ -64,15 +64,15 @@ void TSK_Main(void)
 	switch(st_TaskState)
 	{
 		case TSK_TASK0_BUZZER:
-			st_TaskState = TSK_TASK1;
+			st_TaskState = TSK_TASK1_SENSOR_FILTER;
 			if(st_TaskSchedule[TSK_TASK0_BUZZER] == TASK_ON)
 			{
 				st_Task0();
 			}
 			break;
-		case TSK_TASK1:
+		case TSK_TASK1_SENSOR_FILTER:
 			st_TaskState = TSK_TASK2;
-			if(st_TaskSchedule[TSK_TASK1] == TASK_ON)
+			if(st_TaskSchedule[TSK_TASK1_SENSOR_FILTER] == TASK_ON)
 			{
 				st_Task1();
 			}
@@ -163,7 +163,7 @@ static void st_Task0(void)
 
 static void st_Task1(void)
 {
-
+	SSR_CalcFilter();
 }
 
 static void st_Task2(void)

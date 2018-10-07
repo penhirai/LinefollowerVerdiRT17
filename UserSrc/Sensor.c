@@ -11,12 +11,19 @@
 #include "TaskTimer.h"
 #include "r_cg_rspi.h"
 #include <r_cg_port.h>
+#include "Switch.h"
 
 #define SEND_BUF_SIZE 20
 
-#define LINESENSOR_BUFF_SIZE 2
+#define LINESENSOR_BUFF_SIZE 3
 #define SENSOR_BUFF_SIZE 10
 #define GYRO_BUFF_SIZE 1
+
+#define LINESENSOR_MAX_DEFAULT 4000
+#define LINESENSOR_MIN_DEFAULT 0
+
+#define NOT_SENSOR_CALIB 0
+#define SENSOR_CALIB_DONE 1
 
 #define GYRO_ADDR_GYRO_CONFIG 0x1B
 #define GYRO_ADDR_GYRO_Z 0x47
@@ -38,6 +45,14 @@ typedef struct strLineSensor
 	int16_t RightCenter;
 	int16_t RightMarker;
 }StrLineSensor;
+
+typedef struct strLineSensorCoefficient
+{
+	float32_t LeftMarker;
+	float32_t LeftCenter;
+	float32_t RightCenter;
+	float32_t RightMarker;
+}StrLineSensorCoefficient;
 
 typedef enum enmLine
 {
@@ -83,6 +98,13 @@ static StrComm st_Tx;
 static StrComm st_Rx;
 //static uint8_t st_Tx[GYRO_BUFF_SIZE];
 //static uint8_t st_Rx[GYRO_BUFF_SIZE];
+static StrLineSensorCoefficient st_LineCoefficient;
+static StrLineSensor st_InstantMax;
+static StrLineSensor st_InstantMin;
+static int16_t st_SensorCalibMax;
+static int16_t st_SensorCalibMin;
+static uint8_t st_SensorCalibFlag;
+
 
 static void st_SetSensorGateOn(void);
 static void st_SetSensorGateOff(void);
@@ -123,9 +145,31 @@ void SSR_Init(void)
 
 	st_SensorData.Index = 0;
 
+
+	st_SensorCalibMax = LINESENSOR_MAX_DEFAULT;
+	st_SensorCalibMin = LINESENSOR_MIN_DEFAULT;
+
+	st_InstantMax.LeftMarker  = st_SensorCalibMin;
+	st_InstantMax.LeftCenter  = st_SensorCalibMin;
+	st_InstantMax.RightCenter = st_SensorCalibMin;
+	st_InstantMax.RightMarker = st_SensorCalibMin;
+
+	st_InstantMin.LeftMarker  = st_SensorCalibMax;
+	st_InstantMin.LeftCenter  = st_SensorCalibMax;
+	st_InstantMin.RightCenter = st_SensorCalibMax;
+	st_InstantMin.RightMarker = st_SensorCalibMax;
+
+	st_LineCoefficient.LeftMarker  = 2.0;
+	st_LineCoefficient.LeftCenter  = 2.0;
+	st_LineCoefficient.RightCenter = 2.0;
+	st_LineCoefficient.RightMarker = 2.0;
+
+	st_SensorCalibFlag = NOT_SENSOR_CALIB;
+
 	st_InitGyro();
 
 	TSK_Start(TSK_TASKEACH0_SENSOR);
+	TSK_Start(TSK_TASK1_SENSOR_FILTER);
 }
 
 
@@ -162,6 +206,8 @@ void SSR_TaskStartReadGyro(void)
 
 void SSR_TaskCalcSensor(void)
 {
+	EnmLine kind = CALC;
+
 //	R_S12AD0_Start();
 //	R_S12AD0_WaitAdcEnd();
 //
@@ -173,6 +219,13 @@ void SSR_TaskCalcSensor(void)
 	st_ParseGyro();
 	st_SensorData.ArrayTemp[st_SensorData.Index].Gyro = st_Rx.Data;//st_Rx.Context.Data;
 
+	// input data to array
+	st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker  = st_LineSensor[kind].LeftMarker;
+	st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter  = st_LineSensor[kind].LeftCenter;
+	st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter = st_LineSensor[kind].RightCenter;
+	st_SensorData.ArrayTemp[st_SensorData.Index].RightMarker = st_LineSensor[kind].RightMarker;
+
+	/*
 	// execute filter
 	st_SensorData.Result.LeftMarker  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker;
 	st_SensorData.Result.LeftCenter  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter;
@@ -181,6 +234,7 @@ void SSR_TaskCalcSensor(void)
 	st_SensorData.Result.Potentio    = st_SensorData.ArrayTemp[st_SensorData.Index].Potentio;
 	st_SensorData.Result.Power       = st_SensorData.ArrayTemp[st_SensorData.Index].Power;
 	st_SensorData.Result.Gyro        = st_SensorData.ArrayTemp[st_SensorData.Index].Gyro;
+	*/
 
 	++st_SensorData.Index;
 	st_SensorData.Index %= SSR_SENSOR_BUFF_SIZE;
@@ -190,12 +244,112 @@ void SSR_TaskCalcSensor(void)
 //	return &st_SensorData;
 }
 
+void SSR_CalcFilter(void)
+{
+	// execute filter
+	st_SensorData.Result.LeftMarker  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker;
+	st_SensorData.Result.LeftCenter  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter;
+	st_SensorData.Result.RightCenter = st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter;
+	st_SensorData.Result.RightMarker = st_SensorData.ArrayTemp[st_SensorData.Index].RightMarker;
+	st_SensorData.Result.Potentio    = st_SensorData.ArrayTemp[st_SensorData.Index].Potentio;
+	st_SensorData.Result.Power       = st_SensorData.ArrayTemp[st_SensorData.Index].Power;
+	st_SensorData.Result.Gyro        = st_SensorData.ArrayTemp[st_SensorData.Index].Gyro;
+
+	if(st_SensorCalibFlag == SENSOR_CALIB_DONE)
+	{
+		st_SensorData.Result.LeftMarker = (int16_t)(st_LineCoefficient.LeftMarker * (float32_t)(st_SensorData.Result.LeftMarker - st_InstantMin.LeftMarker));
+	}
+
+	if(st_SensorCalibFlag == SENSOR_CALIB_DONE)
+	{
+		st_SensorData.Result.LeftCenter = (int16_t)(st_LineCoefficient.LeftCenter * (float32_t)(st_SensorData.Result.LeftCenter - st_InstantMin.LeftCenter));
+	}
+
+	if(st_SensorCalibFlag == SENSOR_CALIB_DONE)
+	{
+		st_SensorData.Result.RightCenter = (int16_t)(st_LineCoefficient.RightCenter * (float32_t)(st_SensorData.Result.RightCenter - st_InstantMin.RightCenter));
+	}
+
+	if(st_SensorCalibFlag == SENSOR_CALIB_DONE)
+	{
+		st_SensorData.Result.RightMarker = (int16_t)(st_LineCoefficient.RightMarker * (float32_t)(st_SensorData.Result.RightMarker - st_InstantMin.RightMarker));
+	}
+}
+
+
+void SSR_CalibSensor(void)
+{
+	SWT_EnmDecision decision = SWT_DECISION_FALSE;
+
+	while(1)
+	{
+		// 左マーカーセンサ
+		if(st_InstantMax.LeftMarker < st_SensorData.Result.LeftMarker)
+		{
+			st_InstantMax.LeftMarker = st_SensorData.Result.LeftMarker;
+		}
+		if(st_InstantMin.LeftMarker > st_SensorData.Result.LeftMarker)
+		{
+			st_InstantMin.LeftMarker = st_SensorData.Result.LeftMarker;
+		}
+
+		// 左ラインセンサ
+		if(st_InstantMax.LeftCenter < st_SensorData.Result.LeftCenter)
+		{
+			st_InstantMax.LeftCenter = st_SensorData.Result.LeftCenter;
+		}
+		if(st_InstantMin.LeftCenter > st_SensorData.Result.LeftCenter)
+		{
+			st_InstantMin.LeftCenter = st_SensorData.Result.LeftCenter;
+		}
+
+		// 右ラインセンサ
+		if(st_InstantMax.RightCenter < st_SensorData.Result.RightCenter)
+		{
+			st_InstantMax.RightCenter = st_SensorData.Result.RightCenter;
+		}
+		if(st_InstantMin.RightCenter > st_SensorData.Result.RightCenter)
+		{
+			st_InstantMin.RightCenter = st_SensorData.Result.RightCenter;
+		}
+
+		// 右マーカーセンサ
+		if(st_InstantMax.RightMarker < st_SensorData.Result.RightMarker)
+		{
+			st_InstantMax.RightMarker = st_SensorData.Result.RightMarker;
+		}
+		if(st_InstantMin.RightMarker > st_SensorData.Result.RightMarker)
+		{
+			st_InstantMin.RightMarker = st_SensorData.Result.RightMarker;
+		}
+
+		// 校正モード終了
+		decision = SWT_GetCenterDecision();
+		if(decision == SWT_DECISION_TRUE)
+		{
+			break;
+		}
+	}
+
+	st_LineCoefficient.LeftMarker  = ((float32_t)st_SensorCalibMax - (float32_t)st_SensorCalibMin)
+									/ ((float32_t)st_InstantMax.LeftMarker - (float32_t)st_InstantMin.LeftMarker);
+	st_LineCoefficient.LeftCenter  = ((float32_t)st_SensorCalibMax - (float32_t)st_SensorCalibMin)
+										/ ((float32_t)st_InstantMax.LeftCenter - (float32_t)st_InstantMin.LeftCenter);
+	st_LineCoefficient.RightCenter = ((float32_t)st_SensorCalibMax - (float32_t)st_SensorCalibMin)
+										/ ((float32_t)st_InstantMax.RightCenter - (float32_t)st_InstantMin.RightCenter);
+	st_LineCoefficient.RightMarker = ((float32_t)st_SensorCalibMax - (float32_t)st_SensorCalibMin)
+										/ ((float32_t)st_InstantMax.RightMarker - (float32_t)st_InstantMin.RightMarker);
+	st_SensorCalibFlag = SENSOR_CALIB_DONE;
+}
+
 
 void SSR_PrintAllSensor(void)
 {
-	sprintf(st_SendBuf, "L M:%d, L C:%d,R C:%d, R M:%d, Pow:%d, Pot:%d, Gyro:%d \r\n", st_SensorData.Result.LeftMarker, st_SensorData.Result.LeftCenter, st_SensorData.Result.RightCenter, st_SensorData.Result.RightMarker, st_SensorData.Result.Power, st_SensorData.Result.Potentio, st_SensorData.Result.Gyro);
+	uint8_t buffSize;
 
-	R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+	buffSize = sprintf(st_SendBuf, "L M:%d, L C:%d,R C:%d, R M:%d, Pow:%d, Pot:%d, Gyro:%d \r\n", st_SensorData.Result.LeftMarker, st_SensorData.Result.LeftCenter, st_SensorData.Result.RightCenter, st_SensorData.Result.RightMarker, st_SensorData.Result.Power, st_SensorData.Result.Potentio, st_SensorData.Result.Gyro);
+
+	SCF_WriteData(st_SendBuf, buffSize);
 }
 
 
@@ -228,10 +382,10 @@ static void st_ReadLineSensor(EnmLine kind)
 	R_S12AD0_Get_ValueResult(adc, &st_LineSensor[kind].LeftMarker);
 
 	adc = ADCHANNEL3;
-	R_S12AD0_Get_ValueResult(adc, &st_LineSensor[kind].LeftCenter);
+	R_S12AD0_Get_ValueResult(adc, &st_LineSensor[kind].RightCenter);
 
 	adc = ADCHANNEL5;
-	R_S12AD0_Get_ValueResult(adc, &st_LineSensor[kind].RightCenter);
+	R_S12AD0_Get_ValueResult(adc, &st_LineSensor[kind].LeftCenter);
 }
 
 static void st_ReadOtherSensor(void)
@@ -266,13 +420,13 @@ static void st_ReadAllAnalog(void)
 	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].Power);
 
 	adc = ADCHANNEL3;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter);
+	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter);
 
 	adc = ADCHANNEL4;
 	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].Potentio);
 
 	adc = ADCHANNEL5;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter);
+	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter);
 }
 
 
@@ -297,12 +451,11 @@ static void st_CalcLineSensor(void)
 	EnmLine light = LIGHT;
 	EnmLine calc = CALC;
 
-	st_LineSensor[calc].LeftMarker  = st_LineSensor[light].LeftMarker  - st_LineSensor[dark].LeftMarker;
-	st_LineSensor[calc].LeftCenter  = st_LineSensor[light].LeftCenter  - st_LineSensor[dark].LeftCenter;
-	st_LineSensor[calc].RightCenter = st_LineSensor[light].RightCenter - st_LineSensor[dark].RightCenter;
-	st_LineSensor[calc].RightMarker = st_LineSensor[light].RightMarker - st_LineSensor[dark].RightMarker;
+	st_LineSensor[calc].LeftMarker  = st_LineSensor[light].LeftMarker;//  - st_LineSensor[dark].LeftMarker;
+	st_LineSensor[calc].LeftCenter  = st_LineSensor[light].LeftCenter;//  - st_LineSensor[dark].LeftCenter;
+	st_LineSensor[calc].RightCenter = st_LineSensor[light].RightCenter;// - st_LineSensor[dark].RightCenter;
+	st_LineSensor[calc].RightMarker = st_LineSensor[light].RightMarker;// - st_LineSensor[dark].RightMarker;
 }
-
 
 
 static void st_InitGyro(void)

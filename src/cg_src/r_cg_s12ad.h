@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for S12AD module.
-* Creation Date: 2018/10/01
+* Creation Date: 2018/10/08
 ***********************************************************************************************************************/
 #ifndef S12AD_H
 #define S12AD_H
@@ -310,12 +310,12 @@ Macro definitions
 #define _00_AD0_DISCONECT_SETTING            (0x00U) /* Disconnection detection assist setting */
 #define _0000_AD0_COMPARECHANNEL_SELECT0     (0x0000U) /* Compare channel select register 0 value */
 #define _0000_AD0_COMPARELEVEL_SELECT0       (0x0000U) /* Compare level register 0 value */
-#define _DC_AD0_SAMPLING_STATE_0             (0xDCU) /* AN000 sampling state register value */
-#define _DC_AD0_SAMPLING_STATE_1             (0xDCU) /* AN001 sampling state register value */
-#define _DC_AD0_SAMPLING_STATE_2             (0xDCU) /* AN002 sampling state register value */
-#define _DC_AD0_SAMPLING_STATE_3             (0xDCU) /* AN003 sampling state register value */
-#define _DC_AD0_SAMPLING_STATE_4             (0xDCU) /* AN004 sampling state register value */
-#define _DC_AD0_SAMPLING_STATE_5             (0xDCU) /* AN005 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_0             (0x96U) /* AN000 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_1             (0x96U) /* AN001 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_2             (0x96U) /* AN002 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_3             (0x96U) /* AN003 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_4             (0x96U) /* AN004 sampling state register value */
+#define _96_AD0_SAMPLING_STATE_5             (0x96U) /* AN005 sampling state register value */
 
 /***********************************************************************************************************************
 Typedef definitions

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for RSPI module.
-* Creation Date: 2018/10/01
+* Creation Date: 2018/10/08
 ***********************************************************************************************************************/
 #ifndef RSPI_H
 #define RSPI_H

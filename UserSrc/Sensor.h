@@ -40,6 +40,10 @@ void SSR_TaskStartReadGyro(void);
 
 void SSR_TaskCalcSensor(void);
 
+void SSR_CalcFilter(void);
+
+void SSR_CalibSensor(void);
+
 
 void SSR_PrintAllSensor(void);
 

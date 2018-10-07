@@ -26,6 +26,7 @@ typedef enum enmModeTestLevel
 	CASE_ENCODER_TEST,
 	CASE_SENSOR_TEST,
 	CASE_GYRO_TEST,
+	CASE_CALIB_SENSOR_TEST,
 	CASE_STRAIGHT_TEST,
 	CASE_ROTATION_TEST,
 	CASE_LOG_TEST,
@@ -61,6 +62,7 @@ static void st_IntBuzzerTest(void);
 static void st_EncoderTest(void);
 static void st_SensorTest(void);
 static void st_GyroTest(void);
+static void st_CalibSensorTest(void);
 static void st_StraightTest(void);
 static void st_RotationTest(void);
 static void st_LogTest(void);
@@ -135,6 +137,12 @@ void TST_TestMode(void)
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
 					st_GyroTest();
+				}
+				break;
+			case CASE_CALIB_SENSOR_TEST:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					st_CalibSensorTest();
 				}
 				break;
 			case CASE_STRAIGHT_TEST:
@@ -473,6 +481,32 @@ static void st_GyroTest(void)
 	}
 
 	//R_SCI2_Stop();
+}
+
+
+static void st_CalibSensorTest(void)
+{
+	//st_Decision = SWT_DECISION_FALSE;
+
+	//R_SCI2_Start();
+	//SSR_Init();
+
+	SSR_CalibSensor();
+
+	/*
+	while(1)
+	{
+		SSR_CalibSensor();
+
+
+		st_Decision = SWT_GetCenterDecision();
+		if(st_Decision == SWT_DECISION_TRUE)
+		{
+			break;
+		}
+
+	}
+	*/
 }
 
 
