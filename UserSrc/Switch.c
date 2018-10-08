@@ -7,6 +7,7 @@
 
 #include "Switch.h"
 #include "r_cg_icu.h"
+#include "Buzzer.h"
 
 
 typedef struct strDecision
@@ -58,6 +59,8 @@ void SWT_Init(int32_t rlMin, int32_t rlMax, int32_t udMin, int32_t udMax)
 void SWT_CallCenter(void)
 {
 	++st_Swt.Center;
+
+	BZR_SetBeepCount(2);
 }
 
 
@@ -65,24 +68,32 @@ void SWT_CallRight(void)
 {
 	++st_Swt.Right;
 	st_CalcRL();
+
+	BZR_SetBeepCount(1);
 }
 
 void SWT_CallLeft(void)
 {
 	++st_Swt.Left;
 	st_CalcRL();
+
+	BZR_SetBeepCount(1);
 }
 
 void SWT_CallUp(void)
 {
 	++st_Swt.Up;
 	st_CalcUD();
+
+	BZR_SetBeepCount(1);
 }
 
 void SWT_CallDown(void)
 {
 	++st_Swt.Down;
 	st_CalcUD();
+
+	BZR_SetBeepCount(1);
 }
 
 void SWT_ClearSwitchCount(void)

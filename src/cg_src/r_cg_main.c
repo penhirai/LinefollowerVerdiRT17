@@ -71,6 +71,7 @@ void main(void)
     /* Start user code. Do not edit comment generated here */
     while (1U)
     {
+    	BZR_SetBeepCount(2);
     	MDE_SelectMode();
     }
     /* End user code. Do not edit comment generated here */

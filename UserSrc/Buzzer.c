@@ -19,7 +19,7 @@ void BZR_Init(void)
 {
 	st_BeepCount = 0;
 	st_TaskCounter = 0;
-	st_TaskInterval = 500;
+	st_TaskInterval = 100;
 
 	TSK_Start(TSK_TASK0_BUZZER);
 	FTR_StartBuzzerTimer();
