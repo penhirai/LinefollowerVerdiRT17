@@ -48,6 +48,8 @@ Includes
 #include "Mode.h"
 #include "Buzzer.h"
 #include "SciFifo.h"
+#include "ControlSensorAngle.h"
+#include "Tracer.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -90,6 +92,10 @@ void R_MAIN_UserInit(void)
 	BZR_Init();
 	SSR_Init();
 	SCF_Init();
+
+	CSA_Init();
+
+	TRC_Init();
     /* End user code. Do not edit comment generated here */
 }
 

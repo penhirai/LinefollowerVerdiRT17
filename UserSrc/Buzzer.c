@@ -28,12 +28,12 @@ void BZR_Init(void)
 
 void BZR_BuzzerOn(void)
 {
-	FTR_SetBuzzerDuty(50);
+	FTR_SetBuzzerDuty(50.0);
 }
 
 void BZR_BuzzerOff(void)
 {
-	FTR_SetBuzzerDuty(0);
+	FTR_SetBuzzerDuty(0.0);
 }
 
 

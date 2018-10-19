@@ -13,6 +13,7 @@
 #define CONTROL_LOG_MAX	1000
 #define COURCE_LOG_MAX	1000
 
+/*
 typedef struct strControlFactor
 {
 	float32_t ff;
@@ -26,6 +27,7 @@ typedef struct strControlUnit
 	StrControlFactor Error;
 	StrControlFactor Gain;
 }StrControlUnit_t;
+*/
 
 /*
 typedef struct strTranslationControl
@@ -39,6 +41,7 @@ typedef struct strRotationControl
 }StrRotationControl_t;
 */
 
+/*
 typedef struct strControlLog
 {
 //	StrTranslationControl_t	TranslationControl;
@@ -47,12 +50,13 @@ typedef struct strControlLog
 	StrControlUnit_t RotationControl;
 }StrControlLog_t;
 
+
 typedef struct strControlLogArray
 {
 	StrControlLog_t ControlLog[CONTROL_LOG_MAX];
 	uint32_t ArrayMax;
 }StrControlLogArray;
-
+*/
 
 typedef struct strCourceLog
 {

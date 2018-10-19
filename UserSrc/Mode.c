@@ -11,6 +11,7 @@
 #include "Test.h"
 #include "FunctionTimer.h"
 #include "SciFifo.h"
+#include "Tracer.h"
 
 #define MODE_KIND_MIN 0
 
@@ -54,8 +55,16 @@ void MDE_SelectMode(void)
 		switch(st_ModeKind)
 		{
 			case CASE_SEARCH_MODE:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					TRC_StartSearchMode();
+				}
 				break;
 			case CASE_TRACE_MODE:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					TRC_StartDriveMode();
+				}
 				break;
 			case CASE_TEST_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)

@@ -67,13 +67,16 @@ typedef enum enmComm
 	READ
 }EnmComm;
 
-
 typedef struct strComm
 {
 	uint32_t Buff;
 	uint8_t Address;
 	int16_t Data;
 }StrComm;
+
+
+#define MARKER_HIGH_THRESHOLD 800
+#define MARKER_LOW_THRESHOLD 500
 
 /*
 typedef union unComm
@@ -105,7 +108,6 @@ static int16_t st_SensorCalibMax;
 static int16_t st_SensorCalibMin;
 static uint8_t st_SensorCalibFlag;
 
-
 static void st_SetSensorGateOn(void);
 static void st_SetSensorGateOff(void);
 static void st_ReadLineSensor(EnmLine kind);
@@ -114,6 +116,7 @@ static void st_ReadAllAnalog(void);
 static void st_ReadDarkSensor(void);
 static void st_ReadLightSensor(void);
 static void st_CalcLineSensor(void);
+static SSR_EnmMarkerState st_CalcMarkerSensor(SSR_EnmMarkerState nowState, int16_t markerData);
 
 static void st_InitGyro(void);
 static void st_StartReadGyro(void);
@@ -145,6 +148,9 @@ void SSR_Init(void)
 
 	st_SensorData.Index = 0;
 
+	st_SensorData.MarkerState.Left  = LOW_STATE;
+	st_SensorData.MarkerState.Right = LOW_STATE;
+
 
 	st_SensorCalibMax = LINESENSOR_MAX_DEFAULT;
 	st_SensorCalibMin = LINESENSOR_MIN_DEFAULT;
@@ -166,6 +172,9 @@ void SSR_Init(void)
 
 	st_SensorCalibFlag = NOT_SENSOR_CALIB;
 
+	st_SensorData.SensorTheta = 0.0;
+	st_SensorData.BodyOmega = 0.0;
+
 	st_InitGyro();
 
 	TSK_Start(TSK_TASKEACH0_SENSOR);
@@ -184,7 +193,7 @@ void SSR_TaskStopSensorGate(void)
 }
 
 
-void SSR_GetAnalogSensor(void)
+void SSR_TaskGetAnalogSensor(void)
 {
 //	R_S12AD0_Start();
 //	R_S12AD0_WaitAdcEnd();
@@ -244,7 +253,7 @@ void SSR_TaskCalcSensor(void)
 //	return &st_SensorData;
 }
 
-void SSR_CalcFilter(void)
+void SSR_TaskCalcFilter(void)
 {
 	// execute filter
 	st_SensorData.Result.LeftMarker  = st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker;
@@ -274,6 +283,13 @@ void SSR_CalcFilter(void)
 	{
 		st_SensorData.Result.RightMarker = (int16_t)(st_LineCoefficient.RightMarker * (float32_t)(st_SensorData.Result.RightMarker - st_InstantMin.RightMarker));
 	}
+}
+
+
+void SSR_TaskJudgeMarkerSensor(void)
+{
+	st_SensorData.MarkerState.Left  = st_CalcMarkerSensor(st_SensorData.MarkerState.Left,  st_SensorData.Result.LeftMarker);
+	st_SensorData.MarkerState.Right = st_CalcMarkerSensor(st_SensorData.MarkerState.Right, st_SensorData.Result.RightMarker);
 }
 
 
@@ -340,6 +356,55 @@ void SSR_CalibSensor(void)
 	st_LineCoefficient.RightMarker = ((float32_t)st_SensorCalibMax - (float32_t)st_SensorCalibMin)
 										/ ((float32_t)st_InstantMax.RightMarker - (float32_t)st_InstantMin.RightMarker);
 	st_SensorCalibFlag = SENSOR_CALIB_DONE;
+}
+
+
+/*
+SSR_StrSensorData *SSR_GetSensorStructure(void)
+{
+	return &st_SensorData.Result;
+}
+*/
+
+
+SSR_StrSensorData SSR_GetSensorData(void)
+{
+	return st_SensorData.Result;
+}
+
+/*
+float32_t *SSR_GetPotentioData(void)
+{
+	return &st_SensorData.SensorTheta;
+}
+
+
+float32_t *SSR_GetGyroData(void)
+{
+	return &st_SensorData.BodyOmega;
+}
+*/
+
+
+float32_t SSR_GetPotentioData(void)
+{
+	return st_SensorData.SensorTheta;
+}
+
+
+void SSR_SetPotentioData(float32_t sensorTheta)
+{
+	st_SensorData.SensorTheta = sensorTheta;
+}
+
+float32_t SSR_GetGyroData(void)
+{
+	return st_SensorData.BodyOmega;
+}
+
+void SSR_SetGyroData(float32_t bodyOmega)
+{
+	st_SensorData.BodyOmega = bodyOmega;
 }
 
 
@@ -455,6 +520,32 @@ static void st_CalcLineSensor(void)
 	st_LineSensor[calc].LeftCenter  = st_LineSensor[light].LeftCenter;//  - st_LineSensor[dark].LeftCenter;
 	st_LineSensor[calc].RightCenter = st_LineSensor[light].RightCenter;// - st_LineSensor[dark].RightCenter;
 	st_LineSensor[calc].RightMarker = st_LineSensor[light].RightMarker;// - st_LineSensor[dark].RightMarker;
+}
+
+
+static SSR_EnmMarkerState st_CalcMarkerSensor(SSR_EnmMarkerState nowState, int16_t markerData)
+{
+	SSR_EnmMarkerState lowState = LOW_STATE;
+	SSR_EnmMarkerState HighState = HIGH_STATE;
+	SSR_EnmMarkerState ret;
+
+	// ヒステリシス計算
+	if(nowState == lowState)
+	{
+		if(markerData > MARKER_HIGH_THRESHOLD)
+		{
+			ret = HIGH_STATE;
+		}
+	}
+	else if(nowState == HighState)
+	{
+		if(markerData < MARKER_LOW_THRESHOLD)
+		{
+			ret = LOW_STATE;
+		}
+	}
+
+	return ret;
 }
 
 

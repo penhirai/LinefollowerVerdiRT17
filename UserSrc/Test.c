@@ -420,7 +420,7 @@ static void st_SensorTest(void)
 
 	while(1)
 	{
-		SSR_GetAnalogSensor();
+		SSR_TaskGetAnalogSensor();
 
 		SSR_PrintAllSensor();
 
