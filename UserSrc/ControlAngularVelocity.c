@@ -69,7 +69,7 @@ static void st_CalcGyro(void);
 static void st_UpdateTarget(void);
 static void st_CalcError(void);
 static void st_CalcGain(void);
-static void st_SetMotorDuty(void);
+static void st_AddMotorDuty(void);
 
 void CAV_Init(void)
 {
@@ -155,14 +155,14 @@ void CAV_ControlTask(void)
 	st_CalcError();
 	st_CalcGain();
 
-	st_SetMotorDuty();
+	st_AddMotorDuty();
 }
 
 
 static void st_CalcTarget(void)
 {
 	st_VirtualGeometry.Theta = CSA_GetSensorTheta();
-	st_VirtualGeometry.Radius = 0.5 * LENGTH_SENSOR;// / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
+	st_VirtualGeometry.Radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
 
 	st_VirtualGeometry.Velocity = CVL_GetVelocity();
 	st_Controller.Target = st_VirtualGeometry.Velocity / st_VirtualGeometry.Radius;
@@ -245,8 +245,8 @@ static void st_CalcGain(void)
 }
 
 
-static void st_SetMotorDuty(void)
+static void st_AddMotorDuty(void)
 {
-	FTR_SetLeftMotorDuty(st_Controller.Error.Sum);
-	FTR_SetRightMotorDuty(st_Controller.Error.Sum);
+	FTR_AddLeftMotorDuty(-st_Controller.Error.Sum);
+	FTR_AddRightMotorDuty(st_Controller.Error.Sum);
 }

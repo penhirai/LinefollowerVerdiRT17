@@ -23,10 +23,12 @@ uint16_t FTR_GetLeftEncoderCount(void);
 
 void FTR_StartRightMotorTimer(void);
 void FTR_SetRightMotorDuty(float32_t duty);
+void FTR_AddRightMotorDuty(float32_t duty);
 uint16_t FTR_GetRightMotorDuty(void);
 
 void FTR_StartLeftMotorTimer(void);
 void FTR_SetLeftMotorDuty(float32_t duty);
+void FTR_AddLeftMotorDuty(float32_t duty);
 uint16_t FTR_GetLeftMotorDuty(void);
 
 void FTR_StartSensorMotorTimer(void);
