@@ -9,12 +9,14 @@
 #include "FunctionTimer.h"
 #include "Setting.h"
 #include "ControlStructure.h"
+#include <r_cg_port.h>
 
 typedef struct strEncoderFactor
 {
 	uint16_t Now;
 	uint16_t Past;
-	uint16_t Diff;
+	int32_t Diff;
+	int32_t Sum;
 }StrEncoderFactor;
 
 typedef struct strEncoder
@@ -59,9 +61,11 @@ void CVL_Init(void)
 	st_Encoder.Left.Now   = 0;
 	st_Encoder.Left.Past  = 0;
 	st_Encoder.Left.Diff  = 0;
+	st_Encoder.Left.Sum   = 0;
 	st_Encoder.Right.Now  = 0;
 	st_Encoder.Right.Past = 0;
 	st_Encoder.Right.Diff = 0;
+	st_Encoder.Right.Sum  = 0;
 	st_Encoder.Average    = 0.0;
 	st_Encoder.Velocity   = 0.0;
 
@@ -81,13 +85,40 @@ void CVL_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 1.0;
+	st_Controller.Gain.Factor.P   = 50.0;
 	st_Controller.Gain.Factor.I   = 0.1;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	CVL_SetTargetUpAccel(st_Controller.TargetUpAccel);
 	CVL_SetTargetDownAccel(st_Controller.TargetDownAccel);
 	CVL_SetTarget(st_Controller.Target);
+
+	FTR_StartLeftEncoderTimer();
+	FTR_StartRightEncoderTimer();
+
+	FTR_StartLeftMotorTimer();
+	FTR_StartRightMotorTimer();
+}
+
+
+void CVL_StartDriveMotor(void)
+{
+	R_PORT_EnmPort state = R_PORT_HIGH;
+
+	R_PORT_SetPB2(state);
+
+	st_Controller.Error.Factor.I = 0.0;
+
+	FTR_SetLeftMotorDuty(0.0);
+	FTR_SetRightMotorDuty(0.0);
+}
+
+
+void CVL_StopDriveMotor(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPB2(state);
 }
 
 
@@ -139,15 +170,82 @@ float32_t CVL_GetVelocity(void)
 }
 
 
+float32_t CVL_GetErrorNow(void)
+{
+	return st_Controller.Error.Now;
+}
+
+
 static void st_CalcEncoder(void)
 {
+	int32_t leftDiff;
+	int32_t leftDiffUpBorder;
+	int32_t leftDiffDownBorder;
+	int32_t rightDiff;
+	int32_t rightDiffUpBorder;
+	int32_t rightDiffDownBorder;
+
 	st_Encoder.Left.Now  = FTR_GetLeftEncoderCount();
 	st_Encoder.Right.Now = FTR_GetRightEncoderCount();
 
-	st_Encoder.Left.Diff  = st_Encoder.Left.Now  - st_Encoder.Left.Past;
-	st_Encoder.Right.Diff = st_Encoder.Right.Now - st_Encoder.Right.Past;
+	leftDiff  = (int32_t)st_Encoder.Left.Now  - (int32_t)st_Encoder.Left.Past;
+	rightDiff = (int32_t)st_Encoder.Right.Now - (int32_t)st_Encoder.Right.Past;
+	leftDiffDownBorder  = leftDiff  & 0xFFFF0000;
+	rightDiffDownBorder = rightDiff & 0xFFFF0000;
+	leftDiffUpBorder  = leftDiff  & 0xFFFF;
+	rightDiffUpBorder = rightDiff & 0xFFFF;
+	//leftDiff3 = leftDiff & 0xFFFF0000;
+	//rightDiff3 = rightDiff & 0xFFFF0000;
 
-	st_Encoder.Average = (st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
+	if(leftDiffUpBorder > 30000)
+	{
+		if(leftDiffDownBorder == 0)
+		{
+			leftDiff = leftDiffUpBorder - 0xFFFF;
+		}
+	}
+	else
+	{
+		leftDiff = leftDiffUpBorder;
+	}
+	if(rightDiffUpBorder > 30000)
+	{
+		if(rightDiffDownBorder == 0)
+		{
+			rightDiff = rightDiffUpBorder - 0xFFFF;
+		}
+	}
+	else
+	{
+		rightDiff = rightDiffUpBorder;
+	}
+	st_Encoder.Left.Diff  = leftDiff;
+	st_Encoder.Right.Diff = rightDiff;
+	/*
+	if(leftDiff > 30000)
+	{
+		st_Encoder.Left.Diff  = -leftDiff  & 0xFFFF;
+	}
+	else
+	{
+		st_Encoder.Left.Diff  = leftDiff  & 0xFFFF;
+	}
+
+	if(rightDiff > 30000)
+	{
+		st_Encoder.Right.Diff = -rightDiff & 0xFFFF;
+	}
+	else
+	{
+		st_Encoder.Right.Diff = rightDiff & 0xFFFF;
+	}
+	*/
+
+
+	//st_Encoder.Left.Diff  = (int32_t)st_Encoder.Left.Now  - (int32_t)st_Encoder.Left.Past;
+	//st_Encoder.Right.Diff = (int32_t)st_Encoder.Right.Now - (int32_t)st_Encoder.Right.Past;
+
+	st_Encoder.Average = (float32_t)(st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
 
 	st_Encoder.Velocity = st_Encoder.Average * (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE) * (PERIOD_INTERRUPT_INV);
 

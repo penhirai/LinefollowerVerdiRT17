@@ -26,9 +26,15 @@ typedef struct strSensorData
 
 typedef enum enmMarkerState
 {
-	LOW_STATE = 0,
-	HIGH_STATE
+	SSR_LOW_STATE = 0,
+	SSR_HIGH_STATE
 }SSR_EnmMarkerState;
+
+typedef enum enmMarkerKind
+{
+	SSR_LEFT_MARKER = 0,
+	SSR_RIGHT_MARKER
+}SSR_EnmMarkerKind;
 
 typedef struct StrMarkerSensorState
 {
@@ -67,6 +73,9 @@ SSR_StrSensorData SSR_GetSensorData(void);
 float32_t SSR_GetPotentioData(void);
 void      SSR_SetPotentioData(void);
 float32_t SSR_GetGyroData(void);
+void      SSR_SetGyroData(void);
+
+SSR_EnmMarkerState SSR_GetMarkerState(SSR_EnmMarkerKind kind);
 
 void SSR_PrintAllSensor(void);
 

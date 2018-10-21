@@ -18,7 +18,7 @@ void SCF_WriteData(uint8_t *data, uint8_t size)
 	// temporally でwait するだけ
 	R_SCI2_Serial_Send(data, size);
 
-	for(volatile int32_t i = 0; i < 700 * size; ++i)
+	for(volatile int32_t i = 0; i < 1000 * size; ++i)
 	{
 		;
 	}

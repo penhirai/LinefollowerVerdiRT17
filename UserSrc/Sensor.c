@@ -148,8 +148,8 @@ void SSR_Init(void)
 
 	st_SensorData.Index = 0;
 
-	st_SensorData.MarkerState.Left  = LOW_STATE;
-	st_SensorData.MarkerState.Right = LOW_STATE;
+	st_SensorData.MarkerState.Left  = SSR_LOW_STATE;
+	st_SensorData.MarkerState.Right = SSR_LOW_STATE;
 
 
 	st_SensorCalibMax = LINESENSOR_MAX_DEFAULT;
@@ -397,6 +397,7 @@ void SSR_SetPotentioData(float32_t sensorTheta)
 	st_SensorData.SensorTheta = sensorTheta;
 }
 
+
 float32_t SSR_GetGyroData(void)
 {
 	return st_SensorData.BodyOmega;
@@ -405,6 +406,23 @@ float32_t SSR_GetGyroData(void)
 void SSR_SetGyroData(float32_t bodyOmega)
 {
 	st_SensorData.BodyOmega = bodyOmega;
+}
+
+
+SSR_EnmMarkerState SSR_GetMarkerState(SSR_EnmMarkerKind kind)
+{
+	SSR_EnmMarkerState state;
+
+	if(kind == SSR_LEFT_MARKER)
+	{
+		state = st_SensorData.MarkerState.Left;
+	}
+	else
+	{
+		state = st_SensorData.MarkerState.Right;
+	}
+
+	return state;
 }
 
 
@@ -525,23 +543,23 @@ static void st_CalcLineSensor(void)
 
 static SSR_EnmMarkerState st_CalcMarkerSensor(SSR_EnmMarkerState nowState, int16_t markerData)
 {
-	SSR_EnmMarkerState lowState = LOW_STATE;
-	SSR_EnmMarkerState HighState = HIGH_STATE;
-	SSR_EnmMarkerState ret;
+	SSR_EnmMarkerState lowState = SSR_LOW_STATE;
+	SSR_EnmMarkerState HighState = SSR_HIGH_STATE;
+	SSR_EnmMarkerState ret = nowState;
 
 	// ヒステリシス計算
 	if(nowState == lowState)
 	{
 		if(markerData > MARKER_HIGH_THRESHOLD)
 		{
-			ret = HIGH_STATE;
+			ret = SSR_HIGH_STATE;
 		}
 	}
 	else if(nowState == HighState)
 	{
 		if(markerData < MARKER_LOW_THRESHOLD)
 		{
-			ret = LOW_STATE;
+			ret = SSR_LOW_STATE;
 		}
 	}
 

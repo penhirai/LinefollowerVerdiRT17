@@ -131,43 +131,5 @@ static void st_CalcSensorAngle(int16_t potentio)
 
 static void st_DriveSensorMotor(float32_t input)
 {
-	if(input > 0.0)
-	{
-		st_SetDriveCw();
-		FTR_SetSensorMotorDuty(input);
-	}
-	else
-	{
-		st_SetDriveCcw();
-		input *= -1.0;
-		FTR_SetSensorMotorDuty(input);
-	}
-}
-
-
-static void st_SetDriveCw(void)
-{
-	R_PORT_EnmPort state = R_PORT_LOW;
-
-	R_PORT_SetPE4(state);
-	R_PORT_SetPB0(state);
-
-	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
-
-	R_PORT_SetPE4(state);
-}
-
-
-static void st_SetDriveCcw(void)
-{
-	R_PORT_EnmPort state = R_PORT_LOW;
-
-	R_PORT_SetPE4(state);
-	R_PORT_SetPB0(state);
-
-	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
-
-	R_PORT_SetPB0(state);
+	FTR_SetSensorMotorDuty(input);
 }

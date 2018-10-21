@@ -12,6 +12,8 @@
 #include "Led.h"
 #include "sensor.h"
 #include "SciFifo.h"
+#include "TaskTimer.h"
+#include "ControlVelocity.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -27,6 +29,7 @@ typedef enum enmModeTestLevel
 	CASE_SENSOR_TEST,
 	CASE_GYRO_TEST,
 	CASE_CALIB_SENSOR_TEST,
+	CASE_MARKER_TEST,
 	CASE_STRAIGHT_TEST,
 	CASE_ROTATION_TEST,
 	CASE_LOG_TEST,
@@ -63,6 +66,7 @@ static void st_EncoderTest(void);
 static void st_SensorTest(void);
 static void st_GyroTest(void);
 static void st_CalibSensorTest(void);
+static void st_MarkerTest(void);
 static void st_StraightTest(void);
 static void st_RotationTest(void);
 static void st_LogTest(void);
@@ -73,8 +77,10 @@ void TST_TestMode(void)
 {
 	SWT_Init(SWT_RL_MIN, SWT_RL_MAX, MODE_LEVEL_MIN, MODE_LEVEL_MAX);
 	st_ModeLevel = CASE_SCI_TEST;
-	st_Decision = SWT_DECISION_FALSE;
+	st_Decision = SWT_GetCenterDecision();;
 	st_Swt = SWT_GetSwitch();
+
+	//for(volatile i = 0; i < 100; ++i) ;
 
 	while(1)
 	{
@@ -143,6 +149,12 @@ void TST_TestMode(void)
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
 					st_CalibSensorTest();
+				}
+				break;
+			case CASE_MARKER_TEST:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					st_MarkerTest();
 				}
 				break;
 			case CASE_STRAIGHT_TEST:
@@ -395,8 +407,7 @@ static void st_EncoderTest(void)
 		leftEncoder = FTR_GetLeftEncoderCount();
 
 		st_BufSize = sprintf(st_SendBuf, "Right: %d, Left: %d \r\n", rightEncoder, leftEncoder);
-		SCF_WriteData(st_SendBuf, st_BufSize);
-		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+		//SCF_WriteData(st_SendBuf, st_BufSize);
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -510,17 +521,65 @@ static void st_CalibSensorTest(void)
 }
 
 
-static void st_StraightTest(void)
+static void st_MarkerTest(void)
 {
+	SSR_EnmMarkerState leftMarker;
+	SSR_EnmMarkerState rightMarker;
+	SSR_EnmMarkerKind kind;
+
 	st_Decision = SWT_DECISION_FALSE;
 
-	//R_SCI2_Start();
+	TSK_Start(TSK_TASK5_Judge_MARKER);
 
 	while(1)
 	{
-		st_BufSize = sprintf(st_SendBuf, "test\r\n");
+		kind = SSR_LEFT_MARKER;
+		leftMarker = SSR_GetMarkerState(kind);
+		kind = SSR_RIGHT_MARKER;
+		rightMarker = SSR_GetMarkerState(kind);
+
+		st_BufSize = sprintf(st_SendBuf, "L:%d, R:%d ", leftMarker, rightMarker);
 		SCF_WriteData(st_SendBuf, st_BufSize);
-		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+
+		SSR_PrintAllSensor();
+
+		st_Decision = SWT_GetCenterDecision();
+		if(st_Decision == SWT_DECISION_TRUE)
+		{
+			break;
+		}
+	}
+}
+
+
+static void st_StraightTest(void)
+{
+	float32_t velocity;
+	float32_t leftDuty;
+	float32_t rightDuty;
+	float32_t errorNow;
+
+	st_Decision = SWT_DECISION_FALSE;
+
+	CVL_StartDriveMotor();
+
+	CVL_Init();
+	TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
+
+	//R_SCI2_Start();
+
+	CVL_SetTarget(5.0);
+
+	while(1)
+	{
+		velocity = CVL_GetVelocity();
+		leftDuty  = FTR_GetLeftMotorDuty();
+		rightDuty = FTR_GetRightMotorDuty();
+		errorNow = CVL_GetErrorNow();
+
+		//st_BufSize = sprintf(st_SendBuf, "vec:%.3f, left:%.3f, right:%.3f \r\n", velocity, leftDuty, rightDuty);
+		//st_BufSize = sprintf(st_SendBuf, "vec:%.3f, error:%.3f \r\n", velocity, errorNow);
+		//SCF_WriteData(st_SendBuf, st_BufSize);
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)

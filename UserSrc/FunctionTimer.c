@@ -6,6 +6,7 @@
  */
 
 #include "FunctionTimer.h"
+#include <r_cg_port.h>
 
 typedef struct strDuty
 {
@@ -18,6 +19,14 @@ static StrDuty st_BuzzerDuty;
 static StrDuty st_RightMotorDuty;
 static StrDuty st_LeftMotorDuty;
 static StrDuty st_SensorMotorDuty;
+
+static void st_SetLeftDriveCw(void);
+static void st_SetLeftDriveCcw(void);
+static void st_SetRightDriveCw(void);
+static void st_SetRightDriveCcw(void);
+static void st_SetSensorDriveCw(void);
+static void st_SetSensorDriveCcw(void);
+
 
 void FTR_Init(void)
 {
@@ -101,13 +110,28 @@ void FTR_SetRightMotorDuty(float32_t duty)
 
 	st_RightMotorDuty.Duty = duty;
 
+	if(duty >= 0.0)
+	{
+		st_SetRightDriveCw();
+	}
+	else
+	{
+		duty *= -1.0;
+		st_SetRightDriveCcw();
+	}
+
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
 	temp = (float32_t)st_RightMotorDuty.TgrxMax * duty;
 	temp *= st_RightMotorDuty.DivideValue;
 
 	tempDuty = (uint16_t)temp;
-	if(tempDuty > st_RightMotorDuty.TgrxMax)
+	if(tempDuty >= st_RightMotorDuty.TgrxMax)
 	{
-		tempDuty = st_RightMotorDuty.TgrxMax;
+		tempDuty = st_RightMotorDuty.TgrxMax - 1;
 	}
 
 	R_MTU4_SetTGRA(tempDuty);
@@ -120,7 +144,7 @@ void FTR_AddRightMotorDuty(float32_t duty)
 	FTR_SetRightMotorDuty(st_RightMotorDuty.Duty);
 }
 
-uint16_t FTR_GetRightMotorDuty(void)
+float32_t FTR_GetRightMotorDuty(void)
 {
 	return st_RightMotorDuty.Duty;
 }
@@ -138,13 +162,28 @@ void FTR_SetLeftMotorDuty(float32_t duty)
 
 	st_LeftMotorDuty.Duty = duty;
 
+	if(duty >= 0.0)
+	{
+		st_SetLeftDriveCw();
+	}
+	else
+	{
+		duty *= -1.0;
+		st_SetLeftDriveCcw();
+	}
+
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
 	temp = (float32_t)st_LeftMotorDuty.TgrxMax * duty;
 	temp *= st_LeftMotorDuty.DivideValue;
 
 	tempDuty = (uint16_t)temp;
-	if(tempDuty > st_LeftMotorDuty.TgrxMax)
+	if(tempDuty >= st_LeftMotorDuty.TgrxMax)
 	{
-		tempDuty = st_LeftMotorDuty.TgrxMax;
+		tempDuty = st_LeftMotorDuty.TgrxMax - 1;
 	}
 
 	R_MTU4_SetTGRC(tempDuty);
@@ -157,7 +196,7 @@ void FTR_AddLeftMotorDuty(float32_t duty)
 	FTR_SetLeftMotorDuty(st_LeftMotorDuty.Duty);
 }
 
-uint16_t FTR_GetLeftMotorDuty(void)
+float32_t FTR_GetLeftMotorDuty(void)
 {
 	return st_LeftMotorDuty.Duty;
 }
@@ -173,20 +212,118 @@ void FTR_SetSensorMotorDuty(float32_t duty)
 	uint32_t temp;
 	uint16_t tempDuty;
 
+	if(duty >= 0.0)
+	{
+		st_SetSensorDriveCw();
+	}
+	else
+	{
+		duty *= -1.0;
+		st_SetSensorDriveCcw();
+	}
+
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
 	temp = (float32_t)st_SensorMotorDuty.TgrxMax * duty;
 	temp *= st_SensorMotorDuty.DivideValue;
 
 	tempDuty = (uint16_t)temp;
-	if(tempDuty > st_SensorMotorDuty.TgrxMax)
+	if(tempDuty >= st_SensorMotorDuty.TgrxMax)
 	{
-		tempDuty = st_SensorMotorDuty.TgrxMax;
+		tempDuty = st_SensorMotorDuty.TgrxMax - 1;
 	}
 
 	st_SensorMotorDuty.Duty = tempDuty;
 	R_MTU3_SetTGRC(tempDuty);
 }
 
-uint16_t FTR_GetSensorMotorDuty(void)
+float32_t FTR_GetSensorMotorDuty(void)
 {
 	return st_SensorMotorDuty.Duty;
+}
+
+
+static void st_SetLeftDriveCw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPD0(state);
+	R_PORT_SetPD1(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPD0(state);
+}
+
+
+static void st_SetLeftDriveCcw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPD0(state);
+	R_PORT_SetPD1(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPD1(state);
+}
+
+
+static void st_SetRightDriveCw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPE0(state);
+	R_PORT_SetPE3(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPE3(state);
+}
+
+
+static void st_SetRightDriveCcw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPE0(state);
+	R_PORT_SetPE3(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPE0(state);
+}
+
+static void st_SetSensorDriveCw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPE4(state);
+	R_PORT_SetPB0(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPE4(state);
+}
+
+
+static void st_SetSensorDriveCcw(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPE4(state);
+	R_PORT_SetPB0(state);
+
+	state = R_PORT_HIGH;
+	for(volatile i = 0; i < 10; ++i) ;
+
+	R_PORT_SetPB0(state);
 }
