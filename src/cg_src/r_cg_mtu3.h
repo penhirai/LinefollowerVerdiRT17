@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/10/22
+* Creation Date: 2018/10/24
 ***********************************************************************************************************************/
 #ifndef MTU3_H
 #define MTU3_H
@@ -626,9 +626,9 @@ Macro definitions (Register bit)
 Macro definitions
 ***********************************************************************************************************************/
 /* PWM1 TGRA value */
-#define _7530_TGRA_VALUE                (0x7530U)
+#define _3A98_TGRA_VALUE                (0x3A98U)
 /* PWM1 TGRB value */
-#define _EA5F_TGRB_VALUE                (0xEA5FU)
+#define _752F_TGRB_VALUE                (0x752FU)
 /* PWM1 TGRC value */
 #define _0064_TGRC_VALUE                (0x0064U)
 /* PWM1 TGRD value */
@@ -656,7 +656,7 @@ Macro definitions
 /* PWM1 TGRA value */
 #define _0064_TGRA_VALUE                (0x0064U)
 /* PWM1 TGRB value */
-#define _012B_TGRB_VALUE                (0x012BU)
+#define _0257_TGRB_VALUE                (0x0257U)
 /* PWM1 TGRC value */
 #define _0064_TGRC_VALUE                (0x0064U)
 /* PWM1 TGRD value */

@@ -12,6 +12,7 @@
 #include "r_cg_rspi.h"
 #include <r_cg_port.h>
 #include "Switch.h"
+#include "ControlVelocity.h"
 
 #define SEND_BUF_SIZE 20
 
@@ -37,6 +38,9 @@
 #define GYRO_DATA_FULLSCALE_500  0x08
 #define GYRO_DATA_FULLSCALE_1000 0x10
 #define GYRO_DATA_FULLSCALE_2000 0x18
+
+#define JUDGE_MARKER_LENGTH	(10)	// [mm]
+#define JUDGE_CROSS_LENGTH	(40.4)	// Lj = Lm tan(φ) + ΔL
 
 typedef struct strLineSensor
 {
@@ -78,18 +82,24 @@ typedef struct strComm
 #define MARKER_HIGH_THRESHOLD 800
 #define MARKER_LOW_THRESHOLD 500
 
-/*
-typedef union unComm
+
+typedef struct strCourceFlag
 {
-	uint32_t Buff;//[GYRO_BUFF_SIZE];
-	struct
-	{
-		uint8_t dummy;
-		int16_t Data;
-		uint8_t Address;
-	}Context;
-}UnComm;
-*/
+	float32_t StartDistance;
+	float32_t TempDistance;
+	float32_t DiffDistance;
+	SSR_EnmMarkerState TempState;
+	SSR_EnmMarkerState State;
+	//uint8_t StateCount;
+}StrCourceFlag;
+
+typedef struct strCourceMarker
+{
+	StrCourceFlag Left;
+	StrCourceFlag Right;
+	float32_t StateDistance;
+	SSR_EnmCourceMarkerKind MarkerKind;
+}StrCourceMarker;
 
 
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
@@ -108,6 +118,8 @@ static int16_t st_SensorCalibMax;
 static int16_t st_SensorCalibMin;
 static uint8_t st_SensorCalibFlag;
 
+static StrCourceMarker st_CourceMarker;
+
 static void st_SetSensorGateOn(void);
 static void st_SetSensorGateOff(void);
 static void st_ReadLineSensor(EnmLine kind);
@@ -117,6 +129,7 @@ static void st_ReadDarkSensor(void);
 static void st_ReadLightSensor(void);
 static void st_CalcLineSensor(void);
 static SSR_EnmMarkerState st_CalcMarkerSensor(SSR_EnmMarkerState nowState, int16_t markerData);
+static void st_RegistResetCourceMarker(void);
 
 static void st_InitGyro(void);
 static void st_StartReadGyro(void);
@@ -174,6 +187,21 @@ void SSR_Init(void)
 
 	st_SensorData.SensorTheta = 0.0;
 	st_SensorData.BodyOmega = 0.0;
+
+	st_CourceMarker.Left.StartDistance  = 0.0;
+	st_CourceMarker.Left.TempDistance   = 0.0;
+	st_CourceMarker.Left.DiffDistance   = 0;
+	st_CourceMarker.Left.TempState      = SSR_LOW_STATE;
+	st_CourceMarker.Left.State          = SSR_LOW_STATE;
+	//st_CourceMarker.Left.StateCount     = 0;
+	st_CourceMarker.Right.StartDistance = 0.0;
+	st_CourceMarker.Right.TempDistance  = 0.0;
+	st_CourceMarker.Right.DiffDistance  = 0.0;
+	st_CourceMarker.Right.TempState     = SSR_LOW_STATE;
+	st_CourceMarker.Right.State         = SSR_LOW_STATE;
+	//st_CourceMarker.Right.StateCount    = 0;
+	st_CourceMarker.StateDistance       = 0.0;
+	st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_NON;
 
 	st_InitGyro();
 
@@ -288,8 +316,102 @@ void SSR_TaskCalcFilter(void)
 
 void SSR_TaskJudgeMarkerSensor(void)
 {
+	float32_t *test;
+
 	st_SensorData.MarkerState.Left  = st_CalcMarkerSensor(st_SensorData.MarkerState.Left,  st_SensorData.Result.LeftMarker);
 	st_SensorData.MarkerState.Right = st_CalcMarkerSensor(st_SensorData.MarkerState.Right, st_SensorData.Result.RightMarker);
+
+	// 左マーカー
+	switch(st_SensorData.MarkerState.Left)
+	{
+	case SSR_HIGH_STATE:
+		switch(st_CourceMarker.Left.TempState)
+		{
+		case SSR_LOW_STATE:
+			st_CourceMarker.Left.TempState = SSR_HIGH_STATE;
+			st_CourceMarker.Left.StartDistance = CVL_GetDistance();
+			break;
+		case SSR_HIGH_STATE:
+			switch(st_CourceMarker.Left.State)
+			{
+			case SSR_LOW_STATE:
+				st_CourceMarker.Left.TempDistance = CVL_GetDistance();
+				st_CourceMarker.Left.DiffDistance = st_CourceMarker.Left.TempDistance - st_CourceMarker.Left.StartDistance;
+				if(st_CourceMarker.Left.DiffDistance >= JUDGE_MARKER_LENGTH)
+				{
+					st_CourceMarker.Left.State = SSR_HIGH_STATE;
+				}
+				break;
+			case SSR_HIGH_STATE:
+				// 何もなし
+				break;
+			}
+			break;
+		}
+		break;
+	case SSR_LOW_STATE:
+		switch(st_CourceMarker.Left.TempState)
+		{
+		case SSR_LOW_STATE:
+			// 何もなし
+			break;
+		case SSR_HIGH_STATE:
+			st_CourceMarker.Left.TempDistance = CVL_GetDistance();
+			st_CourceMarker.Left.DiffDistance = st_CourceMarker.Left.TempDistance - st_CourceMarker.Left.StartDistance;
+			if(st_CourceMarker.Left.DiffDistance >= JUDGE_CROSS_LENGTH)
+			{
+				st_RegistResetCourceMarker();
+			}
+			break;
+		}
+		break;
+	}
+
+	// 右マーカー
+	switch(st_SensorData.MarkerState.Right)
+	{
+	case SSR_HIGH_STATE:
+		switch(st_CourceMarker.Right.TempState)
+		{
+		case SSR_LOW_STATE:
+			st_CourceMarker.Right.TempState = SSR_HIGH_STATE;
+			st_CourceMarker.Right.StartDistance = CVL_GetDistance();
+			break;
+		case SSR_HIGH_STATE:
+			switch(st_CourceMarker.Right.State)
+			{
+			case SSR_LOW_STATE:
+				st_CourceMarker.Right.TempDistance = CVL_GetDistance();
+				st_CourceMarker.Right.DiffDistance = st_CourceMarker.Right.TempDistance - st_CourceMarker.Right.StartDistance;
+				if(st_CourceMarker.Right.DiffDistance >= JUDGE_MARKER_LENGTH)
+				{
+					st_CourceMarker.Right.State = SSR_HIGH_STATE;
+				}
+				break;
+			case SSR_HIGH_STATE:
+				// 何もなし
+				break;
+			}
+			break;
+		}
+		break;
+	case SSR_LOW_STATE:
+		switch(st_CourceMarker.Right.TempState)
+		{
+		case SSR_LOW_STATE:
+			// 何もなし
+			break;
+		case SSR_HIGH_STATE:
+			st_CourceMarker.Right.TempDistance = CVL_GetDistance();
+			st_CourceMarker.Right.DiffDistance = st_CourceMarker.Right.TempDistance - st_CourceMarker.Right.StartDistance;
+			if(st_CourceMarker.Right.DiffDistance >= JUDGE_CROSS_LENGTH)
+			{
+				st_RegistResetCourceMarker();
+			}
+			break;
+		}
+		break;
+	}
 }
 
 
@@ -423,6 +545,29 @@ SSR_EnmMarkerState SSR_GetMarkerState(SSR_EnmMarkerKind kind)
 	}
 
 	return state;
+}
+
+
+SSR_StrMarkerData SSR_GetCourceMarker(void)
+{
+	SSR_StrMarkerData markerKind;
+
+	if(st_CourceMarker.MarkerKind != SSR_COURCE_MARKER_NON)
+	{
+		markerKind.Distance = st_CourceMarker.StateDistance;
+		markerKind.MarkerKind = st_CourceMarker.MarkerKind;
+
+		st_CourceMarker.StateDistance = 0.0;
+		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_NON;
+	}
+	else
+	{
+		//markerKind.Distance = st_CourceMarker.Right.StartDistance;
+		markerKind.Distance = 0.0;
+		markerKind.MarkerKind = SSR_COURCE_MARKER_NON;
+	}
+
+	return markerKind;
 }
 
 
@@ -564,6 +709,42 @@ static SSR_EnmMarkerState st_CalcMarkerSensor(SSR_EnmMarkerState nowState, int16
 	}
 
 	return ret;
+}
+
+
+static void st_RegistResetCourceMarker(void)
+{
+	if((st_CourceMarker.Left.State == SSR_HIGH_STATE) && (st_CourceMarker.Right.State == SSR_HIGH_STATE))
+	{
+		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_CROSS;
+		st_CourceMarker.StateDistance = 0.5 * (st_CourceMarker.Left.StartDistance + st_CourceMarker.Right.StartDistance);
+	}
+	else if(st_CourceMarker.Left.State == SSR_HIGH_STATE)
+	{
+		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_LEFT;
+		st_CourceMarker.StateDistance = st_CourceMarker.Left.StartDistance;
+	}
+	else if(st_CourceMarker.Right.State == SSR_HIGH_STATE)
+	{
+		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_RIGHT;
+		st_CourceMarker.StateDistance = st_CourceMarker.Right.StartDistance;
+	}
+	else
+	{
+		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_NON;
+	}
+
+	st_CourceMarker.Left.StartDistance  = 0.0;
+	st_CourceMarker.Left.TempDistance   = 0.0;
+	st_CourceMarker.Left.DiffDistance   = 0.0;
+	st_CourceMarker.Left.TempState      = SSR_LOW_STATE;
+	st_CourceMarker.Left.State          = SSR_LOW_STATE;
+
+	st_CourceMarker.Right.StartDistance = 0.0;
+	st_CourceMarker.Right.TempDistance  = 0.0;
+	st_CourceMarker.Right.DiffDistance  = 0.0;
+	st_CourceMarker.Right.TempState     = SSR_LOW_STATE;
+	st_CourceMarker.Right.State         = SSR_LOW_STATE;
 }
 
 

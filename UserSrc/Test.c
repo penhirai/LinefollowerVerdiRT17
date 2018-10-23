@@ -526,8 +526,12 @@ static void st_MarkerTest(void)
 	SSR_EnmMarkerState leftMarker;
 	SSR_EnmMarkerState rightMarker;
 	SSR_EnmMarkerKind kind;
+	SSR_StrMarkerData markerData;
 
 	st_Decision = SWT_DECISION_FALSE;
+
+	CVL_Init();
+	TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
 
 	TSK_Start(TSK_TASK5_Judge_MARKER);
 
@@ -538,10 +542,12 @@ static void st_MarkerTest(void)
 		kind = SSR_RIGHT_MARKER;
 		rightMarker = SSR_GetMarkerState(kind);
 
-		st_BufSize = sprintf(st_SendBuf, "L:%d, R:%d ", leftMarker, rightMarker);
+		markerData = SSR_GetCourceMarker();
+
+		st_BufSize = sprintf(st_SendBuf, "L:%d, R:%d, c:%d, d:%f \r\n", leftMarker, rightMarker, markerData.MarkerKind, markerData.Distance);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		SSR_PrintAllSensor();
+		//SSR_PrintAllSensor();
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)

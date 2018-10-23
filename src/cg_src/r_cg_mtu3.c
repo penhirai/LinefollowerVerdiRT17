@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/10/22
+* Creation Date: 2018/10/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -78,8 +78,8 @@ void R_MTU3_Create(void)
     MTU0.TMDR1.BYTE = _02_MTU_PWM1;
     MTU0.TIORH.BYTE = _00_MTU_IOA_DISABLE;
     MTU0.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
-    MTU0.TGRA = _7530_TGRA_VALUE;
-    MTU0.TGRB = _EA5F_TGRB_VALUE;
+    MTU0.TGRA = _3A98_TGRA_VALUE;
+    MTU0.TGRB = _752F_TGRB_VALUE;
     MTU0.TGRC = _0064_TGRC_VALUE;
     MTU0.TGRD = _752F_TGRD_VALUE;
     MTU0.TGRE = _0064_TGRE_VALUE;
@@ -133,7 +133,7 @@ void R_MTU3_Create(void)
     MTU4.TIORH.BYTE = _60_MTU_IOB_HH | _01_MTU_IOA_LL;
     MTU4.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
     MTU4.TGRA = _0064_TGRA_VALUE;
-    MTU4.TGRB = _012B_TGRB_VALUE;
+    MTU4.TGRB = _0257_TGRB_VALUE;
     MTU4.TGRC = _0064_TGRC_VALUE;
     MTU4.TGRD = _012B_TGRD_VALUE;
     MTU4.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 

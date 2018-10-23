@@ -12,7 +12,7 @@
 #define PI						(3.1415926535)
 #define PERIOD_INTERRUPT		(1.0 * 10e-3)				// 制御周期 [s]
 #define PERIOD_INTERRUPT_INV	(1.0 / PERIOD_INTERRUPT)	//  逆数
-#define D_TIRE					(21.5 * 10e-3)				// タイヤ直径 [m]
+#define D_TIRE					(21.5 * 10e-3 * 20.0)				// タイヤ直径 [m] なぜか20倍？
 #define ENCODER_PULSE_MAX		(4000.0)					// cnt/回転
 #define ENCODER_PULSE_MAX_INV	(1.0 / ENCODER_PULSE_MAX)	//  逆数
 

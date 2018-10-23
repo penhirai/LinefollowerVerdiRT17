@@ -24,7 +24,9 @@ typedef struct strEncoder
 	StrEncoderFactor Left;
 	StrEncoderFactor Right;
 	float32_t Average;
+	float32_t SumAverage;
 	float32_t Velocity;
+	float32_t Distance;
 }StrEncoder;
 
 typedef enum enmTargetState
@@ -46,7 +48,7 @@ typedef struct strController
 	CST_StrGain Gain;
 }StrController;
 
-static StrEncoder st_Encoder;
+ StrEncoder st_Encoder;
 static StrController st_Controller;
 
 
@@ -67,7 +69,9 @@ void CVL_Init(void)
 	st_Encoder.Right.Diff = 0;
 	st_Encoder.Right.Sum  = 0;
 	st_Encoder.Average    = 0.0;
+	st_Encoder.SumAverage = 0.0;
 	st_Encoder.Velocity   = 0.0;
+	st_Encoder.Distance   = 0.0;
 
 	st_Controller.Target        = 0.0;
 	st_Controller.InstantTarget = 0.0;
@@ -176,6 +180,12 @@ float32_t CVL_GetErrorNow(void)
 }
 
 
+float32_t CVL_GetDistance(void)
+{
+	return st_Encoder.Distance;
+}
+
+
 static void st_CalcEncoder(void)
 {
 	int32_t leftDiff;
@@ -184,6 +194,7 @@ static void st_CalcEncoder(void)
 	int32_t rightDiff;
 	int32_t rightDiffUpBorder;
 	int32_t rightDiffDownBorder;
+	float32_t kTemp;
 
 	st_Encoder.Left.Now  = FTR_GetLeftEncoderCount();
 	st_Encoder.Right.Now = FTR_GetRightEncoderCount();
@@ -221,33 +232,16 @@ static void st_CalcEncoder(void)
 	}
 	st_Encoder.Left.Diff  = leftDiff;
 	st_Encoder.Right.Diff = rightDiff;
-	/*
-	if(leftDiff > 30000)
-	{
-		st_Encoder.Left.Diff  = -leftDiff  & 0xFFFF;
-	}
-	else
-	{
-		st_Encoder.Left.Diff  = leftDiff  & 0xFFFF;
-	}
 
-	if(rightDiff > 30000)
-	{
-		st_Encoder.Right.Diff = -rightDiff & 0xFFFF;
-	}
-	else
-	{
-		st_Encoder.Right.Diff = rightDiff & 0xFFFF;
-	}
-	*/
+	st_Encoder.Left.Sum  += leftDiff;
+	st_Encoder.Right.Sum += rightDiff;
 
+	st_Encoder.Average    = (float32_t)(st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
+	st_Encoder.SumAverage = (float32_t)(st_Encoder.Left.Sum  + st_Encoder.Right.Sum)  * 0.5;
 
-	//st_Encoder.Left.Diff  = (int32_t)st_Encoder.Left.Now  - (int32_t)st_Encoder.Left.Past;
-	//st_Encoder.Right.Diff = (int32_t)st_Encoder.Right.Now - (int32_t)st_Encoder.Right.Past;
-
-	st_Encoder.Average = (float32_t)(st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
-
-	st_Encoder.Velocity = st_Encoder.Average * (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE) * (PERIOD_INTERRUPT_INV);
+	kTemp = (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE);
+	st_Encoder.Velocity = st_Encoder.Average    * kTemp * (PERIOD_INTERRUPT_INV);
+	st_Encoder.Distance = st_Encoder.SumAverage * kTemp;
 
 	st_Encoder.Left.Past  = st_Encoder.Left.Now;
 	st_Encoder.Right.Past = st_Encoder.Right.Now;

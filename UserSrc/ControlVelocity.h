@@ -23,5 +23,6 @@ void CVL_ControlTask(void);
 
 float32_t CVL_GetVelocity(void);
 float32_t CVL_GetErrorNow(void);
+float32_t CVL_GetDistance(void);
 
 #endif /* CONTROLVELOCITY_H_ */

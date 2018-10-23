@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for S12AD module.
-* Creation Date: 2018/10/22
+* Creation Date: 2018/10/24
 ***********************************************************************************************************************/
 #ifndef S12AD_H
 #define S12AD_H

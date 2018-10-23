@@ -157,7 +157,7 @@ void FTR_StartLeftMotorTimer(void)
 
 void FTR_SetLeftMotorDuty(float32_t duty)
 {
-	uint32_t temp;
+	float32_t temp;
 	uint16_t tempDuty;
 
 	st_LeftMotorDuty.Duty = duty;
@@ -209,7 +209,7 @@ void FTR_StartSensorMotorTimer(void)
 
 void FTR_SetSensorMotorDuty(float32_t duty)
 {
-	uint32_t temp;
+	float32_t temp;
 	uint16_t tempDuty;
 
 	if(duty >= 0.0)

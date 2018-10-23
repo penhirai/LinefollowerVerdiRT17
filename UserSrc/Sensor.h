@@ -52,6 +52,20 @@ typedef struct strSensorDataArray
 	uint16_t Index;
 }SSR_StrSensorDataArray;
 
+typedef enum enmCourceMarkerKind
+{
+	SSR_COURCE_MARKER_NON = 0,
+	SSR_COURCE_MARKER_LEFT,
+	SSR_COURCE_MARKER_RIGHT,
+	SSR_COURCE_MARKER_CROSS
+}SSR_EnmCourceMarkerKind;
+
+typedef struct strMarkerData
+{
+	float32_t Distance;
+	SSR_EnmCourceMarkerKind MarkerKind;
+}SSR_StrMarkerData;
+
 void SSR_Init(void);
 
 void SSR_TaskStartSensorGate(void);
@@ -76,6 +90,7 @@ float32_t SSR_GetGyroData(void);
 void      SSR_SetGyroData(void);
 
 SSR_EnmMarkerState SSR_GetMarkerState(SSR_EnmMarkerKind kind);
+SSR_StrMarkerData SSR_GetCourceMarker(void);
 
 void SSR_PrintAllSensor(void);
 
