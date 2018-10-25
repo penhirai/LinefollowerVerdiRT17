@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file includes user definition.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 #ifndef _USER_DEF_H
 #define _USER_DEF_H

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for ICU module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -39,6 +39,7 @@ Includes
 #include "r_cg_icu.h"
 /* Start user code for include. Do not edit comment generated here */
 #include "Switch.h"
+#include "r_cg_cmt.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 

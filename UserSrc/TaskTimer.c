@@ -15,7 +15,7 @@
 #include "ControlAngularVelocity.h"
 #include "DriveAssert.h"
 
-#define TASK_MAX 11
+#define TASK_MAX 12
 
 typedef enum enmTaskSchedule
 {

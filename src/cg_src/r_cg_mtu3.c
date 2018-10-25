@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -72,15 +72,15 @@ void R_MTU3_Create(void)
     MTU0.NFCRC.BYTE = _01_MTU_NFCRC_NFAEN | _02_MTU_NFCRC_NFBEN | _04_MTU_NFCRC_NFCEN | _08_MTU_NFCRC_NFDEN | _00_MTU_NFCSC_PCLK_1;
 
     /* Channel 0 is used as PWM1 mode */
-    MTU0.TCR.BYTE = _00_MTU_PCLK_1 | _00_MTU_CKEG_RISE | _C0_MTU_CKCL_D;
+    MTU0.TCR.BYTE = _01_MTU_PCLK_4 | _00_MTU_CKEG_RISE | _20_MTU_CKCL_A;
     MTU0.TCR2.BYTE = _00_MTU_PCLK_1;
     MTU.TSYRA.BIT.SYNC0 = 0U;
     MTU0.TMDR1.BYTE = _02_MTU_PWM1;
     MTU0.TIORH.BYTE = _00_MTU_IOA_DISABLE;
-    MTU0.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
-    MTU0.TGRA = _3A98_TGRA_VALUE;
+    MTU0.TIORL.BYTE = _60_MTU_IOD_HH | _03_MTU_IOC_LT;
+    MTU0.TGRA = _752F_TGRA_VALUE;
     MTU0.TGRB = _752F_TGRB_VALUE;
-    MTU0.TGRC = _0064_TGRC_VALUE;
+    MTU0.TGRC = _752F_TGRC_VALUE;
     MTU0.TGRD = _752F_TGRD_VALUE;
     MTU0.TGRE = _0064_TGRE_VALUE;
     MTU0.TGRF = _0064_TGRF_VALUE;
@@ -114,11 +114,11 @@ void R_MTU3_Create(void)
     MTU.TSYRA.BIT.SYNC3 = 0U;
     MTU3.TMDR1.BYTE = _02_MTU_PWM1;
     MTU3.TIORH.BYTE = _00_MTU_IOA_DISABLE;
-    MTU3.TIORL.BYTE = _60_MTU_IOD_HH | _05_MTU_IOC_HL;
+    MTU3.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
     MTU3.TGRA = _0064_TGRA_VALUE;
-    MTU3.TGRB = _0257_TGRB_VALUE;
+    MTU3.TGRB = _04AF_TGRB_VALUE;
     MTU3.TGRC = _0064_TGRC_VALUE;
-    MTU3.TGRD = _012B_TGRD_VALUE;
+    MTU3.TGRD = _04AF_TGRD_VALUE;
     MTU3.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
                      _00_MTU_TCIEV_DISABLE | _00_MTU_TTGE_DISABLE;
 
@@ -133,9 +133,9 @@ void R_MTU3_Create(void)
     MTU4.TIORH.BYTE = _60_MTU_IOB_HH | _01_MTU_IOA_LL;
     MTU4.TIORL.BYTE = _60_MTU_IOD_HH | _01_MTU_IOC_LL;
     MTU4.TGRA = _0064_TGRA_VALUE;
-    MTU4.TGRB = _0257_TGRB_VALUE;
+    MTU4.TGRB = _04AF_TGRB_VALUE;
     MTU4.TGRC = _0064_TGRC_VALUE;
-    MTU4.TGRD = _012B_TGRD_VALUE;
+    MTU4.TGRD = _04AF_TGRD_VALUE;
     MTU4.TIER.BYTE = _00_MTU_TGIEA_DISABLE | _00_MTU_TGIEB_DISABLE | _00_MTU_TGIEC_DISABLE | _00_MTU_TGIED_DISABLE | 
                      _00_MTU_TCIEV_DISABLE | _00_MTU_TTGE_DISABLE;
     

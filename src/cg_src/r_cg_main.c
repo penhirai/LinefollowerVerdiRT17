@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements main function.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -50,6 +50,8 @@ Includes
 #include "SciFifo.h"
 #include "ControlSensorAngle.h"
 #include "Tracer.h"
+#include "Sensor.h"
+#include "TaskTimer.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 

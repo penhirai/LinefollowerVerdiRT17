@@ -32,11 +32,11 @@ static StrTheta st_Theta;
 //static float32_t *st_PotentioTheta;
 static float32_t st_PotentioTheta;
 
-static void st_CalcSensorAngle(void);
+static void st_CalcSensorAngle(int16_t potentio);
 
 static void st_DriveSensorMotor(float32_t input);
-static void st_SetDriveCw(void);
-static void st_SetDriveCcw(void);
+//static void st_SetDriveCw(void);
+//static void st_SetDriveCcw(void);
 
 void CSA_Init(void)
 {

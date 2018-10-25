@@ -14,6 +14,7 @@
 #include "SciFifo.h"
 #include "TaskTimer.h"
 #include "ControlVelocity.h"
+#include "Buzzer.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -295,14 +296,16 @@ static void st_PwmTest(void)
 	FTR_StartLeftMotorTimer();
 	FTR_StartSensorMotorTimer();
 
+	CVL_StartDriveMotor();
+
 	while(1)
 	{
 		rightMotorDuty = 10 * st_Swt->RL_Dif;
 		leftMotorDuty  = 10 * st_Swt->UD_Dif;
 		sensorMotorDuty = 10;
 
-		FTR_SetRightMotorDuty(rightMotorDuty);
-		FTR_SetLeftMotorDuty(leftMotorDuty);
+		FTR_SetTransitionRightMotorDuty(rightMotorDuty);
+		FTR_SetTransitionLeftMotorDuty(leftMotorDuty);
 		FTR_SetSensorMotorDuty(sensorMotorDuty);
 
 		st_BufSize = sprintf(st_SendBuf, "Right: %d, Left: %d sensor: %d \r\n", rightMotorDuty, leftMotorDuty, sensorMotorDuty);
@@ -574,7 +577,7 @@ static void st_StraightTest(void)
 
 	//R_SCI2_Start();
 
-	CVL_SetTarget(5.0);
+	CVL_SetTarget(20.0);
 
 	while(1)
 	{
@@ -583,9 +586,9 @@ static void st_StraightTest(void)
 		rightDuty = FTR_GetRightMotorDuty();
 		errorNow = CVL_GetErrorNow();
 
-		//st_BufSize = sprintf(st_SendBuf, "vec:%.3f, left:%.3f, right:%.3f \r\n", velocity, leftDuty, rightDuty);
+		st_BufSize = sprintf(st_SendBuf, "vec:%.3f, left:%.3f, right:%.3f \r\n", velocity, leftDuty, rightDuty);
 		//st_BufSize = sprintf(st_SendBuf, "vec:%.3f, error:%.3f \r\n", velocity, errorNow);
-		//SCF_WriteData(st_SendBuf, st_BufSize);
+		SCF_WriteData(st_SendBuf, st_BufSize);
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)

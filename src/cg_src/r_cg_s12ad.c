@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for S12AD module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -72,12 +72,12 @@ void R_S12AD0_Create(void)
     /* Set channels and sampling time */
     S12AD.ADANSA0.WORD = _003F_AD0_CHANNEL_SELECT_A0;
     S12AD.ADADS0.WORD = _0000_AD0_ADDAVG_CHANNEL_SELECT0;
-    S12AD.ADSSTR0 = _96_AD0_SAMPLING_STATE_0;
-    S12AD.ADSSTR1 = _96_AD0_SAMPLING_STATE_1;
-    S12AD.ADSSTR2 = _96_AD0_SAMPLING_STATE_2;
-    S12AD.ADSSTR3 = _96_AD0_SAMPLING_STATE_3;
-    S12AD.ADSSTR4 = _96_AD0_SAMPLING_STATE_4;
-    S12AD.ADSSTR5 = _96_AD0_SAMPLING_STATE_5;
+    S12AD.ADSSTR0 = _3C_AD0_SAMPLING_STATE_0;
+    S12AD.ADSSTR1 = _3C_AD0_SAMPLING_STATE_1;
+    S12AD.ADSSTR2 = _3C_AD0_SAMPLING_STATE_2;
+    S12AD.ADSSTR3 = _3C_AD0_SAMPLING_STATE_3;
+    S12AD.ADSSTR4 = _3C_AD0_SAMPLING_STATE_4;
+    S12AD.ADSSTR5 = _3C_AD0_SAMPLING_STATE_5;
 
     /* Set compare control register */
     S12AD.ADCMPCR.BYTE = _00_AD_WINDOWFUNCTION_DISABLE;
@@ -216,9 +216,15 @@ void R_S12AD0_Set_CompareValue(uint16_t reg_value0, uint16_t reg_value1 )
 
 void R_S12AD0_WaitAdcEnd(void)
 {
+	volatile int32_t i = 0;
+
 	do
 	{
-		;
+		++i;
+//		if(S12AD.ADCSR.BIT.ADST == 0)
+//		{
+//			break;
+//		}
 	}while(S12AD.ADCSR.BIT.ADST == 1);
 }
 /* End user code. Do not edit comment generated here */

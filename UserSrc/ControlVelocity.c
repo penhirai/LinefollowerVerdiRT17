@@ -89,7 +89,7 @@ void CVL_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 50.0;
+	st_Controller.Gain.Factor.P   = 1.0;
 	st_Controller.Gain.Factor.I   = 0.1;
 	st_Controller.Gain.Factor.D   = 0.0;
 
@@ -113,8 +113,8 @@ void CVL_StartDriveMotor(void)
 
 	st_Controller.Error.Factor.I = 0.0;
 
-	FTR_SetLeftMotorDuty(0.0);
-	FTR_SetRightMotorDuty(0.0);
+	FTR_SetTransitionLeftMotorDuty(0.0);
+	FTR_SetTransitionRightMotorDuty(0.0);
 }
 
 
@@ -162,7 +162,7 @@ void CVL_ControlTask(void)
 	st_UpdateTarget();
 
 	st_CalcError();
-	st_CalcGain();
+	//st_CalcGain();
 
 	st_SetMotorDuty();
 }
@@ -239,8 +239,9 @@ static void st_CalcEncoder(void)
 	st_Encoder.Average    = (float32_t)(st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
 	st_Encoder.SumAverage = (float32_t)(st_Encoder.Left.Sum  + st_Encoder.Right.Sum)  * 0.5;
 
-	kTemp = (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE);
+	kTemp = (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE) * GEAR_RATIO;
 	st_Encoder.Velocity = st_Encoder.Average    * kTemp * (PERIOD_INTERRUPT_INV);
+	//st_Encoder.Velocity = st_Encoder.Average;
 	st_Encoder.Distance = st_Encoder.SumAverage * kTemp;
 
 	st_Encoder.Left.Past  = st_Encoder.Left.Now;
@@ -302,6 +303,6 @@ static void st_CalcGain(void)
 
 static void st_SetMotorDuty(void)
 {
-	FTR_SetLeftMotorDuty(st_Controller.Error.Sum);
-	FTR_SetRightMotorDuty(st_Controller.Error.Sum);
+	FTR_SetTransitionLeftMotorDuty(st_Controller.Error.Sum);
+	FTR_SetTransitionRightMotorDuty(st_Controller.Error.Sum);
 }

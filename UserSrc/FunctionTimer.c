@@ -7,6 +7,7 @@
 
 #include "FunctionTimer.h"
 #include <r_cg_port.h>
+#include <r_cg_mtu3.h>
 
 typedef struct strDuty
 {
@@ -15,11 +16,20 @@ typedef struct strDuty
 	float32_t DivideValue;
 }StrDuty;
 
+typedef struct strMultiDuty
+{
+	StrDuty Base;
+	float32_t TransitionDuty;
+	float32_t AngularDuty;
+}StrMultiDuty;
+
 static StrDuty st_BuzzerDuty;
-static StrDuty st_RightMotorDuty;
-static StrDuty st_LeftMotorDuty;
+static StrMultiDuty st_RightMotorDuty;
+static StrMultiDuty st_LeftMotorDuty;
 static StrDuty st_SensorMotorDuty;
 
+static void st_SetLeftMotorDuty(float32_t duty);
+static void st_SetRightMotorDuty(float32_t duty);
 static void st_SetLeftDriveCw(void);
 static void st_SetLeftDriveCcw(void);
 static void st_SetRightDriveCw(void);
@@ -35,15 +45,19 @@ void FTR_Init(void)
 	st_BuzzerDuty.TgrxMax = R_MTU0_GetTGRD();
 	st_BuzzerDuty.DivideValue = 1.0/100.0;
 
-	st_RightMotorDuty.Duty = 0.0;
-	R_MTU4_SetTGRA(st_RightMotorDuty.Duty);
-	st_RightMotorDuty.TgrxMax = R_MTU4_GetTGRB();
-	st_RightMotorDuty.DivideValue = 1.0/100.0;
+	st_RightMotorDuty.Base.Duty = 0.0;
+	st_RightMotorDuty.TransitionDuty = 0.0;
+	st_RightMotorDuty.AngularDuty    = 0.0;
+	R_MTU4_SetTGRA(st_RightMotorDuty.Base.Duty);
+	st_RightMotorDuty.Base.TgrxMax = R_MTU4_GetTGRB();
+	st_RightMotorDuty.Base.DivideValue = 1.0/100.0;
 
-	st_LeftMotorDuty.Duty = 0.0;
-	R_MTU4_SetTGRC(st_LeftMotorDuty.Duty);
-	st_LeftMotorDuty.TgrxMax = R_MTU4_GetTGRD();
-	st_LeftMotorDuty.DivideValue = 1.0/100.0;
+	st_LeftMotorDuty.Base.Duty = 0.0;
+	st_LeftMotorDuty.TransitionDuty = 0.0;
+	st_LeftMotorDuty.AngularDuty    = 0.0;
+	R_MTU4_SetTGRC(st_LeftMotorDuty.Base.Duty);
+	st_LeftMotorDuty.Base.TgrxMax = R_MTU4_GetTGRD();
+	st_LeftMotorDuty.Base.DivideValue = 1.0/100.0;
 
 	st_SensorMotorDuty.Duty = 0.0;
 	R_MTU3_SetTGRC(st_SensorMotorDuty.Duty);
@@ -103,50 +117,25 @@ void FTR_StartRightMotorTimer(void)
 	R_MTU3_C4_Start();
 }
 
-void FTR_SetRightMotorDuty(float32_t duty)
+void FTR_SetTransitionRightMotorDuty(float32_t duty)
 {
-	float32_t temp;
-	uint16_t tempDuty;
+	st_RightMotorDuty.TransitionDuty = duty;
+	st_RightMotorDuty.Base.Duty = duty + st_RightMotorDuty.AngularDuty;
 
-	st_RightMotorDuty.Duty = duty;
-
-	if(duty >= 0.0)
-	{
-		st_SetRightDriveCw();
-	}
-	else
-	{
-		duty *= -1.0;
-		st_SetRightDriveCcw();
-	}
-
-	if(duty > 100.0)
-	{
-		duty = 100.0;
-	}
-
-	temp = (float32_t)st_RightMotorDuty.TgrxMax * duty;
-	temp *= st_RightMotorDuty.DivideValue;
-
-	tempDuty = (uint16_t)temp;
-	if(tempDuty >= st_RightMotorDuty.TgrxMax)
-	{
-		tempDuty = st_RightMotorDuty.TgrxMax - 1;
-	}
-
-	R_MTU4_SetTGRA(tempDuty);
+	st_SetRightMotorDuty(st_RightMotorDuty.Base.Duty);
 }
 
-void FTR_AddRightMotorDuty(float32_t duty)
+void FTR_SetAngularRightMotorDuty(float32_t duty)
 {
-	st_RightMotorDuty.Duty += duty;
+	st_RightMotorDuty.AngularDuty = duty;
+	st_RightMotorDuty.Base.Duty = st_RightMotorDuty.TransitionDuty + duty;
 
-	FTR_SetRightMotorDuty(st_RightMotorDuty.Duty);
+	st_SetRightMotorDuty(st_RightMotorDuty.Base.Duty);
 }
 
 float32_t FTR_GetRightMotorDuty(void)
 {
-	return st_RightMotorDuty.Duty;
+	return st_RightMotorDuty.Base.Duty;
 }
 
 
@@ -155,50 +144,25 @@ void FTR_StartLeftMotorTimer(void)
 	R_MTU3_C4_Start();
 }
 
-void FTR_SetLeftMotorDuty(float32_t duty)
+void FTR_SetTransitionLeftMotorDuty(float32_t duty)
 {
-	float32_t temp;
-	uint16_t tempDuty;
+	st_LeftMotorDuty.TransitionDuty = duty;
+	st_LeftMotorDuty.Base.Duty = duty + st_LeftMotorDuty.AngularDuty;
 
-	st_LeftMotorDuty.Duty = duty;
-
-	if(duty >= 0.0)
-	{
-		st_SetLeftDriveCw();
-	}
-	else
-	{
-		duty *= -1.0;
-		st_SetLeftDriveCcw();
-	}
-
-	if(duty > 100.0)
-	{
-		duty = 100.0;
-	}
-
-	temp = (float32_t)st_LeftMotorDuty.TgrxMax * duty;
-	temp *= st_LeftMotorDuty.DivideValue;
-
-	tempDuty = (uint16_t)temp;
-	if(tempDuty >= st_LeftMotorDuty.TgrxMax)
-	{
-		tempDuty = st_LeftMotorDuty.TgrxMax - 1;
-	}
-
-	R_MTU4_SetTGRC(tempDuty);
+	st_SetLeftMotorDuty(st_LeftMotorDuty.Base.Duty);
 }
 
-void FTR_AddLeftMotorDuty(float32_t duty)
+void FTR_SetAngularLeftMotorDuty(float32_t duty)
 {
-	st_LeftMotorDuty.Duty += duty;
+	st_LeftMotorDuty.AngularDuty = duty;
+	st_LeftMotorDuty.Base.Duty = st_LeftMotorDuty.TransitionDuty + duty;
 
-	FTR_SetLeftMotorDuty(st_LeftMotorDuty.Duty);
+	st_SetLeftMotorDuty(st_LeftMotorDuty.Base.Duty);
 }
 
 float32_t FTR_GetLeftMotorDuty(void)
 {
-	return st_LeftMotorDuty.Duty;
+	return st_LeftMotorDuty.Base.Duty;
 }
 
 
@@ -246,6 +210,78 @@ float32_t FTR_GetSensorMotorDuty(void)
 }
 
 
+
+
+static void st_SetLeftMotorDuty(float32_t duty)
+{
+	float32_t temp;
+	uint16_t tempDuty;
+
+	//st_LeftMotorDuty.Base.Duty = duty;
+
+	if(duty >= 0.0)
+	{
+		st_SetLeftDriveCw();
+	}
+	else
+	{
+		duty *= -1.0;
+		st_SetLeftDriveCcw();
+	}
+
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
+	temp = (float32_t)st_LeftMotorDuty.Base.TgrxMax * duty;
+	temp *= st_LeftMotorDuty.Base.DivideValue;
+
+	tempDuty = (uint16_t)temp;
+	if(tempDuty >= st_LeftMotorDuty.Base.TgrxMax)
+	{
+		tempDuty = st_LeftMotorDuty.Base.TgrxMax - 1;
+	}
+
+	R_MTU4_SetTGRC(tempDuty);
+}
+
+
+static void st_SetRightMotorDuty(float32_t duty)
+{
+	float32_t temp;
+	uint16_t tempDuty;
+
+	//st_RightMotorDuty.Base.Duty = duty;
+
+	if(duty >= 0.0)
+	{
+		st_SetRightDriveCw();
+	}
+	else
+	{
+		duty *= -1.0;
+		st_SetRightDriveCcw();
+	}
+
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
+	temp = (float32_t)st_RightMotorDuty.Base.TgrxMax * duty;
+	temp *= st_RightMotorDuty.Base.DivideValue;
+
+	tempDuty = (uint16_t)temp;
+	if(tempDuty >= st_RightMotorDuty.Base.TgrxMax)
+	{
+		tempDuty = st_RightMotorDuty.Base.TgrxMax - 1;
+	}
+
+	R_MTU4_SetTGRA(tempDuty);
+}
+
+
 static void st_SetLeftDriveCw(void)
 {
 	R_PORT_EnmPort state = R_PORT_LOW;
@@ -254,7 +290,7 @@ static void st_SetLeftDriveCw(void)
 	R_PORT_SetPD1(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPD0(state);
 }
@@ -268,7 +304,7 @@ static void st_SetLeftDriveCcw(void)
 	R_PORT_SetPD1(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPD1(state);
 }
@@ -282,7 +318,7 @@ static void st_SetRightDriveCw(void)
 	R_PORT_SetPE3(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPE3(state);
 }
@@ -296,7 +332,7 @@ static void st_SetRightDriveCcw(void)
 	R_PORT_SetPE3(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPE0(state);
 }
@@ -309,7 +345,7 @@ static void st_SetSensorDriveCw(void)
 	R_PORT_SetPB0(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPE4(state);
 }
@@ -323,7 +359,7 @@ static void st_SetSensorDriveCcw(void)
 	R_PORT_SetPB0(state);
 
 	state = R_PORT_HIGH;
-	for(volatile i = 0; i < 10; ++i) ;
+	for(volatile int32_t i = 0; i < 10; ++i) ;
 
 	R_PORT_SetPB0(state);
 }

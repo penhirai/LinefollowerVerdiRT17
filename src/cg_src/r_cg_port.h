@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for Port module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 #ifndef PORT_H
 #define PORT_H
@@ -184,6 +184,8 @@ void R_PORT_SetPC0(R_PORT_EnmPort state);
 void R_PORT_SetPC1(R_PORT_EnmPort state);
 void R_PORT_SetPC2(R_PORT_EnmPort state);
 void R_PORT_SetPC3(R_PORT_EnmPort state);
+void R_PORT_SetPD0(R_PORT_EnmPort state);
+void R_PORT_SetPD1(R_PORT_EnmPort state);
 void R_PORT_SetPE0(R_PORT_EnmPort state);
 void R_PORT_SetPE3(R_PORT_EnmPort state);
 void R_PORT_SetPE4(R_PORT_EnmPort state);

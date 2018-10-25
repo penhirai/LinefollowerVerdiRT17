@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for SCI module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -86,7 +86,7 @@ void R_SCI2_Create(void)
                      _40_SCI_BAUDRATE_DOUBLE | _00_SCI_BIT_MODULATION_DISABLE;
 
     /* Set bitrate */
-    SCI2.BRR = 0x20U;
+    SCI2.BRR = 0x40U;
 
     /* Set RXD2 pin */
     MPC.P52PFS.BYTE = 0x0AU;

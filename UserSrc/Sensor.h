@@ -85,9 +85,9 @@ void SSR_CalibSensor(void);
 SSR_StrSensorData SSR_GetSensorData(void);
 //float32_t *SSR_GetPotentioData(void);
 float32_t SSR_GetPotentioData(void);
-void      SSR_SetPotentioData(void);
+void      SSR_SetPotentioData(float32_t sensorTheta);
 float32_t SSR_GetGyroData(void);
-void      SSR_SetGyroData(void);
+void      SSR_SetGyroData(float32_t bodyOmega);
 
 SSR_EnmMarkerState SSR_GetMarkerState(SSR_EnmMarkerKind kind);
 SSR_StrMarkerData SSR_GetCourceMarker(void);

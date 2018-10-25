@@ -12,6 +12,7 @@
 #include "ControlStructure.h"
 #include "ControlVelocity.h"
 #include <mathf.h>
+#include "ControlSensorAngle.h"
 
 //typedef struct strEncoderFactor
 //{
@@ -247,6 +248,6 @@ static void st_CalcGain(void)
 
 static void st_AddMotorDuty(void)
 {
-	FTR_AddLeftMotorDuty(-st_Controller.Error.Sum);
-	FTR_AddRightMotorDuty(st_Controller.Error.Sum);
+	FTR_SetAngularLeftMotorDuty(-st_Controller.Error.Sum);
+	FTR_SetAngularRightMotorDuty(st_Controller.Error.Sum);
 }

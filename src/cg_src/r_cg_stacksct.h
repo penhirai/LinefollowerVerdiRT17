@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : Setting of Stack area.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 #ifndef _STACKSCT_H
 #define _STACKSCT_H
@@ -44,8 +44,8 @@ Typedef definitions
 Global functions
 ***********************************************************************************************************************/
 /* Start user code for adding. Do not edit comment generated here */
-#pragma stacksize su = 0x200
-#pragma stacksize si = 0x400
+#pragma stacksize su = 0x300
+#pragma stacksize si = 0x500
 /* End user code. Do not edit comment generated here */
 
 #endif

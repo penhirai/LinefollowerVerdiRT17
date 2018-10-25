@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for MTU3 module.
-* Creation Date: 2018/10/24
+* Creation Date: 2018/10/26
 ***********************************************************************************************************************/
 #ifndef MTU3_H
 #define MTU3_H
@@ -626,11 +626,11 @@ Macro definitions (Register bit)
 Macro definitions
 ***********************************************************************************************************************/
 /* PWM1 TGRA value */
-#define _3A98_TGRA_VALUE                (0x3A98U)
+#define _752F_TGRA_VALUE                (0x752FU)
 /* PWM1 TGRB value */
 #define _752F_TGRB_VALUE                (0x752FU)
 /* PWM1 TGRC value */
-#define _0064_TGRC_VALUE                (0x0064U)
+#define _752F_TGRC_VALUE                (0x752FU)
 /* PWM1 TGRD value */
 #define _752F_TGRD_VALUE                (0x752FU)
 /* PWM1 TGRE value */
@@ -648,19 +648,19 @@ Macro definitions
 /* PWM1 TGRA value */
 #define _0064_TGRA_VALUE                (0x0064U)
 /* PWM1 TGRB value */
-#define _0257_TGRB_VALUE                (0x0257U)
+#define _04AF_TGRB_VALUE                (0x04AFU)
 /* PWM1 TGRC value */
 #define _0064_TGRC_VALUE                (0x0064U)
 /* PWM1 TGRD value */
-#define _012B_TGRD_VALUE                (0x012BU)
+#define _04AF_TGRD_VALUE                (0x04AFU)
 /* PWM1 TGRA value */
 #define _0064_TGRA_VALUE                (0x0064U)
 /* PWM1 TGRB value */
-#define _0257_TGRB_VALUE                (0x0257U)
+#define _04AF_TGRB_VALUE                (0x04AFU)
 /* PWM1 TGRC value */
 #define _0064_TGRC_VALUE                (0x0064U)
 /* PWM1 TGRD value */
-#define _012B_TGRD_VALUE                (0x012BU)
+#define _04AF_TGRD_VALUE                (0x04AFU)
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -698,7 +698,7 @@ uint16_t R_MTU3_GetTGRA(void);
 uint16_t R_MTU3_GetTGRB(void);
 void     R_MTU3_SetTGRC(uint16_t tgrx);
 uint16_t R_MTU3_GetTGRC(void);
-uint16_t R_MTU3_GetTRGD(void);
+uint16_t R_MTU3_GetTGRD(void);
 
 void     R_MTU4_SetTGRA(uint16_t tgrx);
 uint16_t R_MTU4_GetTGRA(void);

@@ -13,6 +13,7 @@
 #include <r_cg_port.h>
 #include "Switch.h"
 #include "ControlVelocity.h"
+#include "SciFifo.h"
 
 #define SEND_BUF_SIZE 20
 
@@ -563,7 +564,8 @@ SSR_StrMarkerData SSR_GetCourceMarker(void)
 	else
 	{
 		//markerKind.Distance = st_CourceMarker.Right.StartDistance;
-		markerKind.Distance = 0.0;
+		markerKind.Distance = st_CourceMarker.Right.DiffDistance;
+		//markerKind.Distance = 0.0;
 		markerKind.MarkerKind = SSR_COURCE_MARKER_NON;
 	}
 
@@ -639,22 +641,22 @@ static void st_ReadAllAnalog(void)
 	R_S12AD0_WaitAdcEnd();
 
 	adc = ADCHANNEL0;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].RightMarker);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].RightMarker);
 
 	adc = ADCHANNEL1;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].LeftMarker);
 
 	adc = ADCHANNEL2;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].Power);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].Power);
 
 	adc = ADCHANNEL3;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].RightCenter);
 
 	adc = ADCHANNEL4;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].Potentio);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].Potentio);
 
 	adc = ADCHANNEL5;
-	R_S12AD0_Get_ValueResult(adc, &st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter);
+	R_S12AD0_Get_ValueResult(adc, &(uint16_t)st_SensorData.ArrayTemp[st_SensorData.Index].LeftCenter);
 }
 
 
