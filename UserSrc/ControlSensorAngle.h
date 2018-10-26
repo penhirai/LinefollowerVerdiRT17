@@ -14,6 +14,7 @@ void CSA_Init(void);
 
 void CSA_StartSensorMotor(void);
 void CSA_StopSensorMotor(void);
+void CSA_StartSensorTask(void);
 
 void CSA_ControlSensorTask(void);
 

@@ -10,8 +10,10 @@
 #include "ControlStructure.h"
 #include "FunctionTimer.h"
 #include <r_cg_port.h>
+#include "TaskTimer.h"
 
-#define POTENTIO_CENTER 2035
+#define POTENTIO_CENTER (2035.0)
+#define K_ANGLE			(90.0 / 1120.0)		// 90°:1120cnt 程度
 
 typedef struct strTheta
 {
@@ -40,7 +42,7 @@ static void st_DriveSensorMotor(float32_t input);
 
 void CSA_Init(void)
 {
-	st_Theta.Target = 0.0;
+	st_Theta.Target = POTENTIO_CENTER;
 	st_Theta.Delta  = 0.0;
 	st_Theta.Value  = 0.0;
 	st_Theta.PastValue = 0.0;
@@ -83,6 +85,12 @@ void CSA_StopSensorMotor(void)
 	R_PORT_SetPB4(state);
 }
 
+void CSA_StartSensorTask(void)
+{
+	TSK_Start(TSK_TASK2_CONTROL_SENSOR);
+	FTR_StartSensorMotorTimer();
+}
+
 
 void CSA_ControlSensorTask(void)
 {
@@ -119,7 +127,11 @@ void CSA_ControlSensorTask(void)
 
 float32_t CSA_GetSensorTheta(void)
 {
-	return st_Theta.Target;
+	float32_t thetaTemp;
+
+	thetaTemp = st_Theta.Target - POTENTIO_CENTER;
+	thetaTemp *= K_ANGLE;
+	return thetaTemp;
 }
 
 

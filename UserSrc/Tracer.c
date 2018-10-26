@@ -22,8 +22,7 @@ void TRC_StartSearchMode(void)
 	SSR_CalibSensor();
 
 	CSA_StartSensorMotor();
-	TSK_Start(TSK_TASK2_CONTROL_SENSOR);
-	FTR_StartSensorMotorTimer();
+	CSA_StartSensorTask();
 
 	while(1)
 	{

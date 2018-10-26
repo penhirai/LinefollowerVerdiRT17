@@ -420,6 +420,8 @@ void SSR_CalibSensor(void)
 {
 	SWT_EnmDecision decision = SWT_DECISION_FALSE;
 
+	BZR_SetBeepCount(3);
+
 	while(1)
 	{
 		// 左マーカーセンサ

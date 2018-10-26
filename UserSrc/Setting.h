@@ -18,7 +18,9 @@
 #define ENCODER_PULSE_MAX_INV	(1.0 / ENCODER_PULSE_MAX)	//  逆数
 
 // 角速度系
-#define K_ANGULAR_VELOCITY		(2000.0)					// [deg/s]
+#define K_GYRO					(1.0 / 16.4)				// [(deg/s)/LSB]
+#define K_ANGULAR_VELOCITY		(PI / 180.0)				// [deg/s] -> [rad/s]
+#define K_ANGULAR_VELOCITY_INV	(1.0 / K_ANGULAR_VELOCITY)	// [rad/s] -> [deg/s]
 #define LENGTH_SENSOR			(65.0 * 10e-3)				// [m]
 
 

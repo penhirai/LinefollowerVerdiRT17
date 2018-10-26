@@ -98,6 +98,7 @@ void R_MAIN_UserInit(void)
 	CSA_Init();
 
 	TRC_Init();
+	DAS_Init();
     /* End user code. Do not edit comment generated here */
 }
 

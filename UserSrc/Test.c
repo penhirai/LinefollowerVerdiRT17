@@ -15,6 +15,8 @@
 #include "TaskTimer.h"
 #include "ControlVelocity.h"
 #include "Buzzer.h"
+#include "DriveAssert.h"
+#include "ControlAngularVelocity.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -33,6 +35,7 @@ typedef enum enmModeTestLevel
 	CASE_MARKER_TEST,
 	CASE_STRAIGHT_TEST,
 	CASE_ROTATION_TEST,
+	CASE_ASSERT_TEST,
 	CASE_LOG_TEST,
 	MODE_LEVEL_MAX
 }EnmModeTestLevel;
@@ -70,6 +73,7 @@ static void st_CalibSensorTest(void);
 static void st_MarkerTest(void);
 static void st_StraightTest(void);
 static void st_RotationTest(void);
+static void st_AssertTest(void);
 static void st_LogTest(void);
 
 
@@ -168,6 +172,12 @@ void TST_TestMode(void)
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
 					st_RotationTest();
+				}
+				break;
+			case CASE_ASSERT_TEST:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					st_AssertTest();
 				}
 				break;
 			case CASE_LOG_TEST:
@@ -603,15 +613,36 @@ static void st_StraightTest(void)
 
 static void st_RotationTest(void)
 {
+	float32_t velocity;
+	float32_t leftDuty;
+	float32_t rightDuty;
+	float32_t errorNow;
+	float32_t radius;
+
 	st_Decision = SWT_DECISION_FALSE;
 
-	//R_SCI2_Start();
+	CVL_StartDriveMotor();
+
+	CVL_Init();
+	CAV_Init();
+	TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
+	TSK_Start(TSK_TASK4_CONTROL_ANGULAR);
+
+	CSA_StartSensorTask();
+
+	CVL_SetTarget(0.0);
+	CAV_SetTarget(20.0);
 
 	while(1)
 	{
-		st_BufSize = sprintf(st_SendBuf, "test\r\n");
+		velocity = CAV_GetVelocity();
+		leftDuty  = FTR_GetLeftMotorDuty();
+		rightDuty = FTR_GetRightMotorDuty();
+		errorNow = CAV_GetErrorNow();
+		radius = CAV_GetRadius();
+
+		st_BufSize = sprintf(st_SendBuf, "vec:%.3f, left:%.3f, right:%.3f rad:%.3f\r\n", velocity, leftDuty, rightDuty, radius);
 		SCF_WriteData(st_SendBuf, st_BufSize);
-		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -621,6 +652,41 @@ static void st_RotationTest(void)
 	}
 
 	//R_SCI2_Stop();
+}
+
+
+static void st_AssertTest(void)
+{
+	DAS_EnmAssertFlag assertFlag;
+	int32_t rlFlag;
+
+	st_Decision = SWT_DECISION_FALSE;
+
+	TSK_Start(TSK_TASKEACH1_ASSERT);
+	DAS_Init();
+
+	while(1)
+	{
+		assertFlag = DAS_GetAssertFlag();
+
+		rlFlag = st_Swt->RL_Dif;
+		if(rlFlag != 0)
+		{
+			DAS_ClearAssertFlag();
+			while(rlFlag !=0 )
+				rlFlag = st_Swt->RL_Dif;
+		}
+
+		st_BufSize = sprintf(st_SendBuf, "ass:%d \r\n", assertFlag);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		//R_SCI2_Serial_Send(st_SendBuf, sizeof(st_SendBuf));
+
+		st_Decision = SWT_GetCenterDecision();
+		if(st_Decision == SWT_DECISION_TRUE)
+		{
+			break;
+		}
+	}
 }
 
 

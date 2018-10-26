@@ -57,6 +57,7 @@ typedef struct strController
 
 static SSR_StrSensorData st_SensorData;
 static float32_t st_BodyOmega;
+static float32_t st_BodyAngle;
 //static StrEncoder st_Encoder;
 //static float32_t st_Theta;
 //static float32_t st_Radius;
@@ -70,7 +71,7 @@ static void st_CalcGyro(void);
 static void st_UpdateTarget(void);
 static void st_CalcError(void);
 static void st_CalcGain(void);
-static void st_AddMotorDuty(void);
+static void st_SetMotorDuty(void);
 
 void CAV_Init(void)
 {
@@ -99,12 +100,13 @@ void CAV_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 1.0;
-	st_Controller.Gain.Factor.I   = 0.1;
+	st_Controller.Gain.Factor.P   = 0.05;
+	st_Controller.Gain.Factor.I   = 0.0;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	//st_SensorData = SSR_GetSensorStructure();
 	//st_BodyOmega = SSR_GetGyroData();
+	st_BodyAngle = 0.0;
 
 	st_VirtualGeometry.Theta = 0.0;
 	st_VirtualGeometry.Radius = 0.0;
@@ -156,24 +158,65 @@ void CAV_ControlTask(void)
 	st_CalcError();
 	st_CalcGain();
 
-	st_AddMotorDuty();
+	st_SetMotorDuty();
 }
+
+float32_t CAV_GetVelocity(void)
+{
+	return st_BodyOmega;
+}
+
+
+float32_t CAV_GetErrorNow(void)
+{
+	return st_Controller.Error.Now;
+}
+
+
+float32_t CAV_GetAngle(void)
+{
+	return st_BodyAngle;
+}
+
+
+float32_t CAV_GetRadius(void)
+{
+	return st_VirtualGeometry.Radius;
+}
+
+
+void CAV_ClearAngle(void)
+{
+	st_BodyAngle = 0.0;
+}
+
 
 
 static void st_CalcTarget(void)
 {
+	float32_t target;
+	float32_t radius;
+
 	st_VirtualGeometry.Theta = CSA_GetSensorTheta();
-	st_VirtualGeometry.Radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
+	radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
+	st_VirtualGeometry.Radius = radius;
+	if(radius < 0.0)
+	{
+		radius *= -1.0;
+	}
 
 	st_VirtualGeometry.Velocity = CVL_GetVelocity();
-	st_Controller.Target = st_VirtualGeometry.Velocity / st_VirtualGeometry.Radius;
+	target = st_VirtualGeometry.Velocity / radius;		// [rad/s]
+	target *= K_ANGULAR_VELOCITY_INV;		// [deg/s]
+	CAV_SetTarget(target);
 }
 
 
 static void st_CalcGyro(void)
 {
 	st_SensorData = SSR_GetSensorData();
-	st_BodyOmega = K_ANGULAR_VELOCITY * (float32_t)st_SensorData.Gyro;
+	st_BodyOmega = - K_GYRO * (float32_t)st_SensorData.Gyro;	// [deg/s]
+	st_BodyAngle += st_BodyOmega * PERIOD_INTERRUPT;
 }
 /*
 static void st_CalcEncoder(void)
@@ -246,7 +289,7 @@ static void st_CalcGain(void)
 }
 
 
-static void st_AddMotorDuty(void)
+static void st_SetMotorDuty(void)
 {
 	FTR_SetAngularLeftMotorDuty(-st_Controller.Error.Sum);
 	FTR_SetAngularRightMotorDuty(st_Controller.Error.Sum);

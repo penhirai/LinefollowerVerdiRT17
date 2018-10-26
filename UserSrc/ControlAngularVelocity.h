@@ -18,5 +18,11 @@ void CAV_SetTarget(float32_t target);
 
 void CAV_ControlTask(void);
 
+float32_t CAV_GetVelocity(void);
+float32_t CAV_GetErrorNow(void);
+float32_t CAV_GetAngle(void);
+float32_t CAV_GetRadius(void);
+
+void CAV_ClearAngle(void);
 
 #endif /* CONTROLANGULARVELOCITY_H_ */
