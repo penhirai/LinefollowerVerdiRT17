@@ -13,6 +13,7 @@
 #include "ControlVelocity.h"
 #include <mathf.h>
 #include "ControlSensorAngle.h"
+#include <r_cg_port.h>
 
 //typedef struct strEncoderFactor
 //{
@@ -32,6 +33,7 @@
 typedef struct strVirtualGeometry
 {
 	float32_t Theta;
+	float32_t ThetaDeg;
 	float32_t Radius;
 	float32_t Velocity;
 }StrVirtualGeometry;
@@ -88,8 +90,8 @@ void CAV_Init(void)
 	st_Controller.InstantTarget = 0.0;
 	st_Controller.TargetStepAbs = 0.0;
 	st_Controller.TargetState   = NEUTRAL;
-	st_Controller.TargetUpAccel   = 5.0;
-	st_Controller.TargetDownAccel = 5.0;
+	st_Controller.TargetUpAccel   = 20000.0;
+	st_Controller.TargetDownAccel = 20000.0;
 	st_Controller.Error.Now  = 0.0;
 	st_Controller.Error.Past = 0.0;
 	st_Controller.Error.Sum  = 0.0;
@@ -100,8 +102,12 @@ void CAV_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 0.05;
-	st_Controller.Gain.Factor.I   = 0.0;
+	st_Controller.Gain.Factor.P   = 0.2;
+//	st_Controller.Gain.Factor.P   = 0.06;
+//	st_Controller.Gain.Factor.P   = 0.1;
+//	st_Controller.Gain.Factor.I   = 0.002;
+//	st_Controller.Gain.Factor.I   = 0.0001;
+	st_Controller.Gain.Factor.I   = 0.02;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	//st_SensorData = SSR_GetSensorStructure();
@@ -109,12 +115,34 @@ void CAV_Init(void)
 	st_BodyAngle = 0.0;
 
 	st_VirtualGeometry.Theta = 0.0;
+	st_VirtualGeometry.ThetaDeg = 0.0;
 	st_VirtualGeometry.Radius = 0.0;
 	st_VirtualGeometry.Velocity = 0.0;
 
 	CAV_SetTargetUpAccel(st_Controller.TargetUpAccel);
 	CAV_SetTargetDownAccel(st_Controller.TargetDownAccel);
 	CAV_SetTarget(st_Controller.Target);
+}
+
+
+void CAV_StartDriveMotor(void)
+{
+	R_PORT_EnmPort state = R_PORT_HIGH;
+
+	R_PORT_SetPB2(state);
+
+	st_Controller.Error.Factor.I = 0.0;
+
+	FTR_SetTransitionLeftMotorDuty(0.0);
+	FTR_SetTransitionRightMotorDuty(0.0);
+}
+
+
+void CAV_StopDriveMotor(void)
+{
+	R_PORT_EnmPort state = R_PORT_LOW;
+
+	R_PORT_SetPB2(state);
 }
 
 
@@ -156,10 +184,16 @@ void CAV_ControlTask(void)
 	st_UpdateTarget();
 
 	st_CalcError();
-	st_CalcGain();
+//	st_CalcGain();
 
 	st_SetMotorDuty();
 }
+
+float32_t CAV_GetTarget(void)
+{
+	return st_Controller.InstantTarget;
+}
+
 
 float32_t CAV_GetVelocity(void)
 {
@@ -185,6 +219,12 @@ float32_t CAV_GetRadius(void)
 }
 
 
+float32_t CAV_GetVirtualThetaDeg(void)
+{
+	return st_VirtualGeometry.ThetaDeg;
+}
+
+
 void CAV_ClearAngle(void)
 {
 	st_BodyAngle = 0.0;
@@ -197,25 +237,38 @@ static void st_CalcTarget(void)
 	float32_t target;
 	float32_t radius;
 
-	st_VirtualGeometry.Theta = CSA_GetSensorTheta();
+	st_VirtualGeometry.ThetaDeg = CSA_GetSensorTheta();
+	st_VirtualGeometry.Theta = K_ANGULAR_VELOCITY * st_VirtualGeometry.ThetaDeg;
 	radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
 	st_VirtualGeometry.Radius = radius;
-	if(radius < 0.0)
-	{
-		radius *= -1.0;
-	}
+//	if(radius < 0.0)
+//	{
+//		//radius *= -1.0;
+//	}
 
 	st_VirtualGeometry.Velocity = CVL_GetVelocity();
 	target = st_VirtualGeometry.Velocity / radius;		// [rad/s]
 	target *= K_ANGULAR_VELOCITY_INV;		// [deg/s]
+	target *= 1.3;
 	CAV_SetTarget(target);
 }
 
 
 static void st_CalcGyro(void)
 {
+	float32_t encDiff;
+
+	encDiff = CVL_GetEncoderDiff();
+	st_BodyOmega = K_ANGULAR_VELOCITY_INV * encDiff * (16.667);	 //トレッド(0.12) の逆数
+	/*
 	st_SensorData = SSR_GetSensorData();
-	st_BodyOmega = - K_GYRO * (float32_t)st_SensorData.Gyro;	// [deg/s]
+	st_BodyOmega = + K_GYRO * (float32_t)st_SensorData.Gyro;	// [deg/s]
+	st_BodyOmega += 10.0;
+	if((-3.0 < st_BodyOmega) && (st_BodyOmega < 3.0))
+	{
+		st_BodyOmega = 0.0;
+	}
+	*/
 	st_BodyAngle += st_BodyOmega * PERIOD_INTERRUPT;
 }
 /*

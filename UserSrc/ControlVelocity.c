@@ -24,6 +24,8 @@ typedef struct strEncoder
 	StrEncoderFactor Left;
 	StrEncoderFactor Right;
 	float32_t Average;
+	float32_t Diff;
+	float32_t VecDiff;
 	float32_t SumAverage;
 	float32_t Velocity;
 	float32_t Distance;
@@ -69,6 +71,8 @@ void CVL_Init(void)
 	st_Encoder.Right.Diff = 0;
 	st_Encoder.Right.Sum  = 0;
 	st_Encoder.Average    = 0.0;
+	st_Encoder.Diff       = 0.0;
+	st_Encoder.VecDiff    = 0.0;
 	st_Encoder.SumAverage = 0.0;
 	st_Encoder.Velocity   = 0.0;
 	st_Encoder.Distance   = 0.0;
@@ -88,8 +92,8 @@ void CVL_Init(void)
 	st_Controller.Error.Factor.D  = 0.0;
 
 	st_Controller.Gain.Scale      = 1.0;
-	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 1.0;
+	st_Controller.Gain.Factor.FF  = 15.0;  // 無負荷時計測データの傾き
+	st_Controller.Gain.Factor.P   = 2.0;
 	st_Controller.Gain.Factor.I   = 0.1;
 	st_Controller.Gain.Factor.D   = 0.0;
 
@@ -168,6 +172,12 @@ void CVL_ControlTask(void)
 }
 
 
+float32_t CVL_GetTarget(void)
+{
+	return st_Controller.InstantTarget;
+}
+
+
 float32_t CVL_GetVelocity(void)
 {
 	return st_Encoder.Velocity;
@@ -183,6 +193,12 @@ float32_t CVL_GetErrorNow(void)
 float32_t CVL_GetDistance(void)
 {
 	return st_Encoder.Distance;
+}
+
+
+float32_t CVL_GetEncoderDiff(void)
+{
+	return st_Encoder.VecDiff;
 }
 
 
@@ -238,11 +254,13 @@ static void st_CalcEncoder(void)
 
 	st_Encoder.Average    = (float32_t)(st_Encoder.Left.Diff + st_Encoder.Right.Diff) * 0.5;
 	st_Encoder.SumAverage = (float32_t)(st_Encoder.Left.Sum  + st_Encoder.Right.Sum)  * 0.5;
+	st_Encoder.Diff       = (float32_t)(st_Encoder.Right.Diff - st_Encoder.Left.Diff);
 
-	kTemp = (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE) * GEAR_RATIO;
-	st_Encoder.Velocity = st_Encoder.Average    * kTemp * (PERIOD_INTERRUPT_INV);
+	kTemp = (ENCODER_PULSE_MAX_INV) * (PI * D_TIRE) * GEAR_RATIO_INV;
+	st_Encoder.Velocity = st_Encoder.Average    * kTemp * PERIOD_INTERRUPT_INV;
 	//st_Encoder.Velocity = st_Encoder.Average;
 	st_Encoder.Distance = st_Encoder.SumAverage * kTemp;
+	st_Encoder.VecDiff = st_Encoder.Diff * kTemp * PERIOD_INTERRUPT_INV;
 
 	st_Encoder.Left.Past  = st_Encoder.Left.Now;
 	st_Encoder.Right.Past = st_Encoder.Right.Now;

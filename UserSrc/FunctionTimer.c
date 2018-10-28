@@ -120,6 +120,14 @@ void FTR_StartRightMotorTimer(void)
 void FTR_SetTransitionRightMotorDuty(float32_t duty)
 {
 	st_RightMotorDuty.TransitionDuty = duty;
+	if(duty < -100.0)
+	{
+		duty = -100.0;
+	}
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
 	st_RightMotorDuty.Base.Duty = duty + st_RightMotorDuty.AngularDuty;
 
 	st_SetRightMotorDuty(st_RightMotorDuty.Base.Duty);
@@ -128,6 +136,14 @@ void FTR_SetTransitionRightMotorDuty(float32_t duty)
 void FTR_SetAngularRightMotorDuty(float32_t duty)
 {
 	st_RightMotorDuty.AngularDuty = duty;
+	if(duty < -100.0)
+	{
+		duty = -100.0;
+	}
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
 	st_RightMotorDuty.Base.Duty = st_RightMotorDuty.TransitionDuty + duty;
 
 	st_SetRightMotorDuty(st_RightMotorDuty.Base.Duty);
@@ -147,6 +163,16 @@ void FTR_StartLeftMotorTimer(void)
 void FTR_SetTransitionLeftMotorDuty(float32_t duty)
 {
 	st_LeftMotorDuty.TransitionDuty = duty;
+
+	if(duty < -100.0)
+	{
+		duty = -100.0;
+	}
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
+
 	st_LeftMotorDuty.Base.Duty = duty + st_LeftMotorDuty.AngularDuty;
 
 	st_SetLeftMotorDuty(st_LeftMotorDuty.Base.Duty);
@@ -155,6 +181,15 @@ void FTR_SetTransitionLeftMotorDuty(float32_t duty)
 void FTR_SetAngularLeftMotorDuty(float32_t duty)
 {
 	st_LeftMotorDuty.AngularDuty = duty;
+
+	if(duty < -100.0)
+	{
+		duty = -100.0;
+	}
+	if(duty > 100.0)
+	{
+		duty = 100.0;
+	}
 	st_LeftMotorDuty.Base.Duty = st_LeftMotorDuty.TransitionDuty + duty;
 
 	st_SetLeftMotorDuty(st_LeftMotorDuty.Base.Duty);

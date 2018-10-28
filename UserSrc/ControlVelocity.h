@@ -21,8 +21,10 @@ void CVL_SetTarget(float32_t target);
 
 void CVL_ControlTask(void);
 
+float32_t CVL_GetTarget(void);
 float32_t CVL_GetVelocity(void);
 float32_t CVL_GetErrorNow(void);
 float32_t CVL_GetDistance(void);
+float32_t CVL_GetEncoderDiff(void);
 
 #endif /* CONTROLVELOCITY_H_ */

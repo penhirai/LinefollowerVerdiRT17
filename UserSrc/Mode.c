@@ -20,6 +20,7 @@ typedef enum enmModeKind
 {
 	CASE_SEARCH_MODE = MODE_KIND_MIN,
 	CASE_TRACE_MODE,
+	CASE_TRACE2_MODE,
 	CASE_TEST_MODE,
 	MODE_KIND_MAX
 }EnmModeKind;
@@ -64,6 +65,12 @@ void MDE_SelectMode(void)
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
 					TRC_StartDriveMode();
+				}
+				break;
+			case CASE_TRACE2_MODE:
+				if(st_Decision == SWT_DECISION_TRUE)
+				{
+					TRC_StartDriveMode2();
 				}
 				break;
 			case CASE_TEST_MODE:

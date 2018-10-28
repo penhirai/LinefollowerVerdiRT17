@@ -58,7 +58,7 @@ void CSA_Init(void)
 
 	st_Theta.Gain.Scale = 1.0;
 	st_Theta.Gain.Factor.FF = 1.0;
-	st_Theta.Gain.Factor.P  = 1.7;
+	st_Theta.Gain.Factor.P  = 3.0;
 	st_Theta.Gain.Factor.I  = 1.0;
 	st_Theta.Gain.Factor.D  = 1.0;
 
@@ -129,7 +129,7 @@ float32_t CSA_GetSensorTheta(void)
 {
 	float32_t thetaTemp;
 
-	thetaTemp = st_Theta.Target - POTENTIO_CENTER;
+	thetaTemp = POTENTIO_CENTER - st_Theta.Target;
 	thetaTemp *= K_ANGLE;
 	return thetaTemp;
 }

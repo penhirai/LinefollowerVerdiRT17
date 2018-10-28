@@ -17,6 +17,7 @@
 #include "Buzzer.h"
 #include "DriveAssert.h"
 #include "ControlAngularVelocity.h"
+#include "ControlSensorAngle.h"
 
 #define MODE_LEVEL_MIN 0
 
@@ -479,10 +480,10 @@ static void st_GyroTest(void)
 
 	while(1)
 	{
-		LED_On(LED_2);
+		//LED_On(LED_2);
 		//sensor = SSR_TaskCalcSensor();
-		SSR_TaskCalcSensor();
-		LED_Off(LED_2);
+		//SSR_TaskCalcSensor();
+		//LED_Off(LED_2);
 
 		SSR_PrintAllSensor();
 
@@ -493,9 +494,9 @@ static void st_GyroTest(void)
 	//	R_SCI2_Serial_Send(st_SendBuf, length);
 
 
-		LED_On(LED_1);
-		SSR_TaskStartReadGyro();
-		LED_Off(LED_1);
+		//LED_On(LED_1);
+		//SSR_TaskStartReadGyro();
+		//LED_Off(LED_1);
 
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
@@ -543,6 +544,8 @@ static void st_MarkerTest(void)
 
 	st_Decision = SWT_DECISION_FALSE;
 
+	SSR_CalibSensor();
+
 	CVL_Init();
 	TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
 
@@ -565,7 +568,7 @@ static void st_MarkerTest(void)
 		st_Decision = SWT_GetCenterDecision();
 		if(st_Decision == SWT_DECISION_TRUE)
 		{
-			break;
+			//break;
 		}
 	}
 }
@@ -573,12 +576,13 @@ static void st_MarkerTest(void)
 
 static void st_StraightTest(void)
 {
+	float32_t target;
 	float32_t velocity;
 	float32_t leftDuty;
 	float32_t rightDuty;
 	float32_t errorNow;
 
-	st_Decision = SWT_DECISION_FALSE;
+	st_Decision = SWT_GetCenterDecision();
 
 	CVL_StartDriveMotor();
 
@@ -587,16 +591,17 @@ static void st_StraightTest(void)
 
 	//R_SCI2_Start();
 
-	CVL_SetTarget(20.0);
+	CVL_SetTarget(3.5);
 
 	while(1)
 	{
+		target = CVL_GetTarget();
 		velocity = CVL_GetVelocity();
 		leftDuty  = FTR_GetLeftMotorDuty();
 		rightDuty = FTR_GetRightMotorDuty();
 		errorNow = CVL_GetErrorNow();
 
-		st_BufSize = sprintf(st_SendBuf, "vec:%.3f, left:%.3f, right:%.3f \r\n", velocity, leftDuty, rightDuty);
+		st_BufSize = sprintf(st_SendBuf, "tgt:%.3f, vec:%.3f, left:%.3f, right:%.3f \r\n", target, velocity, leftDuty, rightDuty);
 		//st_BufSize = sprintf(st_SendBuf, "vec:%.3f, error:%.3f \r\n", velocity, errorNow);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
@@ -630,8 +635,8 @@ static void st_RotationTest(void)
 
 	CSA_StartSensorTask();
 
-	CVL_SetTarget(0.0);
-	CAV_SetTarget(20.0);
+	CVL_SetTarget(0.5);
+	//CAV_SetTarget(20.0);
 
 	while(1)
 	{

@@ -35,13 +35,14 @@
 #define GYRO_ADDR_PWR_MGMT_2 0x6C
 #define GYRO_ADDR_WHO_AM_I 0x75
 
-#define GYRO_DATA_FULLSCALE_250  0x00
-#define GYRO_DATA_FULLSCALE_500  0x08
-#define GYRO_DATA_FULLSCALE_1000 0x10
-#define GYRO_DATA_FULLSCALE_2000 0x18
+#define GYRO_DATA_FULLSCALE_250		0x00
+#define GYRO_DATA_FULLSCALE_500		0x08
+#define GYRO_DATA_FULLSCALE_1000	0x10
+#define GYRO_DATA_FULLSCALE_2000	0x18
+#define GYRO_DATA_FULLSCALE			GYRO_DATA_FULLSCALE_1000
 
-#define JUDGE_MARKER_LENGTH	(10)	// [mm]
-#define JUDGE_CROSS_LENGTH	(40.4)	// Lj = Lm tan(φ) + ΔL
+#define JUDGE_MARKER_LENGTH	(0.010)	// [m]
+#define JUDGE_CROSS_LENGTH	(0.0404)	// Lj = Lm tan(φ) + ΔL
 
 typedef struct strLineSensor
 {
@@ -775,7 +776,7 @@ static void st_InitGyro(void)
 
 	//
 	rwFlag = WRITE;
-	data = 0x00 | GYRO_DATA_FULLSCALE_2000;
+	data = 0x00 | GYRO_DATA_FULLSCALE;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, data);
 
 	rwFlag = READ;

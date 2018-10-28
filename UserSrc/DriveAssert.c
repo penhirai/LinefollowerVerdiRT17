@@ -10,7 +10,7 @@
 #include "Buzzer.h"
 #include "ControlVelocity.h"
 
-#define LINE_SENSOR_SHRESHOLD	(2400)
+#define LINE_SENSOR_SHRESHOLD	(500)
 
 typedef struct strLineAssert
 {
