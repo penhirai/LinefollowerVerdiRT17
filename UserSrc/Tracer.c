@@ -42,9 +42,13 @@ void TRC_StartSearchMode(void)
 	float32_t vecTargetTemp;
 	float32_t theta;
 	int32_t vecFlag = 0;
-	int32_t threshold = 3;
+	int32_t threshold = 5;
 
 	SSR_CalibSensor();
+
+	for(volatile int32_t i = 0; i < 1000000; ++i){
+		st_Decision = SWT_GetCenterDecision();
+	}
 
 	CSA_StartSensorMotor();
 	CSA_StartSensorTask();
@@ -100,8 +104,9 @@ void TRC_StartSearchMode(void)
 		rightDuty = FTR_GetRightMotorDuty();
 		theta = CAV_GetVirtualThetaDeg();
 
-		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f \r\n", theta, vecTarget);
+		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
 		SCF_WriteData(st_SendBuf, st_BufSize);
+
 //		st_BufSize = sprintf(st_SendBuf, "vt:%.2f, v:%.2f, ve:%.2f   ",vecTarget, velocity, vecError);
 //		SCF_WriteData(st_SendBuf, st_BufSize);
 
@@ -118,7 +123,7 @@ void TRC_StartSearchMode(void)
 		}
 		if((theta < threshold) && (vecFlag == 0))
 		{
-			CVL_SetTarget(1.0 * vecTargetTemp);
+			CVL_SetTarget(1.1 * vecTargetTemp);
 			vecFlag = 1;
 		}
 		if((theta >= threshold) && (vecFlag == 1))
@@ -149,7 +154,10 @@ void TRC_StartSearchMode(void)
 			BZR_SetBeepCount(3);
 			while(1)
 			{
-
+				vecTarget = CVL_GetTarget();
+				velocity = CVL_GetVelocity();
+				st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
+				SCF_WriteData(st_SendBuf, st_BufSize);
 
 
 				theta = CAV_GetVirtualThetaDeg();
@@ -159,7 +167,7 @@ void TRC_StartSearchMode(void)
 				}
 				if((theta < threshold) && (vecFlag == 0))
 				{
-					CVL_SetTarget(1.0 * vecTargetTemp);
+					CVL_SetTarget(1.1 * vecTargetTemp);
 					vecFlag = 1;
 				}
 				if((theta >= threshold) && (vecFlag == 1))
@@ -222,6 +230,10 @@ void TRC_StartDriveMode(void)
 
 		SSR_CalibSensor();
 
+		for(volatile int32_t i = 0; i < 1000000; ++i){
+			st_Decision = SWT_GetCenterDecision();
+		}
+
 		CSA_StartSensorMotor();
 		CSA_StartSensorTask();
 
@@ -250,7 +262,7 @@ void TRC_StartDriveMode(void)
 
 				CVL_StartDriveMotor();
 				CAV_StartDriveMotor();
-				vecTargetTemp = 1.0;
+				vecTargetTemp = 1.1;
 				CVL_SetTarget(vecTargetTemp);
 
 				break;
@@ -276,8 +288,8 @@ void TRC_StartDriveMode(void)
 			rightDuty = FTR_GetRightMotorDuty();
 			theta = CAV_GetVirtualThetaDeg();
 
-			st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f \r\n", theta, vecTarget);
-			SCF_WriteData(st_SendBuf, st_BufSize);
+//			st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f \r\n", theta, vecTarget);
+//			SCF_WriteData(st_SendBuf, st_BufSize);
 	//		st_BufSize = sprintf(st_SendBuf, "vt:%.2f, v:%.2f, ve:%.2f   ",vecTarget, velocity, vecError);
 	//		SCF_WriteData(st_SendBuf, st_BufSize);
 
@@ -397,6 +409,10 @@ void TRC_StartDriveMode2(void)
 
 	SSR_CalibSensor();
 
+	for(volatile int32_t i = 0; i < 1000000; ++i){
+		st_Decision = SWT_GetCenterDecision();
+	}
+
 	CSA_StartSensorMotor();
 	CSA_StartSensorTask();
 
@@ -425,7 +441,7 @@ void TRC_StartDriveMode2(void)
 
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 0.8;
+			vecTargetTemp = 1.3;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;
@@ -451,8 +467,8 @@ void TRC_StartDriveMode2(void)
 		rightDuty = FTR_GetRightMotorDuty();
 		theta = CAV_GetVirtualThetaDeg();
 
-		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f \r\n", theta, vecTarget);
-		SCF_WriteData(st_SendBuf, st_BufSize);
+//		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f \r\n", theta, vecTarget);
+//		SCF_WriteData(st_SendBuf, st_BufSize);
 //		st_BufSize = sprintf(st_SendBuf, "vt:%.2f, v:%.2f, ve:%.2f   ",vecTarget, velocity, vecError);
 //		SCF_WriteData(st_SendBuf, st_BufSize);
 

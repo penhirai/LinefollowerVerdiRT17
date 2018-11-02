@@ -317,7 +317,7 @@ static void st_PwmTest(void)
 
 		FTR_SetTransitionRightMotorDuty(rightMotorDuty);
 		FTR_SetTransitionLeftMotorDuty(leftMotorDuty);
-		FTR_SetSensorMotorDuty(sensorMotorDuty);
+		FTR_SetSensorMotorDuty(sensorMotorDuty, 0.0);
 
 		st_BufSize = sprintf(st_SendBuf, "Right: %d, Left: %d sensor: %d \r\n", rightMotorDuty, leftMotorDuty, sensorMotorDuty);
 		SCF_WriteData(st_SendBuf, st_BufSize);

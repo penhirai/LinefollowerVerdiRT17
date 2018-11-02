@@ -122,9 +122,25 @@ void SWT_SetSwitch(SWT_StrSwitch *swt)
 
 SWT_EnmDecision SWT_GetCenterDecision(void)
 {
+	SWT_EnmDecision decision = SWT_DECISION_FALSE;
+
 	st_CalcDecision();
 
-	return st_Decision.Decision;
+	if(st_Decision.Decision == SWT_DECISION_TRUE)
+	{
+		decision = SWT_DECISION_TRUE;
+
+		for(volatile int32_t i = 0; i < 100000; ++i)
+		{
+			st_CalcDecision();
+			if(st_Decision.Decision == SWT_DECISION_FALSE)
+			{
+				break;
+			}
+		}
+	}
+
+	return decision;
 }
 
 
@@ -141,6 +157,8 @@ static void st_CalcRL(void)
 		st_Swt.Right = st_Swt.Left + st_rlMax;
 		st_Swt.RL_Dif = st_rlMax;
 	}
+
+//	for(volatile int32_t i = 0; i < 100000; ++i)	;
 }
 
 static void st_CalcUD(void)
@@ -156,6 +174,8 @@ static void st_CalcUD(void)
 		st_Swt.Up = st_Swt.Down + st_udMax;
 		st_Swt.UD_Dif = st_udMax;
 	}
+
+//	for(volatile int32_t i = 0; i < 100000; ++i)	;
 }
 
 

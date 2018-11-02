@@ -206,7 +206,7 @@ void FTR_StartSensorMotorTimer(void)
 	R_MTU3_C3_Start();
 }
 
-void FTR_SetSensorMotorDuty(float32_t duty)
+void FTR_SetSensorMotorDuty(float32_t duty, float32_t offset)
 {
 	float32_t temp;
 	uint16_t tempDuty;
@@ -220,6 +220,8 @@ void FTR_SetSensorMotorDuty(float32_t duty)
 		duty *= -1.0;
 		st_SetSensorDriveCcw();
 	}
+
+	duty += offset;
 
 	if(duty > 100.0)
 	{

@@ -23,7 +23,7 @@
 * Device(s)    : R5F564MLDxFP
 * Tool-Chain   : CCRX
 * Description  : This file implements device driver for Port module.
-* Creation Date: 2018/10/26
+* Creation Date: 2018/11/02
 ***********************************************************************************************************************/
 #ifndef PORT_H
 #define PORT_H

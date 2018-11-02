@@ -32,7 +32,7 @@ void FTR_SetAngularLeftMotorDuty(float32_t duty);
 float32_t FTR_GetLeftMotorDuty(void);
 
 void FTR_StartSensorMotorTimer(void);
-void FTR_SetSensorMotorDuty(float32_t duty);
+void FTR_SetSensorMotorDuty(float32_t duty, float32_t offset);
 float32_t FTR_GetSensorMotorDuty(void);
 
 #endif /* FUNCTIONTIMER_H_ */

@@ -11,6 +11,7 @@
 #include "ControlVelocity.h"
 
 #define LINE_SENSOR_SHRESHOLD	(500)
+#define LINE_ASSERT_COUNT		(100)	// 100 ms 連続LINE OUT でAssert する
 
 typedef struct strLineAssert
 {
@@ -71,6 +72,16 @@ static void st_LineSensorAssert(void)
 	if(st_LineAssert.Flag != DAS_ASSERTED)
 	{
 		if((st_SensorData.LeftCenter < LINE_SENSOR_SHRESHOLD) && (st_SensorData.RightCenter < LINE_SENSOR_SHRESHOLD))
+		{
+			++st_LineAssert.Count;
+//			st_LineAssert.Flag = DAS_ASSERTED;
+		}
+		else
+		{
+			st_LineAssert.Count = 0;
+		}
+
+		if(st_LineAssert.Count > LINE_ASSERT_COUNT)
 		{
 			st_LineAssert.Flag = DAS_ASSERTED;
 		}

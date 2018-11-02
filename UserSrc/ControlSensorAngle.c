@@ -12,7 +12,7 @@
 #include <r_cg_port.h>
 #include "TaskTimer.h"
 
-#define POTENTIO_CENTER (2035.0)
+#define POTENTIO_CENTER (2020.0)
 #define K_ANGLE			(90.0 / 1120.0)		// 90°:1120cnt 程度
 
 typedef struct strTheta
@@ -24,6 +24,7 @@ typedef struct strTheta
 	float32_t Offset;
 	CST_StrError Error;
 	CST_StrGain Gain;
+	float32_t DutyOffset;
 	float32_t k_pot_to_theta;
 	float32_t k_sensor_to_pot;
 }StrTheta;
@@ -36,7 +37,7 @@ static float32_t st_PotentioTheta;
 
 static void st_CalcSensorAngle(int16_t potentio);
 
-static void st_DriveSensorMotor(float32_t input);
+static void st_DriveSensorMotor(float32_t input, float32_t offset);
 //static void st_SetDriveCw(void);
 //static void st_SetDriveCcw(void);
 
@@ -57,10 +58,12 @@ void CSA_Init(void)
 	st_Theta.Error.Factor.D  = 0.0;
 
 	st_Theta.Gain.Scale = 1.0;
-	st_Theta.Gain.Factor.FF = 1.0;
-	st_Theta.Gain.Factor.P  = 3.0;
-	st_Theta.Gain.Factor.I  = 1.0;
-	st_Theta.Gain.Factor.D  = 1.0;
+	st_Theta.Gain.Factor.FF = 0.0;
+	st_Theta.Gain.Factor.P  = 4.6;
+	st_Theta.Gain.Factor.I  = 0.0;
+	st_Theta.Gain.Factor.D  = 0.0;
+
+	st_Theta.DutyOffset = 12.0;
 
 	st_Theta.k_pot_to_theta = 1.0;//0.06597; // theta / potentio
 	st_Theta.k_sensor_to_pot = 0.005; // 200 / 2800
@@ -115,7 +118,7 @@ void CSA_ControlSensorTask(void)
 	st_Theta.Error.Sum = st_Theta.Gain.Factor.P * st_Theta.Error.Factor.P;
 
 	//
-	st_DriveSensorMotor(st_Theta.Error.Sum);
+	st_DriveSensorMotor(st_Theta.Error.Sum, st_Theta.DutyOffset);
 
 	//
 	SSR_SetPotentioData(st_PotentioTheta);
@@ -141,7 +144,7 @@ static void st_CalcSensorAngle(int16_t potentio)
 }
 
 
-static void st_DriveSensorMotor(float32_t input)
+static void st_DriveSensorMotor(float32_t input, float32_t offset)
 {
-	FTR_SetSensorMotorDuty(input);
+	FTR_SetSensorMotorDuty(input, offset);
 }

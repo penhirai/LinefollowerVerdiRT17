@@ -34,6 +34,7 @@ typedef struct strVirtualGeometry
 {
 	float32_t Theta;
 	float32_t ThetaDeg;
+	float32_t OmegaRatio;
 	float32_t Radius;
 	float32_t Velocity;
 }StrVirtualGeometry;
@@ -102,7 +103,7 @@ void CAV_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 0.0;
-	st_Controller.Gain.Factor.P   = 0.2;
+	st_Controller.Gain.Factor.P   = 0.1;
 //	st_Controller.Gain.Factor.P   = 0.06;
 //	st_Controller.Gain.Factor.P   = 0.1;
 //	st_Controller.Gain.Factor.I   = 0.002;
@@ -117,6 +118,7 @@ void CAV_Init(void)
 	st_VirtualGeometry.Theta = 0.0;
 	st_VirtualGeometry.ThetaDeg = 0.0;
 	st_VirtualGeometry.Radius = 0.0;
+	st_VirtualGeometry.OmegaRatio = 1.3;
 	st_VirtualGeometry.Velocity = 0.0;
 
 	CAV_SetTargetUpAccel(st_Controller.TargetUpAccel);
@@ -249,7 +251,7 @@ static void st_CalcTarget(void)
 	st_VirtualGeometry.Velocity = CVL_GetVelocity();
 	target = st_VirtualGeometry.Velocity / radius;		// [rad/s]
 	target *= K_ANGULAR_VELOCITY_INV;		// [deg/s]
-	target *= 1.3;
+	target *= st_VirtualGeometry.OmegaRatio;
 	CAV_SetTarget(target);
 }
 
