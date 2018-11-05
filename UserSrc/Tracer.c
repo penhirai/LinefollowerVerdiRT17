@@ -78,7 +78,7 @@ void TRC_StartSearchMode(void)
 
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 1.0;
+			vecTargetTemp = 1.4;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;
@@ -262,7 +262,7 @@ void TRC_StartDriveMode(void)
 
 				CVL_StartDriveMotor();
 				CAV_StartDriveMotor();
-				vecTargetTemp = 1.1;
+				vecTargetTemp = 1.5;
 				CVL_SetTarget(vecTargetTemp);
 
 				break;
@@ -441,7 +441,7 @@ void TRC_StartDriveMode2(void)
 
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 1.3;
+			vecTargetTemp = 1.6;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;

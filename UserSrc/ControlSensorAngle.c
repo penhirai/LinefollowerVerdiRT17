@@ -59,7 +59,7 @@ void CSA_Init(void)
 
 	st_Theta.Gain.Scale = 1.0;
 	st_Theta.Gain.Factor.FF = 0.0;
-	st_Theta.Gain.Factor.P  = 4.6;
+	st_Theta.Gain.Factor.P  = 4.0;
 	st_Theta.Gain.Factor.I  = 0.0;
 	st_Theta.Gain.Factor.D  = 0.0;
 
