@@ -9,67 +9,83 @@
 #define LOG_H_
 
 #include "typedef.h"
+#include "ControlStructure.h"
+#include "Sensor.h"
 
-#define CONTROL_LOG_MAX	1000
-#define COURCE_LOG_MAX	1000
 
-/*
-typedef struct strControlFactor
+typedef struct strControlVelocityHeader
 {
-	float32_t ff;
-	float32_t p;
-	float32_t i;
-	float32_t d;
-}StrControlFactor;
+	CST_StrGain Gain;
+}LOG_StrControlVelocityHeader;
 
-typedef struct strControlUnit
+typedef struct strControlVelocityArray
 {
-	StrControlFactor Error;
-	StrControlFactor Gain;
-}StrControlUnit_t;
-*/
+	float32_t EncoderVelocity;
+	float32_t MemsVelocity;
+	float32_t EncoderDistance;
+	float32_t MemsDistance;
+	float32_t TargetInstance;
+	CST_StrFactor Error;
+	float32_t ErrorSum;
+}LOG_StrControlVelocityArray;
 
-/*
-typedef struct strTranslationControl
+typedef struct strControlVelocityDutyArray
 {
-	StrControlUnit Unit;
-}StrTranslationControl_t;
+	float32_t LeftDuty;
+	float32_t RightDuty;
+}LOG_StrControlVelocityDutyArray;
 
-typedef struct strRotationControl
+
+typedef struct strControlSensorHeader
 {
-	StrControlUnit Unit;
-}StrRotationControl_t;
-*/
+	CST_StrGain Gain;
+}LOG_StrControlSensorHeader;
 
-/*
-typedef struct strControlLog
+typedef struct strControlSensorArray
 {
-//	StrTranslationControl_t	TranslationControl;
-//	StrRotationControl_t	RotationControl;
-	StrControlUnit_t TranslationControl;
-	StrControlUnit_t RotationControl;
-}StrControlLog_t;
+	float32_t LeftLineSensor;
+	float32_t RightLineSensor;
+	float32_t DiffLineSensor;
+	float32_t SensorAngle;
+	float32_t Target;
+	float32_t ErrorP;
+	float32_t ErrorSum;
+}LOG_StrControlSensorArray;
 
-
-typedef struct strControlLogArray
+typedef struct strControlSensorDutyArray
 {
-	StrControlLog_t ControlLog[CONTROL_LOG_MAX];
-	uint32_t ArrayMax;
-}StrControlLogArray;
-*/
+	float32_t SensorDuty;
+}LOG_StrControlSensorDutyArray;
 
-typedef struct strCourceLog
+
+typedef enum enmIsChange
 {
-	float32_t Distance;
-}StrCourceLog_t;
+	LOG_CHANGE_FALSE = 0,
+	LOG_CHANGE_TRUE
+}LOG_EnmIsChange;
 
 typedef struct strCourceLogArray
 {
-	StrCourceLog_t CourceLog[COURCE_LOG_MAX];
-	uint32_t ArrayMax;
-}StrCourceLogArray_t;
+	float32_t SensorAngle;
+	float32_t Velocity;
+	float32_t AngularVelocity;
+	float32_t Distance;
+	SSR_EnmCourceMarkerKind MarkerKind;
+	LOG_EnmIsChange IsChangeFlag;
+}LOG_StrCourceLogArray;
+
+
 
 
 void LOG_Init(void);
+void LOG_InitControl(void);
+void LOG_InitCource(void);
+
+
+void LOG_RecordControl(void);
+void LOG_RecordCource(SSR_EnmCourceMarkerKind kind);
+
+void LOG_PrintControlRecord(void);
+void LOG_PrintCourceRecord(void);
 
 #endif /* LOG_H_ */

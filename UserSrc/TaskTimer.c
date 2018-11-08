@@ -130,15 +130,15 @@ void TSK_Main(void)
 			}
 			break;
 		case TSK_TASK8:
-			st_TaskState = TSK_TASK9;
+			st_TaskState = TSK_TASK9_RECORD_CONTROL;
 			if(st_TaskSchedule[TSK_TASK8] == TASK_ON)
 			{
 				st_Task8();
 			}
 			break;
-		case TSK_TASK9:
+		case TSK_TASK9_RECORD_CONTROL:
 			st_TaskState = TSK_TASK0_BUZZER;
-			if(st_TaskSchedule[TSK_TASK9] == TASK_ON)
+			if(st_TaskSchedule[TSK_TASK9_RECORD_CONTROL] == TASK_ON)
 			{
 				st_Task9();
 			}
@@ -198,7 +198,8 @@ static void st_Task5(void)
 
 static void st_Task6(void)
 {
-
+	// 10mm 刻み
+	// マーカーを検出したら
 }
 
 static void st_Task7(void)
@@ -213,7 +214,7 @@ static void st_Task8(void)
 
 static void st_Task9(void)
 {
-
+	LOG_RecordControl();
 }
 
 static void st_Task10_StartCalc(void)

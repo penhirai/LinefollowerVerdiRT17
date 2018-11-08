@@ -17,6 +17,7 @@
 #include "DriveAssert.h"
 #include "SciFifo.h"
 #include <stdio.h>
+#include "Log.h"
 
 #define SEND_BUF_SIZE 50
 
@@ -43,6 +44,8 @@ void TRC_StartSearchMode(void)
 	float32_t theta;
 	int32_t vecFlag = 0;
 	int32_t threshold = 5;
+
+	LOG_Init();
 
 	SSR_CalibSensor();
 
@@ -76,9 +79,11 @@ void TRC_StartSearchMode(void)
 
 			TSK_Start(TSK_TASK5_Judge_MARKER);
 
+			TSK_Start(TSK_TASK9_RECORD_CONTROL);
+
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 1.4;
+			vecTargetTemp = 1.0;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;
@@ -104,8 +109,8 @@ void TRC_StartSearchMode(void)
 		rightDuty = FTR_GetRightMotorDuty();
 		theta = CAV_GetVirtualThetaDeg();
 
-		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
-		SCF_WriteData(st_SendBuf, st_BufSize);
+//		st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
+//		SCF_WriteData(st_SendBuf, st_BufSize);
 
 //		st_BufSize = sprintf(st_SendBuf, "vt:%.2f, v:%.2f, ve:%.2f   ",vecTarget, velocity, vecError);
 //		SCF_WriteData(st_SendBuf, st_BufSize);
@@ -156,8 +161,8 @@ void TRC_StartSearchMode(void)
 			{
 				vecTarget = CVL_GetTarget();
 				velocity = CVL_GetVelocity();
-				st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
-				SCF_WriteData(st_SendBuf, st_BufSize);
+//				st_BufSize = sprintf(st_SendBuf, "theta:%.2f, vt:%.2f, v:%.2f \r\n", theta, vecTarget, velocity);
+//				SCF_WriteData(st_SendBuf, st_BufSize);
 
 
 				theta = CAV_GetVirtualThetaDeg();
@@ -205,9 +210,14 @@ void TRC_StartSearchMode(void)
 
 					CVL_StopDriveMotor();
 
+					TSK_Stop(TSK_TASK9_RECORD_CONTROL);
+
 					for(volatile int32_t i = 0; i < 10000000; ++i)	;
 
 					CSA_StopSensorMotor();
+
+
+					LOG_PrintControlRecord();
 				}
 			}
 		}

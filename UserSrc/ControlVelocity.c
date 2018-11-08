@@ -50,8 +50,10 @@ typedef struct strController
 	CST_StrGain Gain;
 }StrController;
 
- StrEncoder st_Encoder;
+static StrEncoder st_Encoder;
 static StrController st_Controller;
+static LOG_StrControlVelocityHeader st_LogHeader;
+static LOG_StrControlVelocityArray  st_LogArray;
 
 
 static void st_CalcEncoder(void);
@@ -199,6 +201,26 @@ float32_t CVL_GetDistance(void)
 float32_t CVL_GetEncoderDiff(void)
 {
 	return st_Encoder.VecDiff;
+}
+
+
+LOG_StrControlVelocityHeader *CVL_GetLogHeader(void)
+{
+	st_LogHeader.Gain = st_Controller.Gain;
+
+	return &st_LogHeader;
+}
+
+
+LOG_StrControlVelocityArray  *CVL_GetLogArray(void)
+{
+	st_LogArray.EncoderVelocity = st_Encoder.Velocity;
+	st_LogArray.EncoderDistance = st_Encoder.Distance;
+	st_LogArray.TargetInstance  = st_Controller.InstantTarget;
+	st_LogArray.Error    = st_Controller.Error.Factor;
+	st_LogArray.ErrorSum = st_Controller.Error.Sum;
+
+	return &st_LogArray;
 }
 
 

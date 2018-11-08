@@ -9,6 +9,7 @@
 #define FUNCTIONTIMER_H_
 
 #include "typedef.h"
+#include "Log.h"
 
 
 void FTR_Init(void);
@@ -34,5 +35,9 @@ float32_t FTR_GetLeftMotorDuty(void);
 void FTR_StartSensorMotorTimer(void);
 void FTR_SetSensorMotorDuty(float32_t duty, float32_t offset);
 float32_t FTR_GetSensorMotorDuty(void);
+
+
+LOG_StrControlVelocityDutyArray *FTR_GetVelocityLogDutyArray(void);
+LOG_StrControlSensorDutyArray   *FTR_GetSensorLogDutyArray(void);
 
 #endif /* FUNCTIONTIMER_H_ */

@@ -35,6 +35,10 @@ static StrTheta st_Theta;
 //static float32_t *st_PotentioTheta;
 static float32_t st_PotentioTheta;
 
+static LOG_StrControlSensorHeader st_LogHeader;
+static LOG_StrControlSensorArray  st_LogArray;
+
+
 static void st_CalcSensorAngle(int16_t potentio);
 
 static void st_DriveSensorMotor(float32_t input, float32_t offset);
@@ -135,6 +139,32 @@ float32_t CSA_GetSensorTheta(void)
 	thetaTemp = POTENTIO_CENTER - st_Theta.Target;
 	thetaTemp *= K_ANGLE;
 	return thetaTemp;
+}
+
+
+LOG_StrControlSensorHeader *CSA_GetLogHeader(void)
+{
+	st_LogHeader.Gain = st_Theta.Gain;
+
+	return &st_LogHeader;
+}
+
+
+LOG_StrControlSensorArray  *CSA_GetLogArray(void)
+{
+	float32_t angle;
+
+	angle = CSA_GetSensorTheta();
+
+	st_LogArray.LeftLineSensor  = st_SensorData.LeftCenter;
+	st_LogArray.RightLineSensor = st_SensorData.RightCenter;
+	st_LogArray.DiffLineSensor  = st_Theta.Delta;
+	st_LogArray.Target          = st_Theta.Target;
+	st_LogArray.SensorAngle     = angle;
+	st_LogArray.ErrorP   = st_Theta.Error.Factor.P;
+	st_LogArray.ErrorSum = st_Theta.Error.Sum;
+
+	return &st_LogArray;
 }
 
 

@@ -68,6 +68,9 @@ static float32_t st_BodyAngle;
 static StrVirtualGeometry st_VirtualGeometry;
 static StrController st_Controller;
 
+static LOG_StrControlVelocityHeader st_LogHeader;
+static LOG_StrControlVelocityArray  st_LogArray;
+
 
 static void st_CalcTarget(void);
 static void st_CalcGyro(void);
@@ -232,6 +235,31 @@ void CAV_ClearAngle(void)
 	st_BodyAngle = 0.0;
 }
 
+
+LOG_StrControlVelocityHeader *CAV_GetLogHeader(void)
+{
+	st_LogHeader.Gain = st_Controller.Gain;
+
+	return &st_LogHeader;
+}
+
+
+LOG_StrControlVelocityArray  *CAV_GetLogArray(void)
+{
+	float32_t memsOmega;
+
+	st_SensorData = SSR_GetSensorData();
+	memsOmega = + K_GYRO * (float32_t)st_SensorData.Gyro;	// [deg/s]
+
+	st_LogArray.EncoderVelocity = st_BodyOmega;
+	st_LogArray.EncoderDistance = st_BodyAngle;
+	st_LogArray.MemsVelocity    = memsOmega;
+	st_LogArray.TargetInstance  = st_Controller.InstantTarget;
+	st_LogArray.Error    = st_Controller.Error.Factor;
+	st_LogArray.ErrorSum = st_Controller.Error.Sum;
+
+	return &st_LogArray;
+}
 
 
 static void st_CalcTarget(void)

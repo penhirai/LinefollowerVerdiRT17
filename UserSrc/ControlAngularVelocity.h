@@ -9,6 +9,7 @@
 #define CONTROLANGULARVELOCITY_H_
 
 #include "typedef.h"
+#include "Log.h"
 
 void CAV_Init(void);
 
@@ -29,5 +30,9 @@ float32_t CAV_GetRadius(void);
 float32_t CAV_GetVirtualThetaDeg(void);
 
 void CAV_ClearAngle(void);
+
+
+LOG_StrControlVelocityHeader *CAV_GetLogHeader(void);
+LOG_StrControlVelocityArray  *CAV_GetLogArray(void);
 
 #endif /* CONTROLANGULARVELOCITY_H_ */

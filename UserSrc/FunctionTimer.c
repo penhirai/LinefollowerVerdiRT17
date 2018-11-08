@@ -28,6 +28,9 @@ static StrMultiDuty st_RightMotorDuty;
 static StrMultiDuty st_LeftMotorDuty;
 static StrDuty st_SensorMotorDuty;
 
+static LOG_StrControlVelocityDutyArray st_VelocityDutyArray;
+static LOG_StrControlSensorDutyArray   st_SensorDutyArray;
+
 static void st_SetLeftMotorDuty(float32_t duty);
 static void st_SetRightMotorDuty(float32_t duty);
 static void st_SetLeftDriveCw(void);
@@ -246,6 +249,22 @@ float32_t FTR_GetSensorMotorDuty(void)
 	return st_SensorMotorDuty.Duty;
 }
 
+
+LOG_StrControlVelocityDutyArray *FTR_GetVelocityLogDutyArray(void)
+{
+	st_VelocityDutyArray.LeftDuty  = st_LeftMotorDuty.Base.Duty;
+	st_VelocityDutyArray.RightDuty = st_RightMotorDuty.Base.Duty;
+
+	return &st_VelocityDutyArray;
+}
+
+
+LOG_StrControlSensorDutyArray   *FTR_GetSensorLogDutyArray(void)
+{
+	st_SensorDutyArray.SensorDuty = st_SensorMotorDuty.Duty;
+
+	return &st_SensorDutyArray;
+}
 
 
 

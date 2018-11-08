@@ -9,6 +9,7 @@
 #define CONTROLVELOCITY_H_
 
 #include "typedef.h"
+#include "Log.h"
 
 void CVL_Init(void);
 
@@ -26,5 +27,8 @@ float32_t CVL_GetVelocity(void);
 float32_t CVL_GetErrorNow(void);
 float32_t CVL_GetDistance(void);
 float32_t CVL_GetEncoderDiff(void);
+
+LOG_StrControlVelocityHeader *CVL_GetLogHeader(void);
+LOG_StrControlVelocityArray  *CVL_GetLogArray(void);
 
 #endif /* CONTROLVELOCITY_H_ */
