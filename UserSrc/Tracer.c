@@ -20,11 +20,26 @@
 #include "Log.h"
 
 #define SEND_BUF_SIZE 50
+#define LOG_DISTANCE 0.01	// 10mm 刻み
+
+typedef struct strCourceLogStoreParam
+{
+	float32_t StartDistance;
+	float32_t TempDistance;
+	float32_t DiffDistance;
+	SSR_StrMarkerData MarkerData;
+	SSR_StrMarkerData MarkerDataLatched;
+}StrCourceLogStoreParam;
 
 static SWT_EnmDecision st_Decision;
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
 static uint8_t st_BufSize;
 static SSR_StrSensorData st_SensorData;
+static StrCourceLogStoreParam st_CourceLogStoreParam;
+
+
+static void st_StartRecordCource(void);
+static SSR_StrMarkerData st_GetCourceMarker(void);
 
 
 void TRC_Init(void)
@@ -79,6 +94,8 @@ void TRC_StartSearchMode(void)
 
 			TSK_Start(TSK_TASK5_Judge_MARKER);
 
+			st_StartRecordCource();
+			TSK_Start(TSK_TASK6_RECORD_COURSE);
 			TSK_Start(TSK_TASK9_RECORD_CONTROL);
 
 			CVL_StartDriveMotor();
@@ -148,7 +165,8 @@ void TRC_StartSearchMode(void)
 		rightMarker = SSR_GetMarkerState(kind);
 
 		markerCount = 0;
-		markerData = SSR_GetCourceMarker();
+		//markerData = SSR_GetCourceMarker();
+		markerData = st_GetCourceMarker();
 
 //		st_BufSize = sprintf(st_SendBuf, "l:%d, r:%d, marker:%d, dis:%.3f \r\n", leftMarker, rightMarker, markerData.MarkerKind, markerData.Distance);
 //		SCF_WriteData(st_SendBuf, st_BufSize);
@@ -198,7 +216,8 @@ void TRC_StartSearchMode(void)
 				SCF_WriteData(st_SendBuf, st_BufSize);
 				*/
 
-				markerData = SSR_GetCourceMarker();
+				//markerData = SSR_GetCourceMarker();
+				markerData = st_GetCourceMarker();
 				if(markerData.MarkerKind == SSR_COURCE_MARKER_RIGHT)
 				{
 					++markerCount;
@@ -216,7 +235,9 @@ void TRC_StartSearchMode(void)
 
 					CSA_StopSensorMotor();
 
+					for(volatile int32_t i = 0; i < 10000000; ++i)	;
 
+					LOG_PrintCourceRecord();
 					LOG_PrintControlRecord();
 				}
 			}
@@ -581,4 +602,57 @@ void TRC_StartDriveMode2(void)
 			}
 		}
 	}
+}
+
+
+void TRC_RecordCourceTask(void)
+{
+	// 10mm 刻み
+	st_CourceLogStoreParam.TempDistance = CVL_GetDistance();
+	st_CourceLogStoreParam.DiffDistance = st_CourceLogStoreParam.TempDistance - st_CourceLogStoreParam.StartDistance;
+	if(st_CourceLogStoreParam.DiffDistance >= LOG_DISTANCE)
+	{
+		st_CourceLogStoreParam.StartDistance = st_CourceLogStoreParam.TempDistance;
+		LOG_RecordCource(SSR_COURCE_MARKER_NON, st_CourceLogStoreParam.TempDistance);
+	}
+
+	// マーカーを検出したら
+	st_CourceLogStoreParam.MarkerData = SSR_GetCourceMarker();
+	if(st_CourceLogStoreParam.MarkerData.MarkerKind != SSR_COURCE_MARKER_NON)
+	{
+		LOG_RecordCource(st_CourceLogStoreParam.MarkerData.MarkerKind, st_CourceLogStoreParam.MarkerData.Distance);
+		st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+	}
+}
+
+
+static void st_StartRecordCource(void)
+{
+	st_CourceLogStoreParam.StartDistance = CVL_GetDistance();
+	st_CourceLogStoreParam.TempDistance = 0.0;
+	st_CourceLogStoreParam.DiffDistance = 0.0;
+	st_CourceLogStoreParam.MarkerData.MarkerKind = SSR_COURCE_MARKER_NON;
+	st_CourceLogStoreParam.MarkerData.Distance   = 0.0;
+	st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+}
+
+
+static SSR_StrMarkerData st_GetCourceMarker(void)
+{
+	SSR_StrMarkerData markerKind;
+
+	if(st_CourceLogStoreParam.MarkerDataLatched.MarkerKind != SSR_COURCE_MARKER_NON)
+	{
+		markerKind = st_CourceLogStoreParam.MarkerDataLatched;
+
+		st_CourceLogStoreParam.MarkerDataLatched.Distance = 0.0;
+		st_CourceLogStoreParam.MarkerDataLatched.MarkerKind = SSR_COURCE_MARKER_NON;
+	}
+	else
+	{
+		markerKind.Distance = 0.0;
+		markerKind.MarkerKind = SSR_COURCE_MARKER_NON;
+	}
+
+	return markerKind;
 }

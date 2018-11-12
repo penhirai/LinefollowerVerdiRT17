@@ -105,7 +105,7 @@ void CAV_Init(void)
 	st_Controller.Error.Factor.D  = 0.0;
 
 	st_Controller.Gain.Scale      = 1.0;
-	st_Controller.Gain.Factor.FF  = 0.0;
+	st_Controller.Gain.Factor.FF  = 15.0 / 1000;	// ログよりざっくり
 	st_Controller.Gain.Factor.P   = 0.1;
 //	st_Controller.Gain.Factor.P   = 0.06;
 //	st_Controller.Gain.Factor.P   = 0.1;
@@ -348,7 +348,7 @@ static void st_CalcError(void)
 
 	st_Controller.Error.Now = st_Controller.InstantTarget - st_BodyOmega;
 
-	st_Controller.Error.Factor.FF = st_Controller.Error.Now;
+	st_Controller.Error.Factor.FF = st_Controller.InstantTarget;
 	st_Controller.Error.Factor.P  = st_Controller.Error.Now;
 	st_Controller.Error.Factor.I += st_Controller.Error.Now;
 	st_Controller.Error.Factor.D  = st_Controller.Error.Now - st_Controller.Error.Past;

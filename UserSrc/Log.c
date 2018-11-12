@@ -12,7 +12,7 @@
 #include "FunctionTimer.h"
 #include "SciFifo.h"
 
-#define SEND_BUF_SIZE 150
+#define SEND_BUF_SIZE 200
 
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
 static uint8_t st_BufSize;
@@ -180,16 +180,17 @@ void LOG_RecordControl(void)
 }
 
 
-void LOG_RecordCource(SSR_EnmCourceMarkerKind kind)
+void LOG_RecordCource(SSR_EnmCourceMarkerKind kind, float32_t distance)
 {
 	LOG_StrCourceLogArray array;
 	uint32_t index;
 
 	array.SensorAngle = CSA_GetSensorTheta();
 	array.Velocity    = CVL_GetVelocity();
-	array.Distance    = CVL_GetDistance();
+	array.Distance    = distance;
 	array.AngularVelocity = CAV_GetVelocity();
 	array.MarkerKind  = kind;
+	array.IsChangeFlag = LOG_CHANGE_FALSE;
 	index = st_CourceLog.Index;
 
 	st_CourceLog.Array[index] = array;
@@ -204,8 +205,11 @@ void LOG_RecordCource(SSR_EnmCourceMarkerKind kind)
 
 void LOG_PrintControlRecord(void)
 {
-	// header
-	st_BufSize = sprintf(st_SendBuf, "T FF, %.2f, T P, %.2f, T I, %.2f, T D %.2f, T S, %.2f, A FF, %.2f, A P, %.2f, A I, %.2f, A D, %.2f, A S, %.2f \r\n"
+	// 並進系，回転系，センサ系 header
+	st_BufSize = sprintf(st_SendBuf, "\r\n T FF Gain, T P Gain, T I Gain, T D Gain, T Scale Gain, A FF Gain, A P Gain, A I Gain, A D Gain, A Scale Gain, S P Gain \r\n");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+
+	st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f \r\n"
 										, st_ControlLog.ControlVelocity.Transition.Header.Gain.Factor.FF
 										, st_ControlLog.ControlVelocity.Transition.Header.Gain.Factor.P
 										, st_ControlLog.ControlVelocity.Transition.Header.Gain.Factor.I
@@ -215,12 +219,31 @@ void LOG_PrintControlRecord(void)
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Factor.P
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Factor.I
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Factor.D
-										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Scale);
+										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Scale
+										, st_ControlLog.ControlSensor.Sensor.Header.Gain.Factor.P);
 	SCF_WriteData(st_SendBuf, st_BufSize);
 
-	for(uint32_t i = 0; i < LOG_CONTROL_MAX; ++i)
+
+	// title
+	// 並進系
+	st_BufSize = sprintf(st_SendBuf, "index, V EncoderVelocity[m/s], V EncoderDistance[m], V MemsVelocity[m/s], V MemsDistance[m], V TargetInstance[m/s], V Error FF, V Error P, V Error I, V Error D, V Error Sum, ");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+	// 角速度系
+	st_BufSize = sprintf(st_SendBuf, "A EncoderVelocity[deg/s], A EncoderDistance[deg], A MemsVelocity[deg/s], A MemsDistance[deg], A TargetInstance[deg/s], A Error FF, A Error P, A Error I, A Error D, A Error Sum, ");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+	// 速度系Duty
+	st_BufSize = sprintf(st_SendBuf, "D LeftDuty, D RightDuty, ");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+	// センサ系
+	st_BufSize = sprintf(st_SendBuf, "S LeftLineSensor, S RightLineSensor, S DiffSenser, S SensorAngle[deg], S Target[deg], S Error P, S Error Sum, ");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+	// センサ系Duty
+	st_BufSize = sprintf(st_SendBuf, "S Duty \r\n");
+	SCF_WriteData(st_SendBuf, st_BufSize);
+
+	for(uint32_t i = 0; i < st_ControlLog.Index; ++i)
 	{
-		st_BufSize = sprintf(st_SendBuf, "[%d], [V], E V, %.2f, E D, %.2f, M V, %.2f, M D, %.2f, T I, %.2f, E F, %.2f, E P, %.2f, E I, %.2f, E D, %.2f, E S, %.2f, "
+		st_BufSize = sprintf(st_SendBuf, "%d, %.2f, %.4f, %.2f, %.4f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, "
 											, i
 											, st_ControlLog.ControlVelocity.Transition.Array[i].EncoderVelocity
 											, st_ControlLog.ControlVelocity.Transition.Array[i].EncoderDistance
@@ -234,7 +257,7 @@ void LOG_PrintControlRecord(void)
 											, st_ControlLog.ControlVelocity.Transition.Array[i].ErrorSum);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		st_BufSize = sprintf(st_SendBuf, "[A], E V, %.2f, E D, %.2f, M V, %.2f, M D, %.2f, T I, %.2f, E F, %.2f, E P, %.2f, E I, %.2f, E D, %.2f, E S, %.2f, "
+		st_BufSize = sprintf(st_SendBuf, "%.2f, %.4f, %.2f, %.4f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, "
 											, st_ControlLog.ControlVelocity.Angular.Array[i].EncoderVelocity
 											, st_ControlLog.ControlVelocity.Angular.Array[i].EncoderDistance
 											, st_ControlLog.ControlVelocity.Angular.Array[i].MemsVelocity
@@ -247,11 +270,12 @@ void LOG_PrintControlRecord(void)
 											, st_ControlLog.ControlVelocity.Angular.Array[i].ErrorSum);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		st_BufSize = sprintf(st_SendBuf, "[D], L D, %.2f, R D, %.2f, "
+		st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, "
 											, st_ControlLog.ControlVelocity.MotorArray[i].LeftDuty
 											, st_ControlLog.ControlVelocity.MotorArray[i].RightDuty);
+		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		st_BufSize = sprintf(st_SendBuf, "[S], L L, %.2f, R L, %.2f, Df, %.2f, S A, %.2f, T G, %.2f, E P, %.2f, E S, %.2f, "
+		st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, "
 											, st_ControlLog.ControlSensor.Sensor.Array[i].LeftLineSensor
 											, st_ControlLog.ControlSensor.Sensor.Array[i].RightLineSensor
 											, st_ControlLog.ControlSensor.Sensor.Array[i].DiffLineSensor
@@ -261,7 +285,7 @@ void LOG_PrintControlRecord(void)
 											, st_ControlLog.ControlSensor.Sensor.Array[i].ErrorSum);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		st_BufSize = sprintf(st_SendBuf, "[S D], D, %.2f \r\n"
+		st_BufSize = sprintf(st_SendBuf, "%.2f \r\n"
 											, st_ControlLog.ControlSensor.MotorArray[i].SensorDuty);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 	}
@@ -270,5 +294,19 @@ void LOG_PrintControlRecord(void)
 
 void LOG_PrintCourceRecord(void)
 {
+	st_BufSize = sprintf(st_SendBuf, "\r\n index, SensorAngle, Velocity, AngularVelocity, Distance, MarkerKind, IsChangeFlag \r\n");
+	SCF_WriteData(st_SendBuf, st_BufSize);
 
+	for(uint32_t i = 0; i < st_CourceLog.Index; ++i)
+	{
+		st_BufSize = sprintf(st_SendBuf, "%d, %.4f, %.4f, %.4f, %.4f, %d, %d \r\n"
+											, i
+											, st_CourceLog.Array[i].SensorAngle
+											, st_CourceLog.Array[i].Velocity
+											, st_CourceLog.Array[i].AngularVelocity
+											, st_CourceLog.Array[i].Distance
+											, st_CourceLog.Array[i].MarkerKind
+											, st_CourceLog.Array[i].IsChangeFlag);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+	}
 }

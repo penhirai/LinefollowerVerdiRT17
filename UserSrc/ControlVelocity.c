@@ -83,8 +83,8 @@ void CVL_Init(void)
 	st_Controller.InstantTarget = 0.0;
 	st_Controller.TargetStepAbs = 0.0;
 	st_Controller.TargetState   = NEUTRAL;
-	st_Controller.TargetUpAccel   = 5.0;
-	st_Controller.TargetDownAccel = 5.0;
+	st_Controller.TargetUpAccel   = 13.0;
+	st_Controller.TargetDownAccel = 13.0;
 	st_Controller.Error.Now  = 0.0;
 	st_Controller.Error.Past = 0.0;
 	st_Controller.Error.Sum  = 0.0;
@@ -94,9 +94,9 @@ void CVL_Init(void)
 	st_Controller.Error.Factor.D  = 0.0;
 
 	st_Controller.Gain.Scale      = 1.0;
-	st_Controller.Gain.Factor.FF  = 15.0;  // 無負荷時計測データの傾き
-	st_Controller.Gain.Factor.P   = 2.0;
-	st_Controller.Gain.Factor.I   = 0.1;
+	st_Controller.Gain.Factor.FF  = 21.0;  // 22.5 1m/s 走行データより計算
+	st_Controller.Gain.Factor.P   = 400.0;
+	st_Controller.Gain.Factor.I   = 20.0;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	CVL_SetTargetUpAccel(st_Controller.TargetUpAccel);
@@ -317,7 +317,7 @@ static void st_CalcError(void)
 
 	st_Controller.Error.Now = st_Controller.InstantTarget - st_Encoder.Velocity;
 
-	st_Controller.Error.Factor.FF = st_Controller.Error.Now;
+	st_Controller.Error.Factor.FF = st_Controller.InstantTarget;
 	st_Controller.Error.Factor.P  = st_Controller.Error.Now;
 	st_Controller.Error.Factor.I += st_Controller.Error.Now;
 	st_Controller.Error.Factor.D  = st_Controller.Error.Now - st_Controller.Error.Past;

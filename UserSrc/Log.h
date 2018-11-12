@@ -83,7 +83,7 @@ void LOG_InitCource(void);
 
 
 void LOG_RecordControl(void);
-void LOG_RecordCource(SSR_EnmCourceMarkerKind kind);
+void LOG_RecordCource(SSR_EnmCourceMarkerKind kind, float32_t distance);
 
 void LOG_PrintControlRecord(void);
 void LOG_PrintCourceRecord(void);

@@ -156,8 +156,8 @@ LOG_StrControlSensorArray  *CSA_GetLogArray(void)
 
 	angle = CSA_GetSensorTheta();
 
-	st_LogArray.LeftLineSensor  = st_SensorData.LeftCenter;
-	st_LogArray.RightLineSensor = st_SensorData.RightCenter;
+	st_LogArray.LeftLineSensor  = (float32_t)st_SensorData.LeftCenter;
+	st_LogArray.RightLineSensor = (float32_t)st_SensorData.RightCenter;
 	st_LogArray.DiffLineSensor  = st_Theta.Delta;
 	st_LogArray.Target          = st_Theta.Target;
 	st_LogArray.SensorAngle     = angle;

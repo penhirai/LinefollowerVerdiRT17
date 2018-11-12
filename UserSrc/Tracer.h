@@ -15,4 +15,6 @@ void TRC_Init(void);
 void TRC_StartSearchMode(void);
 void TRC_StartDriveMode(void);
 
+void TRC_RecordCourceTask(void);
+
 #endif /* TRACER_H_ */

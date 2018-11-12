@@ -198,8 +198,7 @@ static void st_Task5(void)
 
 static void st_Task6(void)
 {
-	// 10mm 刻み
-	// マーカーを検出したら
+	TRC_RecordCourceTask();
 }
 
 static void st_Task7(void)
