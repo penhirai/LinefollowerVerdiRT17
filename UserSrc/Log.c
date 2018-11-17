@@ -123,7 +123,8 @@ void LOG_InitControl(void)
 		st_ControlLog.ControlSensor.Sensor.Array[i].RightLineSensor = 0.0;
 		st_ControlLog.ControlSensor.Sensor.Array[i].DiffLineSensor  = 0.0;
 		st_ControlLog.ControlSensor.Sensor.Array[i].Target          = 0.0;
-		st_ControlLog.ControlSensor.Sensor.Array[i].ErrorP          = 0.0;
+		st_ControlLog.ControlSensor.Sensor.Array[i].Error.P         = 0.0;
+		st_ControlLog.ControlSensor.Sensor.Array[i].Error.D         = 0.0;
 		st_ControlLog.ControlSensor.Sensor.Array[i].ErrorSum        = 0.0;
 
 		// センサ系Duty
@@ -206,7 +207,7 @@ void LOG_RecordCource(SSR_EnmCourceMarkerKind kind, float32_t distance)
 void LOG_PrintControlRecord(void)
 {
 	// 並進系，回転系，センサ系 header
-	st_BufSize = sprintf(st_SendBuf, "\r\n T FF Gain, T P Gain, T I Gain, T D Gain, T Scale Gain, A FF Gain, A P Gain, A I Gain, A D Gain, A Scale Gain, S P Gain \r\n");
+	st_BufSize = sprintf(st_SendBuf, "\r\n T FF Gain, T P Gain, T I Gain, T D Gain, T Scale Gain, A FF Gain, A P Gain, A I Gain, A D Gain, A Scale Gain, S P Gain, S D Gain \r\n");
 	SCF_WriteData(st_SendBuf, st_BufSize);
 
 	st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f \r\n"
@@ -220,7 +221,8 @@ void LOG_PrintControlRecord(void)
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Factor.I
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Factor.D
 										, st_ControlLog.ControlVelocity.Angular.Header.Gain.Scale
-										, st_ControlLog.ControlSensor.Sensor.Header.Gain.Factor.P);
+										, st_ControlLog.ControlSensor.Sensor.Header.Gain.Factor.P
+										, st_ControlLog.ControlSensor.Sensor.Header.Gain.Factor.D);
 	SCF_WriteData(st_SendBuf, st_BufSize);
 
 
@@ -235,7 +237,7 @@ void LOG_PrintControlRecord(void)
 	st_BufSize = sprintf(st_SendBuf, "D LeftDuty, D RightDuty, ");
 	SCF_WriteData(st_SendBuf, st_BufSize);
 	// センサ系
-	st_BufSize = sprintf(st_SendBuf, "S LeftLineSensor, S RightLineSensor, S DiffSenser, S SensorAngle[deg], S Target[deg], S Error P, S Error Sum, ");
+	st_BufSize = sprintf(st_SendBuf, "S LeftLineSensor, S RightLineSensor, S DiffSenser, S SensorAngle[deg], S Target[deg], S Error P, S Error D, S Error Sum, ");
 	SCF_WriteData(st_SendBuf, st_BufSize);
 	// センサ系Duty
 	st_BufSize = sprintf(st_SendBuf, "S Duty \r\n");
@@ -275,13 +277,14 @@ void LOG_PrintControlRecord(void)
 											, st_ControlLog.ControlVelocity.MotorArray[i].RightDuty);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 
-		st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, "
+		st_BufSize = sprintf(st_SendBuf, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, "
 											, st_ControlLog.ControlSensor.Sensor.Array[i].LeftLineSensor
 											, st_ControlLog.ControlSensor.Sensor.Array[i].RightLineSensor
 											, st_ControlLog.ControlSensor.Sensor.Array[i].DiffLineSensor
 											, st_ControlLog.ControlSensor.Sensor.Array[i].SensorAngle
 											, st_ControlLog.ControlSensor.Sensor.Array[i].Target
-											, st_ControlLog.ControlSensor.Sensor.Array[i].ErrorP
+											, st_ControlLog.ControlSensor.Sensor.Array[i].Error.P
+											, st_ControlLog.ControlSensor.Sensor.Array[i].Error.D
 											, st_ControlLog.ControlSensor.Sensor.Array[i].ErrorSum);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 

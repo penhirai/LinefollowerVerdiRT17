@@ -63,11 +63,11 @@ void CSA_Init(void)
 
 	st_Theta.Gain.Scale = 1.0;
 	st_Theta.Gain.Factor.FF = 0.0;
-	st_Theta.Gain.Factor.P  = 4.0;
+	st_Theta.Gain.Factor.P  = 2.8;
 	st_Theta.Gain.Factor.I  = 0.0;
-	st_Theta.Gain.Factor.D  = 0.0;
+	st_Theta.Gain.Factor.D  = 0.6;
 
-	st_Theta.DutyOffset = 12.0;
+	st_Theta.DutyOffset = 16.0;
 
 	st_Theta.k_pot_to_theta = 1.0;//0.06597; // theta / potentio
 	st_Theta.k_sensor_to_pot = 0.005; // 200 / 2800
@@ -101,6 +101,8 @@ void CSA_StartSensorTask(void)
 
 void CSA_ControlSensorTask(void)
 {
+	CST_StrFactor factorBuff;
+
 	st_SensorData = SSR_GetSensorData();
 
 	// ポテンショ角度計算
@@ -116,10 +118,14 @@ void CSA_ControlSensorTask(void)
 	st_Theta.Target = st_Theta.PastValue + st_Theta.Delta + st_Theta.Offset;
 
 	// 偏差計算
-	st_Theta.Error.Factor.P = st_Theta.Target - st_Theta.Value;
+	st_Theta.Error.Now = st_Theta.Target - st_Theta.Value;
+	st_Theta.Error.Factor.P = st_Theta.Error.Now;
+	st_Theta.Error.Factor.D = st_Theta.Error.Now - st_Theta.Error.Past;
 
 	// 偏差を合計
-	st_Theta.Error.Sum = st_Theta.Gain.Factor.P * st_Theta.Error.Factor.P;
+	factorBuff.P = st_Theta.Gain.Factor.P * st_Theta.Error.Factor.P;
+	factorBuff.D = st_Theta.Gain.Factor.D * st_Theta.Error.Factor.D;
+	st_Theta.Error.Sum = factorBuff.P + factorBuff.D;
 
 	//
 	st_DriveSensorMotor(st_Theta.Error.Sum, st_Theta.DutyOffset);
@@ -129,6 +135,8 @@ void CSA_ControlSensorTask(void)
 
 	// 現在のポテンショ値を記録
 	st_Theta.PastValue = st_Theta.Value;
+
+	st_Theta.Error.Past = st_Theta.Error.Now;
 }
 
 
@@ -161,7 +169,7 @@ LOG_StrControlSensorArray  *CSA_GetLogArray(void)
 	st_LogArray.DiffLineSensor  = st_Theta.Delta;
 	st_LogArray.Target          = st_Theta.Target;
 	st_LogArray.SensorAngle     = angle;
-	st_LogArray.ErrorP   = st_Theta.Error.Factor.P;
+	st_LogArray.Error    = st_Theta.Error.Factor;
 	st_LogArray.ErrorSum = st_Theta.Error.Sum;
 
 	return &st_LogArray;

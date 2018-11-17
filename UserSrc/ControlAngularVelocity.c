@@ -105,13 +105,9 @@ void CAV_Init(void)
 	st_Controller.Error.Factor.D  = 0.0;
 
 	st_Controller.Gain.Scale      = 1.0;
-	st_Controller.Gain.Factor.FF  = 15.0 / 1000;	// ログよりざっくり
+	st_Controller.Gain.Factor.FF  = 1.0 / 1200.0;	// 30 / 1200 実働を見てざっくり
 	st_Controller.Gain.Factor.P   = 0.1;
-//	st_Controller.Gain.Factor.P   = 0.06;
-//	st_Controller.Gain.Factor.P   = 0.1;
-//	st_Controller.Gain.Factor.I   = 0.002;
-//	st_Controller.Gain.Factor.I   = 0.0001;
-	st_Controller.Gain.Factor.I   = 0.02;
+	st_Controller.Gain.Factor.I   = 0.01;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	//st_SensorData = SSR_GetSensorStructure();

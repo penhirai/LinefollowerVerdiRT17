@@ -48,7 +48,7 @@ typedef struct strControlSensorArray
 	float32_t DiffLineSensor;
 	float32_t SensorAngle;
 	float32_t Target;
-	float32_t ErrorP;
+	CST_StrFactor Error;
 	float32_t ErrorSum;
 }LOG_StrControlSensorArray;
 

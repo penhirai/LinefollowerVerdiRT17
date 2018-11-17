@@ -58,7 +58,7 @@ void TRC_StartSearchMode(void)
 	float32_t vecTargetTemp;
 	float32_t theta;
 	int32_t vecFlag = 0;
-	int32_t threshold = 5;
+	int32_t threshold = 8;
 
 	LOG_Init();
 
@@ -100,7 +100,7 @@ void TRC_StartSearchMode(void)
 
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 1.0;
+			vecTargetTemp = 1.4;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;
@@ -145,7 +145,7 @@ void TRC_StartSearchMode(void)
 		}
 		if((theta < threshold) && (vecFlag == 0))
 		{
-			CVL_SetTarget(1.1 * vecTargetTemp);
+			CVL_SetTarget(1.2 * vecTargetTemp);
 			vecFlag = 1;
 		}
 		if((theta >= threshold) && (vecFlag == 1))
@@ -190,7 +190,7 @@ void TRC_StartSearchMode(void)
 				}
 				if((theta < threshold) && (vecFlag == 0))
 				{
-					CVL_SetTarget(1.1 * vecTargetTemp);
+					CVL_SetTarget(1.2 * vecTargetTemp);
 					vecFlag = 1;
 				}
 				if((theta >= threshold) && (vecFlag == 1))
