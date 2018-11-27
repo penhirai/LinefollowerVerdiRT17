@@ -722,17 +722,20 @@ static void st_RegistResetCourceMarker(void)
 	if((st_CourceMarker.Left.State == SSR_HIGH_STATE) && (st_CourceMarker.Right.State == SSR_HIGH_STATE))
 	{
 		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_CROSS;
-		st_CourceMarker.StateDistance = 0.5 * (st_CourceMarker.Left.StartDistance + st_CourceMarker.Right.StartDistance);
+		//st_CourceMarker.StateDistance = 0.5 * (st_CourceMarker.Left.StartDistance + st_CourceMarker.Right.StartDistance);
+		st_CourceMarker.StateDistance = 0.5 * (st_CourceMarker.Left.TempDistance + st_CourceMarker.Right.TempDistance);
 	}
 	else if(st_CourceMarker.Left.State == SSR_HIGH_STATE)
 	{
 		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_LEFT;
-		st_CourceMarker.StateDistance = st_CourceMarker.Left.StartDistance;
+		//st_CourceMarker.StateDistance = st_CourceMarker.Left.StartDistance;
+		st_CourceMarker.StateDistance = st_CourceMarker.Left.TempDistance;
 	}
 	else if(st_CourceMarker.Right.State == SSR_HIGH_STATE)
 	{
 		st_CourceMarker.MarkerKind = SSR_COURCE_MARKER_RIGHT;
-		st_CourceMarker.StateDistance = st_CourceMarker.Right.StartDistance;
+		//st_CourceMarker.StateDistance = st_CourceMarker.Right.StartDistance;
+		st_CourceMarker.StateDistance = st_CourceMarker.Right.TempDistance;
 	}
 	else
 	{

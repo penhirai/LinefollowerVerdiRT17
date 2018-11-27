@@ -100,7 +100,7 @@ void TRC_StartSearchMode(void)
 
 			CVL_StartDriveMotor();
 			CAV_StartDriveMotor();
-			vecTargetTemp = 1.4;
+			vecTargetTemp = 1.5;
 			CVL_SetTarget(vecTargetTemp);
 
 			break;
@@ -623,6 +623,12 @@ void TRC_RecordCourceTask(void)
 		LOG_RecordCource(st_CourceLogStoreParam.MarkerData.MarkerKind, st_CourceLogStoreParam.MarkerData.Distance);
 		st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
 	}
+}
+
+
+void TRC_PlayCourceTask(void)
+{
+
 }
 
 

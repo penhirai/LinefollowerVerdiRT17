@@ -117,7 +117,7 @@ void CAV_Init(void)
 	st_VirtualGeometry.Theta = 0.0;
 	st_VirtualGeometry.ThetaDeg = 0.0;
 	st_VirtualGeometry.Radius = 0.0;
-	st_VirtualGeometry.OmegaRatio = 1.3;
+	st_VirtualGeometry.OmegaRatio = 2.0;
 	st_VirtualGeometry.Velocity = 0.0;
 
 	CAV_SetTargetUpAccel(st_Controller.TargetUpAccel);

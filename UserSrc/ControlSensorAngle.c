@@ -14,6 +14,7 @@
 
 #define POTENTIO_CENTER (2020.0)
 #define K_ANGLE			(90.0 / 1120.0)		// 90°:1120cnt 程度
+#define K_POT			(200.0 / 2800.0)
 
 typedef struct strTheta
 {
@@ -47,7 +48,7 @@ static void st_DriveSensorMotor(float32_t input, float32_t offset);
 
 void CSA_Init(void)
 {
-	st_Theta.Target = POTENTIO_CENTER;
+	st_Theta.Target = 0.0;
 	st_Theta.Delta  = 0.0;
 	st_Theta.Value  = 0.0;
 	st_Theta.PastValue = 0.0;
@@ -62,15 +63,15 @@ void CSA_Init(void)
 	st_Theta.Error.Factor.D  = 0.0;
 
 	st_Theta.Gain.Scale = 1.0;
-	st_Theta.Gain.Factor.FF = 0.0;
-	st_Theta.Gain.Factor.P  = 2.8;
+	st_Theta.Gain.Factor.FF = 0.0;		// この制御方式でFF はダメだ
+	st_Theta.Gain.Factor.P  = 3.0;
 	st_Theta.Gain.Factor.I  = 0.0;
 	st_Theta.Gain.Factor.D  = 0.6;
 
 	st_Theta.DutyOffset = 16.0;
 
-	st_Theta.k_pot_to_theta = 1.0;//0.06597; // theta / potentio
-	st_Theta.k_sensor_to_pot = 0.005; // 200 / 2800
+	st_Theta.k_pot_to_theta = K_ANGLE;//0.06597; // theta / potentio
+	st_Theta.k_sensor_to_pot = 1.4 * K_POT;//0.005; // 200 / 2800
 
 	//st_SensorData = SSR_GetSensorStructure();
 	//st_PotentioTheta = SSR_GetPotentioData();
@@ -123,9 +124,10 @@ void CSA_ControlSensorTask(void)
 	st_Theta.Error.Factor.D = st_Theta.Error.Now - st_Theta.Error.Past;
 
 	// 偏差を合計
+	factorBuff.FF = st_Theta.Gain.Factor.FF * st_Theta.Target;
 	factorBuff.P = st_Theta.Gain.Factor.P * st_Theta.Error.Factor.P;
 	factorBuff.D = st_Theta.Gain.Factor.D * st_Theta.Error.Factor.D;
-	st_Theta.Error.Sum = factorBuff.P + factorBuff.D;
+	st_Theta.Error.Sum = factorBuff.FF + factorBuff.P + factorBuff.D;
 
 	//
 	st_DriveSensorMotor(st_Theta.Error.Sum, st_Theta.DutyOffset);
@@ -144,8 +146,8 @@ float32_t CSA_GetSensorTheta(void)
 {
 	float32_t thetaTemp;
 
-	thetaTemp = POTENTIO_CENTER - st_Theta.Target;
-	thetaTemp *= K_ANGLE;
+	thetaTemp = st_Theta.Target;
+	thetaTemp *= 1.0;
 	return thetaTemp;
 }
 
@@ -178,7 +180,7 @@ LOG_StrControlSensorArray  *CSA_GetLogArray(void)
 
 static void st_CalcSensorAngle(int16_t potentio)
 {
-	st_PotentioTheta = st_Theta.k_pot_to_theta * (float32_t)potentio;
+	st_PotentioTheta = st_Theta.k_pot_to_theta * (POTENTIO_CENTER - (float32_t)potentio);
 }
 
 
