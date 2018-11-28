@@ -47,6 +47,8 @@ void MDE_SelectMode(void)
 	SWT_Init(MODE_KIND_MIN, MODE_KIND_MAX, SWT_UD_MIN, SWT_UD_MAX);
 	st_Swt = SWT_GetSwitch();
 
+	//st_AnalyzeCource();
+
 	while(1)
 	{
 		st_ModeKind = (EnmModeKind)st_Swt->RL_Dif;

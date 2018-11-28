@@ -39,7 +39,7 @@
 #define GYRO_DATA_FULLSCALE_500		0x08
 #define GYRO_DATA_FULLSCALE_1000	0x10
 #define GYRO_DATA_FULLSCALE_2000	0x18
-#define GYRO_DATA_FULLSCALE			GYRO_DATA_FULLSCALE_250
+#define GYRO_DATA_FULLSCALE			GYRO_DATA_FULLSCALE_2000
 
 #define JUDGE_MARKER_LENGTH	(0.010)	// [m]
 #define JUDGE_CROSS_LENGTH	(0.0404)	// Lj = Lm tan(φ) + ΔL
@@ -121,6 +121,7 @@ static int16_t st_SensorCalibMin;
 static uint8_t st_SensorCalibFlag;
 
 static StrCourceMarker st_CourceMarker;
+
 
 static void st_SetSensorGateOn(void);
 static void st_SetSensorGateOff(void);
@@ -776,22 +777,28 @@ static void st_InitGyro(void)
 	// MPU6500: 0x70
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_WHO_AM_I, 0x00);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
-	//
+	// レンジ変更
 	rwFlag = WRITE;
 	data = 0x00 | GYRO_DATA_FULLSCALE;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, 0x00);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
 	// 加速度，GYRO Enable
 	rwFlag = WRITE;
 	data = 0x00;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
 
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, 0x00);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 //	rwFlag = WRITE;
 //	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_1, 0x81);
 

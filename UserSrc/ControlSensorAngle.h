@@ -21,7 +21,6 @@ void CSA_ControlSensorTask(void);
 
 float32_t CSA_GetSensorTheta(void);
 
-
 LOG_StrControlSensorHeader *CSA_GetLogHeader(void);
 LOG_StrControlSensorArray  *CSA_GetLogArray(void);
 

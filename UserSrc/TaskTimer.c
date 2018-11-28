@@ -203,7 +203,7 @@ static void st_Task6(void)
 
 static void st_Task7(void)
 {
-
+	TRC_PlayCourceTask();
 }
 
 static void st_Task8(void)

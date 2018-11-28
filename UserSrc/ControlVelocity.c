@@ -203,6 +203,16 @@ float32_t CVL_GetEncoderDiff(void)
 	return st_Encoder.VecDiff;
 }
 
+float32_t CVL_GetUpAccel(void)
+{
+	return st_Controller.TargetUpAccel;
+}
+
+float32_t CVL_GetDownAccel(void)
+{
+	return st_Controller.TargetDownAccel;
+}
+
 
 LOG_StrControlVelocityHeader *CVL_GetLogHeader(void)
 {

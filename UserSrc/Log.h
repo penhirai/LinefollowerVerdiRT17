@@ -70,8 +70,13 @@ typedef struct strCourceLogArray
 	float32_t Velocity;
 	float32_t AngularVelocity;
 	float32_t Distance;
+	float32_t Radius;
+	float32_t TargetVelocity;
+	float32_t s_n;
+	float32_t v_n;
+	float32_t a_n;
 	SSR_EnmCourceMarkerKind MarkerKind;
-	LOG_EnmIsChange IsChangeFlag;
+	//LOG_EnmIsChange IsChangeFlag;
 }LOG_StrCourceLogArray;
 
 
@@ -87,5 +92,8 @@ void LOG_RecordCource(SSR_EnmCourceMarkerKind kind, float32_t distance);
 
 void LOG_PrintControlRecord(void);
 void LOG_PrintCourceRecord(void);
+
+uint32_t LOG_GetCourceRecordIndex(void);
+LOG_StrCourceLogArray *LOG_GetCourceRecord(void);
 
 #endif /* LOG_H_ */

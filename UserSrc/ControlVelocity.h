@@ -27,6 +27,8 @@ float32_t CVL_GetVelocity(void);
 float32_t CVL_GetErrorNow(void);
 float32_t CVL_GetDistance(void);
 float32_t CVL_GetEncoderDiff(void);
+float32_t CVL_GetUpAccel(void);
+float32_t CVL_GetDownAccel(void);
 
 LOG_StrControlVelocityHeader *CVL_GetLogHeader(void);
 LOG_StrControlVelocityArray  *CVL_GetLogArray(void);

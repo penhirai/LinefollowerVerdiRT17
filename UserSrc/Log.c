@@ -17,7 +17,7 @@
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
 static uint8_t st_BufSize;
 
-#define LOG_CONTROL_MAX	2500
+#define LOG_CONTROL_MAX	1500
 #define LOG_COURCE_MAX	6500
 
 
@@ -143,8 +143,13 @@ void LOG_InitCource(void)
 		st_CourceLog.Array[i].Velocity        = 0.0;
 		st_CourceLog.Array[i].AngularVelocity = 0.0;
 		st_CourceLog.Array[i].Distance        = 0.0;
+		st_CourceLog.Array[i].Radius          = 0.0;
+		st_CourceLog.Array[i].TargetVelocity  = 0.0;
+		st_CourceLog.Array[i].s_n             = 0.0;
+		st_CourceLog.Array[i].v_n             = 0.0;
+		st_CourceLog.Array[i].a_n             = 0.0;
 		st_CourceLog.Array[i].MarkerKind      = SSR_COURCE_MARKER_NON;
-		st_CourceLog.Array[i].IsChangeFlag    = LOG_CHANGE_FALSE;
+		//st_CourceLog.Array[i].IsChangeFlag    = LOG_CHANGE_FALSE;
 	}
 
 	st_CourceLog.Index = 0;
@@ -190,8 +195,13 @@ void LOG_RecordCource(SSR_EnmCourceMarkerKind kind, float32_t distance)
 	array.Velocity    = CVL_GetVelocity();
 	array.Distance    = distance;
 	array.AngularVelocity = CAV_GetVelocity();
+	array.Radius      = 0.0;
+	array.TargetVelocity = 0.0;
+	array.s_n         = 0.0;
+	array.v_n         = 0.0;
+	array.a_n         = 0.0;
 	array.MarkerKind  = kind;
-	array.IsChangeFlag = LOG_CHANGE_FALSE;
+	//array.IsChangeFlag = LOG_CHANGE_FALSE;
 	index = st_CourceLog.Index;
 
 	st_CourceLog.Array[index] = array;
@@ -297,19 +307,35 @@ void LOG_PrintControlRecord(void)
 
 void LOG_PrintCourceRecord(void)
 {
-	st_BufSize = sprintf(st_SendBuf, "\r\n index, SensorAngle, Velocity, AngularVelocity, Distance, MarkerKind, IsChangeFlag \r\n");
+	st_BufSize = sprintf(st_SendBuf, "\r\n index, SensorAngle, Velocity, AngularVelocity, Distance, Radius, Target Velocity, s_n, v_n, a_n, MarkerKind \r\n");
 	SCF_WriteData(st_SendBuf, st_BufSize);
 
 	for(uint32_t i = 0; i < st_CourceLog.Index; ++i)
 	{
-		st_BufSize = sprintf(st_SendBuf, "%d, %.4f, %.4f, %.4f, %.4f, %d, %d \r\n"
+		st_BufSize = sprintf(st_SendBuf, "%d, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %d \r\n"
 											, i
 											, st_CourceLog.Array[i].SensorAngle
 											, st_CourceLog.Array[i].Velocity
 											, st_CourceLog.Array[i].AngularVelocity
 											, st_CourceLog.Array[i].Distance
-											, st_CourceLog.Array[i].MarkerKind
-											, st_CourceLog.Array[i].IsChangeFlag);
+											, st_CourceLog.Array[i].Radius
+											, st_CourceLog.Array[i].TargetVelocity
+											, st_CourceLog.Array[i].s_n
+											, st_CourceLog.Array[i].v_n
+											, st_CourceLog.Array[i].a_n
+											, st_CourceLog.Array[i].MarkerKind);
+//											, st_CourceLog.Array[i].IsChangeFlag);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 	}
+}
+
+
+uint32_t LOG_GetCourceRecordIndex(void)
+{
+	return st_CourceLog.Index;
+}
+
+LOG_StrCourceLogArray *LOG_GetCourceRecord(void)
+{
+	return st_CourceLog.Array;
 }

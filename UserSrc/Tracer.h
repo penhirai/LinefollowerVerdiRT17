@@ -16,5 +16,8 @@ void TRC_StartSearchMode(void);
 void TRC_StartDriveMode(void);
 
 void TRC_RecordCourceTask(void);
+void TRC_PlayCourceTask(void);
+
+void st_AnalyzeCource(void);
 
 #endif /* TRACER_H_ */
