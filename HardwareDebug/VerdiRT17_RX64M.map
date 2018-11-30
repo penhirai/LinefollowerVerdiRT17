@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W2.04.00 )             30-Nov-2018 00:51:29
+Renesas Optimizing Linker (W2.04.00 )             01-Dec-2018 03:26:32
 
 *** Options ***
 
@@ -69,13 +69,13 @@ B_1
 R_1
                                   0000092a  0000097a        51   1
 B_2
-                                  0000097c  00000deb       470   2
+                                  0000097c  00000ddd       462   2
 R_2
-                                  00000dec  00000dec         0   1
+                                  00000dde  00000dde         0   1
 B
-                                  00000dec  000715fb     70810   4
+                                  00000de0  000715ff     70820   4
 R
-                                  000715fc  0007187f       284   4
+                                  00071600  00071883       284   4
 $ADDR_C_120040
                                   00120040  00120043         4   1
 $ADDR_C_120048
@@ -113,11 +113,11 @@ W_1
 W_2
                                   ffc00b8c  ffc00bdd        52   2
 L
-                                  ffc00be0  ffc0124c       66d   4
+                                  ffc00be0  ffc011d0       5f1   4
 PIntPRG
-                                  ffc0124d  ffc012c4        78   1
+                                  ffc011d1  ffc01248        78   1
 P
-                                  ffc012c5  ffc09510      824c   1
+                                  ffc01249  ffc09016      7dce   1
 EXCEPTVECT
                                   ffffff80  fffffffb        7c   4
 RESETVECT
@@ -159,9 +159,9 @@ FILE=.\UserSrc\Test.obj
 FILE=.\UserSrc\Tracer.obj
                                   000008f7  00000929        33
   _st_SendBuf
-                                  000008f7        32   data ,l        16
+                                  000008f7        32   data ,l         4
   _st_BufSize
-                                  00000929         1   data ,l        16
+                                  00000929         1   data ,l         4
 
 SECTION=R_1
 FILE=xfiles
@@ -198,260 +198,260 @@ FILE=.\UserSrc\Sensor.obj
                                   000009ce         2   data ,l         9
   _st_SensorCalibMin
                                   000009d0         2   data ,l         9
-FILE=.\UserSrc\Tracer.obj
-                                  000009d2  000009df         e
-  _st_SensorData
-                                  000009d2         e   data ,l         3
 FILE=.\src\cg_src\r_cg_rspi.obj
-                                  000009e0  000009e5         6
+                                  000009d2  000009d7         6
   _g_rspi0_tx_count
-                                  000009e0         2   data ,g         3
+                                  000009d2         2   data ,g         3
   _g_rspi0_rx_count
-                                  000009e2         2   data ,g         4
+                                  000009d4         2   data ,g         4
   _g_rspi0_rx_length
-                                  000009e4         2   data ,g         3
+                                  000009d6         2   data ,g         3
 FILE=.\src\cg_src\r_cg_sbrk.obj
-                                  000009e6  00000de5       400
+                                  000009d8  00000dd7       400
   _heap_area
-                                  000009e6       400   data ,l         2
+                                  000009d8       400   data ,l         2
 FILE=.\src\cg_src\r_cg_sci.obj
-                                  00000de6  00000deb         6
+                                  00000dd8  00000ddd         6
   _g_sci2_tx_count
-                                  00000de6         2   data ,g         3
+                                  00000dd8         2   data ,g         3
   _g_sci2_rx_count
-                                  00000de8         2   data ,g         4
+                                  00000dda         2   data ,g         4
   _g_sci2_rx_length
-                                  00000dea         2   data ,g         3
+                                  00000ddc         2   data ,g         3
 
 SECTION=B
 FILE=.\UserSrc\Buzzer.obj
-                                  00000dec  00000df7         c
+                                  00000de0  00000deb         c
   _st_BeepCount
-                                  00000dec         4   data ,l         5
+                                  00000de0         4   data ,l         5
   _st_TaskCounter
-                                  00000df0         4   data ,l         5
+                                  00000de4         4   data ,l         5
   _st_TaskInterval
-                                  00000df4         4   data ,l         3
+                                  00000de8         4   data ,l         3
 FILE=.\UserSrc\ControlAngularVelocity.obj
-                                  00000df8  00000e97        a0
+                                  00000dec  00000e8b        a0
   _st_BodyOmega
-                                  00000df8         4   data ,l         5
+                                  00000dec         4   data ,l         5
   _st_BodyAngle
-                                  00000dfc         4   data ,l         5
+                                  00000df0         4   data ,l         5
   _st_VirtualGeometry
-                                  00000e00        14   data ,l         e
+                                  00000df4        14   data ,l         e
   _st_Controller
-                                  00000e14        48   data ,l        36
+                                  00000e08        48   data ,l        36
   _st_LogHeader
-                                  00000e5c        14   data ,l         2
+                                  00000e50        14   data ,l         2
   _st_LogArray
-                                  00000e70        28   data ,l         7
+                                  00000e64        28   data ,l         7
 FILE=.\UserSrc\ControlSensorAngle.obj
-                                  00000e98  00000f27        90
+                                  00000e8c  00000f1b        90
   _st_Theta
-                                  00000e98        50   data ,l        29
+                                  00000e8c        50   data ,l        29
   _st_PotentioTheta
-                                  00000ee8         4   data ,l         3
+                                  00000edc         4   data ,l         3
   _st_LogHeader
-                                  00000eec        14   data ,l         2
+                                  00000ee0        14   data ,l         2
   _st_LogArray
-                                  00000f00        28   data ,l         8
+                                  00000ef4        28   data ,l         8
 FILE=.\UserSrc\ControlVelocity.obj
-                                  00000f28  00000fdb        b4
+                                  00000f1c  00000fcf        b4
   _st_Encoder
-                                  00000f28        30   data ,l        24
+                                  00000f1c        30   data ,l        24
   _st_Controller
-                                  00000f58        48   data ,l        38
+                                  00000f4c        48   data ,l        38
   _st_LogHeader
-                                  00000fa0        14   data ,l         2
+                                  00000f94        14   data ,l         2
   _st_LogArray
-                                  00000fb4        28   data ,l         6
+                                  00000fa8        28   data ,l         6
 FILE=.\UserSrc\DriveAssert.obj
-                                  00000fdc  00000fe7         c
+                                  00000fd0  00000fdb         c
   _st_AssertFlag
-                                  00000fdc         4   data ,l         5
+                                  00000fd0         4   data ,l         5
   _st_LineAssert
-                                  00000fe0         8   data ,l         9
+                                  00000fd4         8   data ,l         9
 FILE=.\UserSrc\FunctionTimer.obj
-                                  00000fe8  00001033        4c
+                                  00000fdc  00001027        4c
   _st_BuzzerDuty
-                                  00000fe8         c   data ,l         9
+                                  00000fdc         c   data ,l         9
   _st_RightMotorDuty
-                                  00000ff4        14   data ,l        15
+                                  00000fe8        14   data ,l        15
   _st_LeftMotorDuty
-                                  00001008        14   data ,l        15
+                                  00000ffc        14   data ,l        15
   _st_SensorMotorDuty
-                                  0000101c         c   data ,l         b
+                                  00001010         c   data ,l         b
   _st_VelocityDutyArray
-                                  00001028         8   data ,l         3
+                                  0000101c         8   data ,l         3
   _st_SensorDutyArray
-                                  00001030         4   data ,l         2
+                                  00001024         4   data ,l         2
 FILE=.\UserSrc\Log.obj
-                                  00001034  00070d87     6fd54
+                                  00001028  00070d7b     6fd54
   _st_ControlLog
-                                  00001034     305b0   data ,l        31
+                                  00001028     305b0   data ,l        32
   _st_CourceLog
-                                  000315e4     3f7a4   data ,l        16
+                                  000315d8     3f7a4   data ,l        15
 FILE=.\UserSrc\Mode.obj
-                                  00070d88  00070d93         c
+                                  00070d7c  00070d87         c
   _st_Swt
-                                  00070d88         4   data ,l         2
+                                  00070d7c         4   data ,l         2
   _st_ModeKind
-                                  00070d8c         4   data ,l         5
+                                  00070d80         4   data ,l         5
   _st_Decision
-                                  00070d90         4   data ,l         5
+                                  00070d84         4   data ,l         5
 FILE=.\UserSrc\Sensor.obj
-                                  00070d94  00070e93       100
+                                  00070d88  00070e87       100
   _st_SensorData
-                                  00070d94        b0   data ,l        43
+                                  00070d88        b0   data ,l        43
   _st_Tx
-                                  00070e44         8   data ,l         5
+                                  00070e38         8   data ,l         5
   _st_Rx
-                                  00070e4c         8   data ,l         5
+                                  00070e40         8   data ,l         5
   _st_LineCoefficient
-                                  00070e54        10   data ,l         c
+                                  00070e48        10   data ,l         c
   _st_CourceMarker
-                                  00070e64        30   data ,l        3f
+                                  00070e58        30   data ,l        3f
 FILE=.\UserSrc\Switch.obj
-                                  00070e94  00070ecb        38
+                                  00070e88  00070ebf        38
   _st_Swt
-                                  00070e94        1c   data ,l        22
+                                  00070e88        1c   data ,l        22
   _st_udMin
-                                  00070eb0         4   data ,l         4
+                                  00070ea4         4   data ,l         4
   _st_udMax
-                                  00070eb4         4   data ,l         4
+                                  00070ea8         4   data ,l         4
   _st_rlMin
-                                  00070eb8         4   data ,l         4
+                                  00070eac         4   data ,l         4
   _st_rlMax
-                                  00070ebc         4   data ,l         4
+                                  00070eb0         4   data ,l         4
   _st_Decision
-                                  00070ec0         c   data ,l         a
+                                  00070eb4         c   data ,l         a
 FILE=.\UserSrc\TaskTimer.obj
-                                  00070ecc  00070eff        34
+                                  00070ec0  00070ef3        34
   _st_TaskState
-                                  00070ecc         4   data ,l         c
+                                  00070ec0         4   data ,l         c
   _st_TaskSchedule
-                                  00070ed0        30   data ,l        10
+                                  00070ec4        30   data ,l        10
 FILE=.\UserSrc\Test.obj
-                                  00070f00  00070f0b         c
+                                  00070ef4  00070eff         c
   _st_Swt
-                                  00070f00         4   data ,l        12
+                                  00070ef4         4   data ,l        12
   _st_ModeLevel
-                                  00070f04         4   data ,l         4
+                                  00070ef8         4   data ,l         4
   _st_Decision
-                                  00070f08         4   data ,l        3a
+                                  00070efc         4   data ,l        3a
 FILE=.\UserSrc\Tracer.obj
-                                  00070f0c  000715e7       6dc
+                                  00070f00  000715eb       6ec
   _st_Decision
-                                  00070f0c         4   data ,l         9
+                                  00070f00         4   data ,l         a
   _st_CourceLogStoreParam
-                                  00070f10        20   data ,l        1c
+                                  00070f04        20   data ,l        1e
   _st_CourceLog
-                                  00070f30         c   data ,l        37
+                                  00070f24         c   data ,l        37
   _st_CourceAnalysisParam
-                                  00070f3c         c   data ,l         9
+                                  00070f30         c   data ,l         7
   _st_CrossMarkerArray
-                                  00070f48       640   data ,l         1
+                                  00070f3c       640   data ,l         1
   _st_RightMarkerArray
-                                  00071588        50   data ,l         1
+                                  0007157c        50   data ,l         1
   _st_CrossMarkerRecord
-                                  000715d8         8   data ,l         e
+                                  000715cc         c   data ,l        10
   _st_RightMarkerRecord
-                                  000715e0         8   data ,l         e
+                                  000715d8         c   data ,l        10
+  _st_ModeKind
+                                  000715e4         4   data ,l         4
+  _st_Swt
+                                  000715e8         4   data ,l         2
 FILE=.\src\cg_src\r_cg_rspi.obj
-                                  000715e8  000715ef         8
+                                  000715ec  000715f3         8
   _gp_rspi0_tx_address
-                                  000715e8         4   data ,g         3
-  _gp_rspi0_rx_address
                                   000715ec         4   data ,g         3
-FILE=.\src\cg_src\r_cg_sci.obj
-                                  000715f0  000715f7         8
-  _gp_sci2_tx_address
+  _gp_rspi0_rx_address
                                   000715f0         4   data ,g         3
-  _gp_sci2_rx_address
+FILE=.\src\cg_src\r_cg_sci.obj
+                                  000715f4  000715fb         8
+  _gp_sci2_tx_address
                                   000715f4         4   data ,g         3
+  _gp_sci2_rx_address
+                                  000715f8         4   data ,g         3
 FILE=_errno
-                                  000715f8  000715fb         4
+                                  000715fc  000715ff         4
   __errno
-                                  000715f8         4   data ,g         4
+                                  000715fc         4   data ,g         4
 
 SECTION=R
 FILE=.\src\cg_src\r_cg_sbrk.obj
-                                  000715fc  000715ff         4
+                                  00071600  00071603         4
   _brk
-                                  000715fc         4   data ,l         3
+                                  00071600         4   data ,l         3
 FILE=sincosfsub
-                                  00071600  0007163b        3c
+                                  00071604  0007163f        3c
   _sinf_coeff
-                                  00071600        10   data ,l         1
+                                  00071604        10   data ,l         1
   _cosf_coeff
-                                  00071610        10   data ,l         1
+                                  00071614        10   data ,l         1
   _pi4ptr_table
-                                  00071620         c   data ,l         1
+                                  00071624         c   data ,l         1
   _sub_table
-                                  0007162c        10   data ,l         1
+                                  00071630        10   data ,l         1
 FILE=xprintf
-                                  0007163c  0007163f         4
+                                  00071640  00071643         4
   _stderr
-                                  0007163c         4   data ,g         0
+                                  00071640         4   data ,g         0
 FILE=xfiles
-                                  00071640  00071717        d8
+                                  00071644  0007171b        d8
   __Stdin
-                                  00071640        48   data ,g         7
+                                  00071644        48   data ,g         7
   __Stdout
-                                  00071688        48   data ,g         7
+                                  0007168c        48   data ,g         7
   __Stderr
-                                  000716d0        48   data ,g         3
+                                  000716d4        48   data ,g         3
 FILE=xctype
-                                  00071718  0007171f         8
+                                  0007171c  00071723         8
   __Ctype
-                                  00071718         4   data ,g         2
+                                  0007171c         4   data ,g         2
   __Tls_setup__Ctype
-                                  0007171c         4   data ,g         1
-FILE=xstate
-                                  00071720  00071767        48
-  __Tls_setup__Mbcurmax
                                   00071720         4   data ,g         1
+FILE=xstate
+                                  00071724  0007176b        48
+  __Tls_setup__Mbcurmax
+                                  00071724         4   data ,g         1
   __Mbstate
-                                  00071724        40   data ,g         2
+                                  00071728        40   data ,g         2
   __Tls_setup__Mbstate
-                                  00071764         4   data ,g         2
+                                  00071768         4   data ,g         2
 FILE=malloc
-                                  00071768  0007176f         8
+                                  0007176c  00071773         8
   __Aldata
-                                  00071768         8   data ,g         3
+                                  0007176c         8   data ,g         3
 FILE=localeco
-                                  00071770  000717c3        54
+                                  00071774  000717c7        54
   __Locale
-                                  00071770        50   data ,g         1
+                                  00071774        50   data ,g         1
   __Tls_setup__Locale
-                                  000717c0         4   data ,g         0
+                                  000717c4         4   data ,g         0
 FILE=xwcstate
-                                  000717c4  00071807        44
+                                  000717c8  0007180b        44
   __Wcstate
-                                  000717c4        40   data ,g         2
+                                  000717c8        40   data ,g         2
   __Tls_setup__Wcstate
-                                  00071804         4   data ,g         2
+                                  00071808         4   data ,g         2
 FILE=xfvalues
-                                  00071808  0007187f        78
+                                  0007180c  00071883        78
   __FDenorm
-                                  00071808        10   data ,g         0
+                                  0007180c        10   data ,g         0
   __FEps
-                                  00071818        10   data ,g         0
+                                  0007181c        10   data ,g         0
   __FHugeval
-                                  00071828        10   data ,g         0
+                                  0007182c        10   data ,g         0
   __FInf
-                                  00071838        10   data ,g         1
+                                  0007183c        10   data ,g         1
   __FNan
-                                  00071848        10   data ,g         0
+                                  0007184c        10   data ,g         0
   __FSnan
-                                  00071858        10   data ,g         0
+                                  0007185c        10   data ,g         0
   __FRteps
-                                  00071868        10   data ,g         0
+                                  0007186c        10   data ,g         0
   __FXbig
-                                  00071878         4   data ,g         0
-  __FZero
                                   0007187c         4   data ,g         0
+  __FZero
+                                  00071880         4   data ,g         0
 
 SECTION=$ADDR_C_120040
 FILE=.\src\cg_src\r_cg_vecttbl.obj
@@ -681,923 +681,927 @@ FILE=.\UserSrc\Sensor.obj
 FILE=.\UserSrc\Test.obj
                                   ffc0105c  ffc01161       106
 FILE=.\UserSrc\Tracer.obj
-                                  ffc01164  ffc0120c        a9
+                                  ffc01164  ffc01193        30
 FILE=xprintf
-                                  ffc01210  ffc01216         7
+                                  ffc01194  ffc0119a         7
 FILE=xldtob
-                                  ffc01218  ffc01239        22
+                                  ffc0119c  ffc011bd        22
 FILE=xgenld
-                                  ffc0123c  ffc0123d         2
+                                  ffc011c0  ffc011c1         2
 FILE=localeco
-                                  ffc01240  ffc0124c         d
+                                  ffc011c4  ffc011d0         d
 
 SECTION=PIntPRG
 FILE=.\src\cg_src\r_cg_intprg.obj
-                                  ffc0124d  ffc012c4        78
+                                  ffc011d1  ffc01248        78
   _r_undefined_exception
-                                  ffc0124d         2   func ,g         3
+                                  ffc011d1         2   func ,g         3
   _r_reserved_exception
-                                  ffc0124f         2   func ,g        1b
+                                  ffc011d3         2   func ,g        1b
   _r_nmi_exception
-                                  ffc01251         2   func ,g         1
+                                  ffc011d5         2   func ,g         1
   _r_brk_exception
-                                  ffc01253         2   func ,g         0
+                                  ffc011d7         2   func ,g         0
   _r_icu_group_be0_interrupt
-                                  ffc01255         2   func ,g         0
+                                  ffc011d9         2   func ,g         0
   _r_icu_group_bl0_interrupt
-                                  ffc01257        35   func ,g         0
+                                  ffc011db        35   func ,g         0
   _r_icu_group_bl1_interrupt
-                                  ffc0128c         2   func ,g         0
+                                  ffc01210         2   func ,g         0
   _r_icu_group_al0_interrupt
-                                  ffc0128e        35   func ,g         0
+                                  ffc01212        35   func ,g         0
   _r_icu_group_al1_interrupt
-                                  ffc012c3         2   func ,g         0
+                                  ffc01247         2   func ,g         0
 
 SECTION=P
 FILE=.\UserSrc\Buzzer.obj
-                                  ffc012c5  ffc01372        ae
+                                  ffc01249  ffc012f6        ae
   _BZR_Init
-                                  ffc012c5        26   func ,g         1
+                                  ffc01249        26   func ,g         1
   _BZR_BuzzerOn
-                                  ffc012eb         b   func ,g         2
+                                  ffc0126f         b   func ,g         2
   _BZR_BuzzerOff
-                                  ffc012f6         7   func ,g         2
+                                  ffc0127a         7   func ,g         2
   _BZR_SetBeepCount
-                                  ffc012fd        22   func ,g        15
+                                  ffc01281        22   func ,g        15
   _BZR_BuzzerTask
-                                  ffc0131f        54   func ,g         1
+                                  ffc012a3        54   func ,g         1
 FILE=.\UserSrc\ControlAngularVelocity.obj
-                                  ffc01373  ffc01819       4a7
+                                  ffc012f7  ffc0179d       4a7
   _CAV_Init
-                                  ffc01373       116   func ,g         4
+                                  ffc012f7       116   func ,g         3
   _CAV_StartDriveMotor
-                                  ffc01489        22   func ,g         3
+                                  ffc0140d        22   func ,g         2
   _CAV_StopDriveMotor
-                                  ffc014ab         d   func ,g         0
+                                  ffc0142f         d   func ,g         0
   _CAV_SetTargetUpAccel
-                                  ffc014b8         e   func ,g         1
+                                  ffc0143c         e   func ,g         1
   _CAV_SetTargetDownAccel
-                                  ffc014c6         e   func ,g         1
+                                  ffc0144a         e   func ,g         1
   _CAV_SetTarget
-                                  ffc014d4        51   func ,g         2
+                                  ffc01458        51   func ,g         2
   _CAV_ControlTask
-                                  ffc01525        10   func ,g         1
+                                  ffc014a9        10   func ,g         1
   _CAV_GetTarget
-                                  ffc01535         e   func ,g         3
+                                  ffc014b9         e   func ,g         0
   _CAV_GetVelocity
-                                  ffc01543         e   func ,g         5
+                                  ffc014c7         e   func ,g         2
   _CAV_GetErrorNow
-                                  ffc01551         e   func ,g         4
+                                  ffc014d5         e   func ,g         1
   _CAV_GetAngle
-                                  ffc0155f         e   func ,g         0
+                                  ffc014e3         e   func ,g         0
   _CAV_GetRadius
-                                  ffc0156d         e   func ,g         1
+                                  ffc014f1         e   func ,g         1
   _CAV_GetVirtualThetaDeg
-                                  ffc0157b         e   func ,g         9
+                                  ffc014ff         e   func ,g         1
   _CAV_ClearAngle
-                                  ffc01589         a   func ,g         0
+                                  ffc0150d         a   func ,g         0
   _CAV_GetLogHeader
-                                  ffc01593        2b   func ,g         1
+                                  ffc01517        2b   func ,g         1
   _CAV_GetLogArray
-                                  ffc015be        90   func ,g         1
+                                  ffc01542        90   func ,g         1
   _st_CalcTarget
-                                  ffc0164e        82   func ,l         1
+                                  ffc015d2        82   func ,l         1
   _st_CalcGyro
-                                  ffc016d0        3e   func ,l         1
+                                  ffc01654        3e   func ,l         1
   _st_UpdateTarget
-                                  ffc0170e        3d   func ,l         1
+                                  ffc01692        3d   func ,l         1
   _st_CalcError
-                                  ffc0174b        b3   func ,l         1
+                                  ffc016cf        b3   func ,l         1
   _st_SetMotorDuty
-                                  ffc017fe        1c   func ,l         1
+                                  ffc01782        1c   func ,l         1
 FILE=.\UserSrc\ControlSensorAngle.obj
-                                  ffc0181a  ffc01b05       2ec
+                                  ffc0179e  ffc01a89       2ec
   _CSA_Init
-                                  ffc0181a        cd   func ,g         1
+                                  ffc0179e        cd   func ,g         1
   _CSA_StartSensorMotor
-                                  ffc018e7         d   func ,g         3
+                                  ffc0186b         d   func ,g         2
   _CSA_StopSensorMotor
-                                  ffc018f4         d   func ,g         3
+                                  ffc01878         d   func ,g         2
   _CSA_StartSensorTask
-                                  ffc01901         b   func ,g         4
+                                  ffc01885         b   func ,g         3
   _CSA_ControlSensorTask
-                                  ffc0190c        f4   func ,g         1
+                                  ffc01890        f4   func ,g         1
   _CSA_GetSensorTheta
-                                  ffc01a00        1b   func ,g         3
+                                  ffc01984        1b   func ,g         3
   _CSA_GetLogHeader
-                                  ffc01a1b        2b   func ,g         1
+                                  ffc0199f        2b   func ,g         1
   _CSA_GetLogArray
-                                  ffc01a46        8d   func ,g         1
+                                  ffc019ca        8d   func ,g         1
   _st_CalcSensorAngle
-                                  ffc01ad3        25   func ,l         1
+                                  ffc01a57        25   func ,l         1
   _st_DriveSensorMotor
-                                  ffc01af8         e   func ,l         1
+                                  ffc01a7c         e   func ,l         1
 FILE=.\UserSrc\ControlVelocity.obj
-                                  ffc01b06  ffc02063       55e
+                                  ffc01a8a  ffc01fe7       55e
   _CVL_Init
-                                  ffc01b06       16a   func ,g         6
+                                  ffc01a8a       16a   func ,g         5
   _CVL_StartDriveMotor
-                                  ffc01c70        22   func ,g         6
+                                  ffc01bf4        22   func ,g         5
   _CVL_StopDriveMotor
-                                  ffc01c92         d   func ,g         4
+                                  ffc01c16         d   func ,g         3
   _CVL_SetTargetUpAccel
-                                  ffc01c9f         e   func ,g         1
+                                  ffc01c23         e   func ,g         1
   _CVL_SetTargetDownAccel
-                                  ffc01cad         e   func ,g         1
+                                  ffc01c31         e   func ,g         1
   _CVL_SetTarget
-                                  ffc01cbb        51   func ,g        16
+                                  ffc01c3f        51   func ,g         b
   _CVL_ControlTask
-                                  ffc01d0c         d   func ,g         1
+                                  ffc01c90         d   func ,g         1
   _CVL_GetTarget
-                                  ffc01d19         e   func ,g         5
+                                  ffc01c9d         e   func ,g         2
   _CVL_GetVelocity
-                                  ffc01d27         e   func ,g         7
+                                  ffc01cab         e   func ,g         4
   _CVL_GetErrorNow
-                                  ffc01d35         e   func ,g         4
+                                  ffc01cb9         e   func ,g         1
   _CVL_GetDistance
-                                  ffc01d43         e   func ,g         9
+                                  ffc01cc7         e   func ,g         9
   _CVL_GetEncoderDiff
-                                  ffc01d51         e   func ,g         1
+                                  ffc01cd5         e   func ,g         1
   _CVL_GetUpAccel
-                                  ffc01d5f         e   func ,g         1
+                                  ffc01ce3         e   func ,g         1
   _CVL_GetDownAccel
-                                  ffc01d6d         e   func ,g         1
+                                  ffc01cf1         e   func ,g         1
   _CVL_GetLogHeader
-                                  ffc01d7b        2b   func ,g         1
+                                  ffc01cff        2b   func ,g         1
   _CVL_GetLogArray
-                                  ffc01da6        68   func ,g         1
+                                  ffc01d2a        68   func ,g         1
   _st_CalcEncoder
-                                  ffc01e0e       14c   func ,l         1
+                                  ffc01d92       14c   func ,l         1
   _st_UpdateTarget
-                                  ffc01f5a        3d   func ,l         1
+                                  ffc01ede        3d   func ,l         1
   _st_CalcError
-                                  ffc01f97        b4   func ,l         1
+                                  ffc01f1b        b4   func ,l         1
   _st_SetMotorDuty
-                                  ffc0204b        19   func ,l         1
+                                  ffc01fcf        19   func ,l         1
 FILE=.\UserSrc\DriveAssert.obj
-                                  ffc02064  ffc02141        de
+                                  ffc01fe8  ffc020c5        de
   _DAS_Init
-                                  ffc02064        1c   func ,g         5
+                                  ffc01fe8        1c   func ,g         4
   _DAS_AssertTask
-                                  ffc02080        30   func ,g         1
+                                  ffc02004        30   func ,g         1
   _DAS_GetAssertFlag
-                                  ffc020b0         e   func ,g         1
+                                  ffc02034         e   func ,g         1
   _DAS_ClearAssertFlag
-                                  ffc020be        13   func ,g         1
+                                  ffc02042        13   func ,g         1
   _st_LineSensorAssert
-                                  ffc020d1        71   func ,l         1
+                                  ffc02055        71   func ,l         1
 FILE=.\UserSrc\FunctionTimer.obj
-                                  ffc02142  ffc02709       5c8
+                                  ffc020c6  ffc0268d       5c8
   _FTR_Init
-                                  ffc02142        e9   func ,g         1
+                                  ffc020c6        e9   func ,g         1
   _FTR_StartBuzzerTimer
-                                  ffc0222b         5   func ,g         1
+                                  ffc021af         5   func ,g         1
   _FTR_SetBuzzerDuty
-                                  ffc02230        55   func ,g         2
+                                  ffc021b4        55   func ,g         2
   _FTR_StartRightEncoderTimer
-                                  ffc02285         5   func ,g         2
+                                  ffc02209         5   func ,g         2
   _FTR_GetRightEncoderCount
-                                  ffc0228a         e   func ,g         2
+                                  ffc0220e         e   func ,g         2
   _FTR_StartLeftEncoderTimer
-                                  ffc02298         5   func ,g         2
+                                  ffc0221c         5   func ,g         2
   _FTR_GetLeftEncoderCount
-                                  ffc0229d         e   func ,g         2
+                                  ffc02221         e   func ,g         2
   _FTR_StartRightMotorTimer
-                                  ffc022ab        20   func ,g         2
+                                  ffc0222f        20   func ,g         2
   _FTR_SetTransitionRightMotorDuty
-                                  ffc022cb        4a   func ,g         4
+                                  ffc0224f        4a   func ,g         4
   _FTR_SetAngularRightMotorDuty
-                                  ffc02315        48   func ,g         1
+                                  ffc02299        48   func ,g         1
   _FTR_GetRightMotorDuty
-                                  ffc0235d         e   func ,g         5
+                                  ffc022e1         e   func ,g         2
   _FTR_StartLeftMotorTimer
-                                  ffc0236b        20   func ,g         2
+                                  ffc022ef        20   func ,g         2
   _FTR_SetTransitionLeftMotorDuty
-                                  ffc0238b        4a   func ,g         4
+                                  ffc0230f        4a   func ,g         4
   _FTR_SetAngularLeftMotorDuty
-                                  ffc023d5        48   func ,g         1
+                                  ffc02359        48   func ,g         1
   _FTR_GetLeftMotorDuty
-                                  ffc0241d         e   func ,g         5
+                                  ffc023a1         e   func ,g         2
   _FTR_StartSensorMotorTimer
-                                  ffc0242b         5   func ,g         2
+                                  ffc023af         5   func ,g         2
   _FTR_SetSensorMotorDuty
-                                  ffc02430        90   func ,g         2
+                                  ffc023b4        90   func ,g         2
   _FTR_GetSensorMotorDuty
-                                  ffc024c0         e   func ,g         0
+                                  ffc02444         e   func ,g         0
   _FTR_GetVelocityLogDutyArray
-                                  ffc024ce        2c   func ,g         1
+                                  ffc02452        2c   func ,g         1
   _FTR_GetSensorLogDutyArray
-                                  ffc024fa        1c   func ,g         1
+                                  ffc0247e        1c   func ,g         1
   _st_SetLeftMotorDuty
-                                  ffc02516        76   func ,l         2
+                                  ffc0249a        76   func ,l         2
   _st_SetRightMotorDuty
-                                  ffc0258c        76   func ,l         2
+                                  ffc02510        76   func ,l         2
   _st_SetLeftDriveCw
-                                  ffc02602        2c   func ,l         1
+                                  ffc02586        2c   func ,l         1
   _st_SetLeftDriveCcw
-                                  ffc0262e        2c   func ,l         1
+                                  ffc025b2        2c   func ,l         1
   _st_SetRightDriveCw
-                                  ffc0265a        2c   func ,l         1
+                                  ffc025de        2c   func ,l         1
   _st_SetRightDriveCcw
-                                  ffc02686        2c   func ,l         1
+                                  ffc0260a        2c   func ,l         1
   _st_SetSensorDriveCw
-                                  ffc026b2        2c   func ,l         1
+                                  ffc02636        2c   func ,l         1
   _st_SetSensorDriveCcw
-                                  ffc026de        2c   func ,l         1
+                                  ffc02662        2c   func ,l         1
 FILE=.\UserSrc\Led.obj
-                                  ffc0270a  ffc0294b       242
+                                  ffc0268e  ffc028cf       242
   _LED_binaryOn
-                                  ffc0270a       181   func ,g         3
+                                  ffc0268e       181   func ,g         4
   _LED_AllOff
-                                  ffc0288b        15   func ,g         1
+                                  ffc0280f        15   func ,g         1
   _LED_On
-                                  ffc028a0        56   func ,g        21
+                                  ffc02824        56   func ,g        21
   _LED_Off
-                                  ffc028f6        56   func ,g        25
+                                  ffc0287a        56   func ,g        25
 FILE=.\UserSrc\Log.obj
-                                  ffc0294c  ffc03324       9d9
+                                  ffc028d0  ffc032a8       9d9
   _LOG_Init
-                                  ffc0294c         7   func ,g         1
+                                  ffc028d0         7   func ,g         1
   _LOG_InitControl
-                                  ffc02953       29f   func ,g         1
+                                  ffc028d7       29f   func ,g         1
   _LOG_InitCource
-                                  ffc02bf2        c6   func ,g         1
+                                  ffc02b76        c6   func ,g         1
   _LOG_RecordControl
-                                  ffc02cb8       13b   func ,g         1
+                                  ffc02c3c       13b   func ,g         1
   _LOG_RecordCource
-                                  ffc02df3        9e   func ,g         2
+                                  ffc02d77        9e   func ,g         2
   _LOG_PrintControlRecord
-                                  ffc02e91       3b0   func ,g         1
+                                  ffc02e15       3b0   func ,g         0
   _LOG_PrintCourceRecord
-                                  ffc03241        c8   func ,g         1
+                                  ffc031c5        c8   func ,g         0
   _LOG_GetCourceRecordIndex
-                                  ffc03309        10   func ,g         1
+                                  ffc0328d        10   func ,g         1
   _LOG_GetCourceRecord
-                                  ffc03319         c   func ,g         1
+                                  ffc0329d         c   func ,g         1
 FILE=.\UserSrc\Mode.obj
-                                  ffc03325  ffc033ee        ca
+                                  ffc032a9  ffc03385        dd
   _MDE_InitMode
-                                  ffc03325         e   func ,g         1
+                                  ffc032a9         e   func ,g         1
   _MDE_SelectMode
-                                  ffc03333        bc   func ,g         1
+                                  ffc032b7        cf   func ,g         1
 FILE=.\UserSrc\SciFifo.obj
-                                  ffc033ef  ffc03417        29
+                                  ffc03386  ffc033ae        29
   _SCF_Init
-                                  ffc033ef         5   func ,g         1
+                                  ffc03386         5   func ,g         1
   _SCF_WriteData
-                                  ffc033f4        24   func ,g        25
+                                  ffc0338b        24   func ,g        1c
 FILE=.\UserSrc\Sensor.obj
-                                  ffc03418  ffc04101       cea
+                                  ffc033af  ffc040db       d2d
   _SSR_Init
-                                  ffc03418       243   func ,g         3
+                                  ffc033af       243   func ,g         3
   _SSR_TaskStartSensorGate
-                                  ffc0365b         4   func ,g         1
+                                  ffc035f2         4   func ,g         1
   _SSR_TaskStopSensorGate
-                                  ffc0365f         4   func ,g         1
+                                  ffc035f6         4   func ,g         1
   _SSR_TaskGetAnalogSensor
-                                  ffc03663         7   func ,g         2
+                                  ffc035fa         7   func ,g         2
   _SSR_TaskStartReadGyro
-                                  ffc0366a         4   func ,g         1
+                                  ffc03601         4   func ,g         1
   _SSR_TaskCalcSensor
-                                  ffc0366e        c2   func ,g         1
+                                  ffc03605        c2   func ,g         1
   _SSR_TaskCalcFilter
-                                  ffc03730       143   func ,g         1
+                                  ffc036c7       143   func ,g         1
   _SSR_TaskJudgeMarkerSensor
-                                  ffc03873       198   func ,g         1
+                                  ffc0380a       198   func ,g         1
   _SSR_CalibSensor
-                                  ffc03a0b       23d   func ,g         5
+                                  ffc039a2       23d   func ,g         3
   _SSR_GetSensorData
-                                  ffc03c48        22   func ,g         6
+                                  ffc03bdf        22   func ,g         3
   _SSR_GetPotentioData
-                                  ffc03c6a         f   func ,g         0
+                                  ffc03c01         f   func ,g         0
   _SSR_SetPotentioData
-                                  ffc03c79         f   func ,g         1
+                                  ffc03c10         f   func ,g         1
   _SSR_GetGyroData
-                                  ffc03c88         f   func ,g         0
+                                  ffc03c1f         f   func ,g         0
   _SSR_SetGyroData
-                                  ffc03c97         f   func ,g         0
+                                  ffc03c2e         f   func ,g         0
   _SSR_GetMarkerState
-                                  ffc03ca6        21   func ,g         8
+                                  ffc03c3d        21   func ,g         2
   _SSR_GetCourceMarker
-                                  ffc03cc7        4f   func ,g         7
+                                  ffc03c5e        4f   func ,g         3
   _SSR_PrintAllSensor
-                                  ffc03d16        55   func ,g         2
+                                  ffc03cad        55   func ,g         2
   _st_SetSensorGateOn
-                                  ffc03d6b         d   func ,l         1
+                                  ffc03d02         d   func ,l         1
   _st_SetSensorGateOff
-                                  ffc03d78         d   func ,l         2
+                                  ffc03d0f         d   func ,l         2
   _st_ReadLineSensor
-                                  ffc03d85        68   func ,l         2
+                                  ffc03d1c        68   func ,l         2
   _st_ReadOtherSensor
-                                  ffc03ded        3c   func ,l         1
+                                  ffc03d84        3c   func ,l         1
   _st_ReadDarkSensor
-                                  ffc03e29         c   func ,l         1
+                                  ffc03dc0         c   func ,l         1
   _st_ReadLightSensor
-                                  ffc03e35         c   func ,l         1
+                                  ffc03dcc         c   func ,l         1
   _st_CalcLineSensor
-                                  ffc03e41        63   func ,l         1
+                                  ffc03dd8        63   func ,l         1
   _st_CalcMarkerSensor
-                                  ffc03ea4        3e   func ,l         2
+                                  ffc03e3b        3e   func ,l         2
   _st_RegistResetCourceMarker
-                                  ffc03ee2        ec   func ,l         2
+                                  ffc03e79        ec   func ,l         2
   _st_InitGyro
-                                  ffc03fce        c7   func ,l         1
+                                  ffc03f65       10a   func ,l         1
   _st_StartReadGyro
-                                  ffc04095        11   func ,l         1
+                                  ffc0406f        11   func ,l         1
   _st_CommunicateGyro
-                                  ffc040a6        45   func ,l         6
+                                  ffc04080        45   func ,l         8
   _st_ParseGyro
-                                  ffc040eb        17   func ,l         1
+                                  ffc040c5        17   func ,l         1
 FILE=.\UserSrc\Switch.obj
-                                  ffc04102  ffc043f4       2f3
+                                  ffc040dc  ffc043ce       2f3
   _SWT_Init
-                                  ffc04102        a3   func ,g         6
+                                  ffc040dc        a3   func ,g         7
   _SWT_CallCenter
-                                  ffc041a5        13   func ,g         1
+                                  ffc0417f        13   func ,g         1
   _SWT_CallRight
-                                  ffc041b8        16   func ,g         1
+                                  ffc04192        16   func ,g         1
   _SWT_CallLeft
-                                  ffc041ce        16   func ,g         1
+                                  ffc041a8        16   func ,g         1
   _SWT_CallUp
-                                  ffc041e4        16   func ,g         1
+                                  ffc041be        16   func ,g         1
   _SWT_CallDown
-                                  ffc041fa        16   func ,g         1
+                                  ffc041d4        16   func ,g         1
   _SWT_ClearSwitchCount
-                                  ffc04210        34   func ,g         0
+                                  ffc041ea        34   func ,g         0
   _SWT_GetSwitch
-                                  ffc04244         c   func ,g         2
+                                  ffc0421e         c   func ,g         3
   _SWT_SetSwitch
-                                  ffc04250        28   func ,g         0
+                                  ffc0422a        28   func ,g         0
   _SWT_GetCenterDecision
-                                  ffc04278        40   func ,g        19
+                                  ffc04252        40   func ,g        17
   _st_CalcRL
-                                  ffc042b8        7c   func ,l         3
+                                  ffc04292        7c   func ,l         3
   _st_CalcUD
-                                  ffc04334        7c   func ,l         3
+                                  ffc0430e        7c   func ,l         3
   _st_CalcDecision
-                                  ffc043b0        45   func ,l         2
+                                  ffc0438a        45   func ,l         2
 FILE=.\UserSrc\TaskTimer.obj
-                                  ffc043f5  ffc045ea       1f6
+                                  ffc043cf  ffc045c4       1f6
   _TSK_Init
-                                  ffc043f5        2f   func ,g         1
+                                  ffc043cf        2f   func ,g         1
   _TSK_Main
-                                  ffc04424       15c   func ,g         1
+                                  ffc043fe       15c   func ,g         1
   _TSK_Start
-                                  ffc04580        11   func ,g        18
+                                  ffc0455a        11   func ,g        15
   _TSK_Stop
-                                  ffc04591        11   func ,g         1
+                                  ffc0456b        11   func ,g         5
   _st_Task0
-                                  ffc045a2         5   func ,l         1
+                                  ffc0457c         5   func ,l         1
   _st_Task1
-                                  ffc045a7         5   func ,l         1
+                                  ffc04581         5   func ,l         1
   _st_Task2
-                                  ffc045ac         5   func ,l         1
+                                  ffc04586         5   func ,l         1
   _st_Task3
-                                  ffc045b1         5   func ,l         1
+                                  ffc0458b         5   func ,l         1
   _st_Task4
-                                  ffc045b6         5   func ,l         1
+                                  ffc04590         5   func ,l         1
   _st_Task5
-                                  ffc045bb         5   func ,l         1
+                                  ffc04595         5   func ,l         1
   _st_Task6
-                                  ffc045c0         5   func ,l         1
+                                  ffc0459a         5   func ,l         1
   _st_Task7
-                                  ffc045c5         5   func ,l         1
+                                  ffc0459f         5   func ,l         1
   _st_Task8
-                                  ffc045ca         1   func ,l         1
+                                  ffc045a4         1   func ,l         1
   _st_Task9
-                                  ffc045cb         5   func ,l         1
+                                  ffc045a5         5   func ,l         1
   _st_Task10_StartCalc
-                                  ffc045d0         9   func ,l         1
+                                  ffc045aa         9   func ,l         1
   _st_Task10_StartComm
-                                  ffc045d9         d   func ,l         1
+                                  ffc045b3         d   func ,l         1
   _st_Task11
-                                  ffc045e6         5   func ,l         1
+                                  ffc045c0         5   func ,l         1
 FILE=.\UserSrc\Test.obj
-                                  ffc045eb  ffc04e5a       870
+                                  ffc045c5  ffc04e34       870
   _TST_TestMode
-                                  ffc045eb       17b   func ,g         1
+                                  ffc045c5       17b   func ,g         1
   _st_SciTest
-                                  ffc04766        52   func ,l         1
+                                  ffc04740        52   func ,l         1
   _st_IrqTest
-                                  ffc047b8        70   func ,l         1
+                                  ffc04792        70   func ,l         1
   _st_LedTest
-                                  ffc04828        df   func ,l         1
+                                  ffc04802        df   func ,l         1
   _st_PwmTest
-                                  ffc04907        bc   func ,l         1
+                                  ffc048e1        bc   func ,l         1
   _st_BuzzerTest
-                                  ffc049c3        84   func ,l         1
+                                  ffc0499d        84   func ,l         1
   _st_IntBuzzerTest
-                                  ffc04a47        94   func ,l         1
+                                  ffc04a21        94   func ,l         1
   _st_EncoderTest
-                                  ffc04adb        5f   func ,l         1
+                                  ffc04ab5        5f   func ,l         1
   _st_SensorTest
-                                  ffc04b3a        2e   func ,l         1
+                                  ffc04b14        2e   func ,l         1
   _st_GyroTest
-                                  ffc04b68        2a   func ,l         1
+                                  ffc04b42        2a   func ,l         1
   _st_CalibSensorTest
-                                  ffc04b92         5   func ,l         1
+                                  ffc04b6c         5   func ,l         1
   _st_MarkerTest
-                                  ffc04b97        8e   func ,l         1
+                                  ffc04b71        8e   func ,l         1
   _st_StraightTest
-                                  ffc04c25        a1   func ,l         1
+                                  ffc04bff        a1   func ,l         1
   _st_RotationTest
-                                  ffc04cc6        ac   func ,l         1
+                                  ffc04ca0        ac   func ,l         1
   _st_AssertTest
-                                  ffc04d72        97   func ,l         1
+                                  ffc04d4c        97   func ,l         1
   _st_LogTest
-                                  ffc04e09        52   func ,l         1
+                                  ffc04de3        52   func ,l         1
 FILE=.\UserSrc\Tracer.obj
-                                  ffc04e5b  ffc06233      13d9
+                                  ffc04e35  ffc05d39       f05
   _TRC_Init
-                                  ffc04e5b        c8   func ,g         1
+                                  ffc04e35        d2   func ,g         1
   _TRC_StartSearchMode
-                                  ffc04f23       2f4   func ,g         1
-  _TRC_StartDriveMode
-                                  ffc05217       278   func ,g         1
-  _TRC_StartDriveMode2
-                                  ffc0548f       278   func ,g         1
+                                  ffc04f07       21d   func ,g         3
+  _TRC_DriveMode
+                                  ffc05124       12c   func ,g         1
   _TRC_RecordCourceTask
-                                  ffc05707        79   func ,g         1
+                                  ffc05250        79   func ,g         1
   _TRC_PlayCourceTask
-                                  ffc05780       123   func ,g         1
+                                  ffc052c9       168   func ,g         1
+  _st_SetAnalysisParam
+                                  ffc05431        1a   func ,l         5
   _st_StartRecordCource
-                                  ffc058a3        51   func ,l         1
+                                  ffc0544b        63   func ,l         2
   _st_GetCourceMarker
-                                  ffc058f4        42   func ,l         2
+                                  ffc054ae        42   func ,l         2
+  _st_PrepareCource
+                                  ffc054f0       1b1   func ,l         1
   _st_AnalyzeCource
-                                  ffc05936       8af   func ,g         1
+                                  ffc056a1       4dc   func ,l         1
   _st_CalculateRadius
-                                  ffc061e5        4f   func ,l         3
+                                  ffc05b7d        4f   func ,l         3
+  _st_ExecuteDriveMode
+                                  ffc05bcc       16e   func ,l         4
 FILE=.\src\cg_src\r_cg_cgc.obj
-                                  ffc06234  ffc062dc        a9
+                                  ffc05d3a  ffc05de2        a9
   _R_CGC_Create
-                                  ffc06234        a9   func ,g         1
+                                  ffc05d3a        a9   func ,g         1
 FILE=.\src\cg_src\r_cg_cmt.obj
-                                  ffc062dd  ffc0639a        be
+                                  ffc05de3  ffc05ea0        be
   _R_CMT0_Create
-                                  ffc062dd        34   func ,g         1
+                                  ffc05de3        34   func ,g         1
   _R_CMT0_Start
-                                  ffc06311        13   func ,g         1
+                                  ffc05e17        13   func ,g         1
   _R_CMT0_Stop
-                                  ffc06324        16   func ,g         0
+                                  ffc05e2a        16   func ,g         0
   _R_CMT1_Create
-                                  ffc0633a        38   func ,g         1
+                                  ffc05e40        38   func ,g         1
   _R_CMT1_Start
-                                  ffc06372        13   func ,g         5
+                                  ffc05e78        13   func ,g         5
   _R_CMT1_Stop
-                                  ffc06385        16   func ,g         0
+                                  ffc05e8b        16   func ,g         0
 FILE=.\src\cg_src\r_cg_cmt_user.obj
-                                  ffc0639b  ffc063c6        2c
+                                  ffc05ea1  ffc05ecc        2c
   _r_cmt_cmi0_interrupt
-                                  ffc0639b         e   func ,l         0
+                                  ffc05ea1         e   func ,l         0
   _r_cmt_cmi1_interrupt
-                                  ffc063a9        1e   func ,l         0
+                                  ffc05eaf        1e   func ,l         0
 FILE=.\src\cg_src\r_cg_hardware_setup.obj
-                                  ffc063c7  ffc0646d        a7
+                                  ffc05ecd  ffc05f73        a7
   _R_Systeminit
-                                  ffc063c7        a3   func ,g         1
+                                  ffc05ecd        a3   func ,g         1
   _HardwareSetup
-                                  ffc0646a         4   func ,g         1
+                                  ffc05f70         4   func ,g         1
 FILE=.\src\cg_src\r_cg_icu.obj
-                                  ffc0646e  ffc0662a       1bd
+                                  ffc05f74  ffc06130       1bd
   _R_ICU_Create
-                                  ffc0646e       16d   func ,g         1
+                                  ffc05f74       16d   func ,g         1
   _R_ICU_IRQ5_Start
-                                  ffc065db         8   func ,g         2
+                                  ffc060e1         8   func ,g         2
   _R_ICU_IRQ5_Stop
-                                  ffc065e3         8   func ,g         1
+                                  ffc060e9         8   func ,g         1
   _R_ICU_IRQ6_Start
-                                  ffc065eb         8   func ,g         2
+                                  ffc060f1         8   func ,g         2
   _R_ICU_IRQ6_Stop
-                                  ffc065f3         8   func ,g         1
+                                  ffc060f9         8   func ,g         1
   _R_ICU_IRQ7_Start
-                                  ffc065fb         8   func ,g         2
+                                  ffc06101         8   func ,g         2
   _R_ICU_IRQ7_Stop
-                                  ffc06603         8   func ,g         1
+                                  ffc06109         8   func ,g         1
   _R_ICU_IRQ8_Start
-                                  ffc0660b         8   func ,g         2
+                                  ffc06111         8   func ,g         2
   _R_ICU_IRQ8_Stop
-                                  ffc06613         8   func ,g         1
+                                  ffc06119         8   func ,g         1
   _R_ICU_IRQ9_Start
-                                  ffc0661b         8   func ,g         2
+                                  ffc06121         8   func ,g         2
   _R_ICU_IRQ9_Stop
-                                  ffc06623         8   func ,g         1
+                                  ffc06129         8   func ,g         1
 FILE=.\src\cg_src\r_cg_icu_user.obj
-                                  ffc0662b  ffc06698        6e
+                                  ffc06131  ffc0619e        6e
   _r_icu_irq5_interrupt
-                                  ffc0662b        16   func ,l         0
+                                  ffc06131        16   func ,l         0
   _r_icu_irq6_interrupt
-                                  ffc06641        16   func ,l         0
+                                  ffc06147        16   func ,l         0
   _r_icu_irq7_interrupt
-                                  ffc06657        16   func ,l         0
+                                  ffc0615d        16   func ,l         0
   _r_icu_irq8_interrupt
-                                  ffc0666d        16   func ,l         0
+                                  ffc06173        16   func ,l         0
   _r_icu_irq9_interrupt
-                                  ffc06683        16   func ,l         0
+                                  ffc06189        16   func ,l         0
 FILE=.\src\cg_src\r_cg_main.obj
-                                  ffc06699  ffc066c8        30
+                                  ffc0619f  ffc061ce        30
   _main
-                                  ffc06699         f   func ,g         1
+                                  ffc0619f         f   func ,g         1
   _R_MAIN_UserInit
-                                  ffc066a8        21   func ,l         1
+                                  ffc061ae        21   func ,l         1
 FILE=.\src\cg_src\r_cg_mtu3.obj
-                                  ffc066c9  ffc06ae6       41e
+                                  ffc061cf  ffc065ec       41e
   _R_MTU3_Create
-                                  ffc066c9       2a0   func ,g         1
+                                  ffc061cf       2a0   func ,g         1
   _R_MTU3_C0_Start
-                                  ffc06969         8   func ,g         1
+                                  ffc0646f         8   func ,g         1
   _R_MTU3_C0_Stop
-                                  ffc06971         8   func ,g         0
+                                  ffc06477         8   func ,g         0
   _R_MTU3_C1_Start
-                                  ffc06979         8   func ,g         1
+                                  ffc0647f         8   func ,g         1
   _R_MTU3_C1_Stop
-                                  ffc06981         8   func ,g         0
+                                  ffc06487         8   func ,g         0
   _R_MTU3_C2_Start
-                                  ffc06989         8   func ,g         1
+                                  ffc0648f         8   func ,g         1
   _R_MTU3_C2_Stop
-                                  ffc06991         8   func ,g         0
+                                  ffc06497         8   func ,g         0
   _R_MTU3_C3_Start
-                                  ffc06999         8   func ,g         1
+                                  ffc0649f         8   func ,g         1
   _R_MTU3_C3_Stop
-                                  ffc069a1         8   func ,g         0
+                                  ffc064a7         8   func ,g         0
   _R_MTU3_C4_Start
-                                  ffc069a9         8   func ,g         2
+                                  ffc064af         8   func ,g         2
   _R_MTU3_C4_Stop
-                                  ffc069b1         8   func ,g         0
+                                  ffc064b7         8   func ,g         0
   _R_MTU0_SetTGRA
-                                  ffc069b9         d   func ,g         0
+                                  ffc064bf         d   func ,g         0
   _R_MTU0_GetTGRA
-                                  ffc069c6        10   func ,g         0
+                                  ffc064cc        10   func ,g         0
   _R_MTU0_GetTGRB
-                                  ffc069d6        10   func ,g         0
+                                  ffc064dc        10   func ,g         0
   _R_MTU0_SetTGRC
-                                  ffc069e6         d   func ,g         2
+                                  ffc064ec         d   func ,g         2
   _R_MTU0_GetTGRC
-                                  ffc069f3        10   func ,g         0
+                                  ffc064f9        10   func ,g         0
   _R_MTU0_GetTGRD
-                                  ffc06a03        10   func ,g         1
+                                  ffc06509        10   func ,g         1
   _R_MTU1_GetTcnt
-                                  ffc06a13        10   func ,g         1
+                                  ffc06519        10   func ,g         1
   _R_MTU2_GetTcnt
-                                  ffc06a23        10   func ,g         1
+                                  ffc06529        10   func ,g         1
   _R_MTU3_SetTGRA
-                                  ffc06a33         d   func ,g         0
+                                  ffc06539         d   func ,g         0
   _R_MTU3_GetTGRA
-                                  ffc06a40        10   func ,g         0
+                                  ffc06546        10   func ,g         0
   _R_MTU3_GetTGRB
-                                  ffc06a50        10   func ,g         0
+                                  ffc06556        10   func ,g         0
   _R_MTU3_SetTGRC
-                                  ffc06a60         d   func ,g         2
+                                  ffc06566         d   func ,g         2
   _R_MTU3_GetTGRC
-                                  ffc06a6d        10   func ,g         0
+                                  ffc06573        10   func ,g         0
   _R_MTU3_GetTGRD
-                                  ffc06a7d        10   func ,g         1
+                                  ffc06583        10   func ,g         1
   _R_MTU4_SetTGRA
-                                  ffc06a8d         d   func ,g         2
+                                  ffc06593         d   func ,g         2
   _R_MTU4_GetTGRA
-                                  ffc06a9a        10   func ,g         0
+                                  ffc065a0        10   func ,g         0
   _R_MTU4_GetTGRB
-                                  ffc06aaa        10   func ,g         1
+                                  ffc065b0        10   func ,g         1
   _R_MTU4_SetTGRC
-                                  ffc06aba         d   func ,g         2
+                                  ffc065c0         d   func ,g         2
   _R_MTU4_GetTGRC
-                                  ffc06ac7        10   func ,g         0
+                                  ffc065cd        10   func ,g         0
   _R_MTU4_GetTGRD
-                                  ffc06ad7        10   func ,g         1
+                                  ffc065dd        10   func ,g         1
 FILE=.\src\cg_src\r_cg_port.obj
-                                  ffc06ae7  ffc06cee       208
+                                  ffc065ed  ffc067f4       208
   _R_PORT_Create
-                                  ffc06ae7        7a   func ,g         1
+                                  ffc065ed        7a   func ,g         1
   _R_PORT_SetP05
-                                  ffc06b61        1c   func ,g         0
+                                  ffc06667        1c   func ,g         0
   _R_PORT_SetP07
-                                  ffc06b7d        18   func ,g         0
+                                  ffc06683        18   func ,g         0
   _R_PORT_SetP14
-                                  ffc06b95        1c   func ,g         2
+                                  ffc0669b        1c   func ,g         2
   _R_PORT_SetPB0
-                                  ffc06bb1        19   func ,g         3
+                                  ffc066b7        19   func ,g         3
   _R_PORT_SetPB2
-                                  ffc06bca        1b   func ,g         4
+                                  ffc066d0        1b   func ,g         4
   _R_PORT_SetPB4
-                                  ffc06be5        1c   func ,g         2
+                                  ffc066eb        1c   func ,g         2
   _R_PORT_SetPC0
-                                  ffc06c01        19   func ,g         4
+                                  ffc06707        19   func ,g         4
   _R_PORT_SetPC1
-                                  ffc06c1a        1b   func ,g         4
+                                  ffc06720        1b   func ,g         4
   _R_PORT_SetPC2
-                                  ffc06c35        1b   func ,g         4
+                                  ffc0673b        1b   func ,g         4
   _R_PORT_SetPC3
-                                  ffc06c50        1b   func ,g         4
+                                  ffc06756        1b   func ,g         4
   _R_PORT_SetPD0
-                                  ffc06c6b        19   func ,g         3
+                                  ffc06771        19   func ,g         3
   _R_PORT_SetPD1
-                                  ffc06c84        1b   func ,g         3
+                                  ffc0678a        1b   func ,g         3
   _R_PORT_SetPE0
-                                  ffc06c9f        19   func ,g         3
+                                  ffc067a5        19   func ,g         3
   _R_PORT_SetPE3
-                                  ffc06cb8        1b   func ,g         3
+                                  ffc067be        1b   func ,g         3
   _R_PORT_SetPE4
-                                  ffc06cd3        1c   func ,g         3
+                                  ffc067d9        1c   func ,g         3
 FILE=.\src\cg_src\r_cg_rspi.obj
-                                  ffc06cef  ffc06ecd       1df
+                                  ffc067f5  ffc069d3       1df
   _R_RSPI0_Create
-                                  ffc06cef       107   func ,g         1
+                                  ffc067f5       107   func ,g         1
   _R_RSPI0_Start
-                                  ffc06df6        40   func ,g         1
+                                  ffc068fc        40   func ,g         1
   _R_RSPI0_Stop
-                                  ffc06e36        2c   func ,g         0
+                                  ffc0693c        2c   func ,g         0
   _R_RSPI0_Send_Receive
-                                  ffc06e62        6c   func ,g         1
+                                  ffc06968        6c   func ,g         1
 FILE=.\src\cg_src\r_cg_rspi_user.obj
-                                  ffc06ece  ffc07031       164
+                                  ffc069d4  ffc06b37       164
   _r_rspi0_transmit_interrupt
-                                  ffc06ece        67   func ,l         0
+                                  ffc069d4        67   func ,l         0
   _r_rspi0_receive_interrupt
-                                  ffc06f35        7f   func ,l         0
+                                  ffc06a3b        7f   func ,l         0
   _r_rspi0_error_interrupt
-                                  ffc06fb4        63   func ,g         1
+                                  ffc06aba        63   func ,g         1
   _r_rspi0_idle_interrupt
-                                  ffc07017        13   func ,g         1
+                                  ffc06b1d        13   func ,g         1
   _r_rspi0_callback_transmitend
-                                  ffc0702a         1   func ,l         1
+                                  ffc06b30         1   func ,l         1
   _r_rspi0_callback_receiveend
-                                  ffc0702b         1   func ,l         1
+                                  ffc06b31         1   func ,l         1
   _r_rspi0_callback_error
-                                  ffc0702c         6   func ,l         1
+                                  ffc06b32         6   func ,l         1
 FILE=.\src\cg_src\r_cg_s12ad.obj
-                                  ffc07032  ffc072a4       273
+                                  ffc06b38  ffc06daa       273
   _R_S12AD0_Create
-                                  ffc07032       13e   func ,g         1
+                                  ffc06b38       13e   func ,g         1
   _R_S12AD0_Start
-                                  ffc07170         c   func ,g         2
+                                  ffc06c76         c   func ,g         2
   _R_S12AD0_Stop
-                                  ffc0717c         e   func ,g         0
+                                  ffc06c82         e   func ,g         0
   _R_S12AD0_Get_ValueResult
-                                  ffc0718a        e3   func ,g         6
+                                  ffc06c90        e3   func ,g         6
   _R_S12AD0_Set_CompareValue
-                                  ffc0726d        19   func ,g         0
+                                  ffc06d73        19   func ,g         0
   _R_S12AD0_WaitAdcEnd
-                                  ffc07286        1f   func ,g         2
+                                  ffc06d8c        1f   func ,g         2
 FILE=.\src\cg_src\r_cg_sbrk.obj
-                                  ffc072a5  ffc072e1        3d
+                                  ffc06dab  ffc06de7        3d
   _sbrk
-                                  ffc072a5        3d   func ,g         1
+                                  ffc06dab        3d   func ,g         1
 FILE=.\src\cg_src\r_cg_sci.obj
-                                  ffc072e2  ffc07499       1b8
+                                  ffc06de8  ffc06f9f       1b8
   _R_SCI2_Create
-                                  ffc072e2        99   func ,g         1
+                                  ffc06de8        99   func ,g         1
   _R_SCI2_Start
-                                  ffc0737b        33   func ,g         1
+                                  ffc06e81        33   func ,g         1
   _R_SCI2_Stop
-                                  ffc073ae        56   func ,g         0
+                                  ffc06eb4        56   func ,g         0
   _R_SCI2_Serial_Receive
-                                  ffc07404        48   func ,g         0
+                                  ffc06f0a        48   func ,g         0
   _R_SCI2_Serial_Send
-                                  ffc0744c        4e   func ,g         1
+                                  ffc06f52        4e   func ,g         1
 FILE=.\src\cg_src\r_cg_sci_user.obj
-                                  ffc0749a  ffc07595        fc
+                                  ffc06fa0  ffc0709b        fc
   _r_sci2_transmit_interrupt
-                                  ffc0749a        4d   func ,l         0
+                                  ffc06fa0        4d   func ,l         0
   _r_sci2_transmitend_interrupt
-                                  ffc074e7        28   func ,g         1
+                                  ffc06fed        28   func ,g         1
   _r_sci2_receive_interrupt
-                                  ffc0750f        60   func ,l         0
+                                  ffc07015        60   func ,l         0
   _r_sci2_receiveerror_interrupt
-                                  ffc0756f        25   func ,g         1
+                                  ffc07075        25   func ,g         1
   _r_sci2_callback_transmitend
-                                  ffc07594         1   func ,l         1
+                                  ffc0709a         1   func ,l         1
   _r_sci2_callback_receiveend
-                                  ffc07595         1   func ,l         1
+                                  ffc0709b         1   func ,l         1
 FILE=sinf
-                                  ffc07596  ffc075d4        3f
+                                  ffc0709c  ffc070da        3f
   _sinl
-                                  ffc07596         2   func ,g         0
+                                  ffc0709c         2   func ,g         0
   _sin
-                                  ffc07598         2   func ,g         1
+                                  ffc0709e         2   func ,g         1
   _sinf
-                                  ffc0759a        3b   func ,g         2
+                                  ffc070a0        3b   func ,g         2
 FILE=powf
-                                  ffc075d5  ffc07601        2d
+                                  ffc070db  ffc07107        2d
   _powl
-                                  ffc075d5         2   func ,g         0
+                                  ffc070db         2   func ,g         0
   _pow
-                                  ffc075d7         2   func ,g         1
+                                  ffc070dd         2   func ,g         1
   _powf
-                                  ffc075d9        29   func ,g         5
+                                  ffc070df        29   func ,g         5
 FILE=sprintf
-                                  ffc07602  ffc07638        37
+                                  ffc07108  ffc0713e        37
   _prout
-                                  ffc07602         b   func ,l         1
+                                  ffc07108         b   func ,l         1
   _sprintf
-                                  ffc0760d        2c   func ,g        26
+                                  ffc07113        2c   func ,g        1d
 FILE=__initsct
-                                  ffc07639  ffc07682        4a
+                                  ffc0713f  ffc07188        4a
   __INITSCT
-                                  ffc07639         0   none ,g         1
+                                  ffc0713f         0   none ,g         1
   loop1
-                                  ffc0764b         0   none ,l         1
+                                  ffc07151         0   none ,l         1
   next_loop1
-                                  ffc07659         0   none ,l         2
+                                  ffc0715f         0   none ,l         2
   loop3
-                                  ffc0766b         0   none ,l         1
+                                  ffc07171         0   none ,l         1
   next_loop3
-                                  ffc0767c         0   none ,l         2
+                                  ffc07182         0   none ,l         2
 FILE=_in_pows
-                                  ffc07683  ffc0778b       109
+                                  ffc07189  ffc07291       109
   __in_pows
-                                  ffc07683       109   func ,g         1
+                                  ffc07189       109   func ,g         1
 FILE=sincosfsub
-                                  ffc0778c  ffc07873        e8
+                                  ffc07292  ffc07379        e8
   ___poly_sinf
-                                  ffc0778c        31   func ,g         3
+                                  ffc07292        31   func ,g         3
   ___poly_cosf
-                                  ffc077bd        28   func ,g         2
+                                  ffc072c3        28   func ,g         2
   _poly_cosfn
-                                  ffc077e5         7   func ,l         1
+                                  ffc072eb         7   func ,l         1
   _poly_sinfn
-                                  ffc077ec         5   func ,l         1
+                                  ffc072f2         5   func ,l         1
   _sincosf_special
-                                  ffc077f1        33   func ,l         1
+                                  ffc072f7        33   func ,l         1
   ___internal_sincosf
-                                  ffc07824        50   func ,g         3
+                                  ffc0732a        50   func ,g         3
 FILE=xprintf
-                                  ffc07874  ffc07ad9       266
+                                  ffc0737a  ffc075df       266
   __Printf
-                                  ffc07874       266   func ,g         1
+                                  ffc0737a       266   func ,g         1
 FILE=fmodf
-                                  ffc07ada  ffc07b0b        32
+                                  ffc075e0  ffc07611        32
   _fmodl
-                                  ffc07ada         2   func ,g         0
+                                  ffc075e0         2   func ,g         0
   _fmod
-                                  ffc07adc         2   func ,g         1
+                                  ffc075e2         2   func ,g         1
   _fmodf
-                                  ffc07ade        2e   func ,g         2
+                                  ffc075e4        2e   func ,g         2
 FILE=_i_ldes
-                                  ffc07b0c  ffc07b8a        7f
+                                  ffc07612  ffc07690        7f
   __in_ldexps
-                                  ffc07b0c        7f   func ,g         2
+                                  ffc07612        7f   func ,g         2
 FILE=_in_exps
-                                  ffc07b8b  ffc07c85        fb
+                                  ffc07691  ffc0778b        fb
   __in_exps
-                                  ffc07b8b        fb   func ,g         2
+                                  ffc07691        fb   func ,g         2
 FILE=_in_logs
-                                  ffc07c86  ffc07d4c        c7
+                                  ffc0778c  ffc07852        c7
   __in_logs
-                                  ffc07c86        c7   func ,g         2
+                                  ffc0778c        c7   func ,g         2
 FILE=nanfval
-                                  ffc07d4d  ffc07d53         7
+                                  ffc07853  ffc07859         7
   ___nanf_value
-                                  ffc07d4d         7   func ,g         1
+                                  ffc07853         7   func ,g         1
 FILE=xputfld
-                                  ffc07d54  ffc081ea       497
+                                  ffc0785a  ffc07cf0       497
   __Putfld
-                                  ffc07d54       497   func ,g         1
+                                  ffc0785a       497   func ,g         1
 FILE=xvacopy
-                                  ffc081eb  ffc081f2         8
+                                  ffc07cf1  ffc07cf8         8
   __Vacopy
-                                  ffc081eb         8   func ,g         2
+                                  ffc07cf1         8   func ,g         2
 FILE=xputtxt
-                                  ffc081f3  ffc084d7       2e5
+                                  ffc07cf9  ffc07fdd       2e5
   __Puttxt
-                                  ffc081f3       2e5   func ,g         3
+                                  ffc07cf9       2e5   func ,g         3
 FILE=strchr
-                                  ffc084d8  ffc084ed        16
+                                  ffc07fde  ffc07ff3        16
   _strchr
-                                  ffc084d8        16   func ,g         2
+                                  ffc07fde        16   func ,g         2
 FILE=xctype
-                                  ffc084ee  ffc08503        16
+                                  ffc07ff4  ffc08009        16
   __Getpctype
-                                  ffc084ee        16   func ,g         0
+                                  ffc07ff4        16   func ,g         0
 FILE=_i_fmds
-                                  ffc08504  ffc085db        d8
+                                  ffc0800a  ffc080e1        d8
   __in_fmods
-                                  ffc08504        d8   func ,g         1
+                                  ffc0800a        d8   func ,g         1
 FILE=xldtob
-                                  ffc085dc  ffc08a12       437
+                                  ffc080e2  ffc08518       437
   __Ldtob
-                                  ffc085dc       437   func ,g         1
+                                  ffc080e2       437   func ,g         1
 FILE=xputstr
-                                  ffc08a13  ffc08af2        e0
+                                  ffc08519  ffc085f8        e0
   __Putstr
-                                  ffc08a13        e0   func ,g         1
+                                  ffc08519        e0   func ,g         1
 FILE=xlitob
-                                  ffc08af3  ffc08c0a       118
+                                  ffc085f9  ffc08710       118
   __Litob
-                                  ffc08af3       118   func ,g         1
+                                  ffc085f9       118   func ,g         1
 FILE=xgenld
-                                  ffc08c0b  ffc08eb8       2ae
+                                  ffc08711  ffc089be       2ae
   __Genld
-                                  ffc08c0b       2ae   func ,g         1
+                                  ffc08711       2ae   func ,g         1
 FILE=xwctomb
-                                  ffc08eb9  ffc09010       158
+                                  ffc089bf  ffc08b16       158
   __Wctombx
-                                  ffc08eb9       112   func ,g         1
+                                  ffc089bf       112   func ,g         1
   __Wctomb
-                                  ffc08fcb        46   func ,g         1
+                                  ffc08ad1        46   func ,g         1
 FILE=xstate
-                                  ffc09011  ffc09042        32
+                                  ffc08b17  ffc08b48        32
   __Getmbcurmax
-                                  ffc09011        16   func ,g         2
+                                  ffc08b17        16   func ,g         2
   __Getpmbstate
-                                  ffc09027        1c   func ,g         0
+                                  ffc08b2d        1c   func ,g         0
 FILE=xldscale
-                                  ffc09043  ffc09046         4
+                                  ffc08b49  ffc08b4c         4
   __LDscale
-                                  ffc09043         4   func ,g         1
+                                  ffc08b49         4   func ,g         1
 FILE=xldunsca
-                                  ffc09047  ffc0904a         4
+                                  ffc08b4d  ffc08b50         4
   __LDunscale
-                                  ffc09047         4   func ,g         1
+                                  ffc08b4d         4   func ,g         1
 FILE=__COM_DIV64u
-                                  ffc0904b  ffc090e3        99
+                                  ffc08b51  ffc08be9        99
   __COM_DIV64u
-                                  ffc0904b         0   none ,g         2
+                                  ffc08b51         0   none ,g         2
   _Loop_Init
-                                  ffc09055         0   none ,l         2
+                                  ffc08b5b         0   none ,l         2
   _Loop
-                                  ffc0905d         0   none ,l         1
+                                  ffc08b63         0   none ,l         1
   _DivStart
-                                  ffc09069         0   none ,l         3
+                                  ffc08b6f         0   none ,l         3
   _Success
-                                  ffc09077         0   none ,l         1
+                                  ffc08b7d         0   none ,l         1
   _DivEnd
-                                  ffc09083         0   none ,l         0
+                                  ffc08b89         0   none ,l         0
   IXI6DIV
-                                  ffc09088         0   none ,l         1
+                                  ffc08b8e         0   none ,l         1
   IXI4DIV
-                                  ffc0909a         0   none ,l         1
+                                  ffc08ba0         0   none ,l         1
   IXI2DIV
-                                  ffc090aa         0   none ,l         1
+                                  ffc08bb0         0   none ,l         1
   I8I2DIV
-                                  ffc090b2         0   none ,l         1
+                                  ffc08bb8         0   none ,l         1
   I4I2DIV
-                                  ffc090e0         0   none ,l         1
+                                  ffc08be6         0   none ,l         1
   _i8divU_End
-                                  ffc090e3         0   none ,l         0
+                                  ffc08be9         0   none ,l         0
 FILE=__COM_MOD64u
-                                  ffc090e4  ffc0916a        87
+                                  ffc08bea  ffc08c70        87
   __COM_MOD64u
-                                  ffc090e4         0   none ,g         1
+                                  ffc08bea         0   none ,g         1
   _Loop_Init
-                                  ffc090ee         0   none ,l         2
+                                  ffc08bf4         0   none ,l         2
   _Loop
-                                  ffc090f2         0   none ,l         1
+                                  ffc08bf8         0   none ,l         1
   _DivStart
-                                  ffc090fe         0   none ,l         3
+                                  ffc08c04         0   none ,l         3
   _Success
-                                  ffc0910c         0   none ,l         1
+                                  ffc08c12         0   none ,l         1
   _DivEnd
-                                  ffc09114         0   none ,l         0
+                                  ffc08c1a         0   none ,l         0
   IXI6DIV
-                                  ffc09115         0   none ,l         1
+                                  ffc08c1b         0   none ,l         1
   IXI4DIV
-                                  ffc09127         0   none ,l         1
+                                  ffc08c2d         0   none ,l         1
   IXI2DIV
-                                  ffc09137         0   none ,l         1
+                                  ffc08c3d         0   none ,l         1
   I8I2DIV
-                                  ffc0913f         0   none ,l         1
+                                  ffc08c45         0   none ,l         1
   I4I2DIV
-                                  ffc0915f         0   none ,l         1
+                                  ffc08c65         0   none ,l         1
 FILE=_div
-                                  ffc0916b  ffc09176         c
+                                  ffc08c71  ffc08c7c         c
   _ldiv
-                                  ffc0916b         0   none ,g         1
+                                  ffc08c71         0   none ,g         1
   _div
-                                  ffc0916b         0   none ,g         1
+                                  ffc08c71         0   none ,g         1
 FILE=free
-                                  ffc09177  ffc091f9        83
+                                  ffc08c7d  ffc08cff        83
   _free
-                                  ffc09177        83   func ,g         2
+                                  ffc08c7d        83   func ,g         2
 FILE=malloc
-                                  ffc091fa  ffc092d7        de
+                                  ffc08d00  ffc08ddd        de
   _findmem
-                                  ffc091fa        7b   func ,l         1
+                                  ffc08d00        7b   func ,l         1
   _malloc
-                                  ffc09275        63   func ,g         1
+                                  ffc08d7b        63   func ,g         1
 FILE=localeco
-                                  ffc092d8  ffc092de         7
+                                  ffc08dde  ffc08de4         7
   _localeconv
-                                  ffc092d8         7   func ,g         1
+                                  ffc08dde         7   func ,g         1
 FILE=xwcstate
-                                  ffc092df  ffc092fa        1c
+                                  ffc08de5  ffc08e00        1c
   __Getpwcstate
-                                  ffc092df        1c   func ,g         0
+                                  ffc08de5        1c   func ,g         0
 FILE=xfdscale
-                                  ffc092fb  ffc0941b       121
+                                  ffc08e01  ffc08f21       121
   __FDscale
-                                  ffc092fb       121   func ,g         1
+                                  ffc08e01       121   func ,g         1
 FILE=xfdunsca
-                                  ffc0941c  ffc09476        5b
+                                  ffc08f22  ffc08f7c        5b
   __FDunscale
-                                  ffc0941c        5b   func ,g         1
+                                  ffc08f22        5b   func ,g         1
 FILE=xgetmem
-                                  ffc09477  ffc09491        1b
+                                  ffc08f7d  ffc08f97        1b
   __Getmem
-                                  ffc09477        1b   func ,g         1
+                                  ffc08f7d        1b   func ,g         1
 FILE=xfdnorm
-                                  ffc09492  ffc09510        7f
+                                  ffc08f98  ffc09016        7f
   __FDnorm
-                                  ffc09492        7f   func ,g         2
+                                  ffc08f98        7f   func ,g         2
 
 SECTION=EXCEPTVECT
 FILE=.\src\cg_src\r_cg_vecttbl.obj

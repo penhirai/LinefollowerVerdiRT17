@@ -47,8 +47,6 @@ void MDE_SelectMode(void)
 	SWT_Init(MODE_KIND_MIN, MODE_KIND_MAX, SWT_UD_MIN, SWT_UD_MAX);
 	st_Swt = SWT_GetSwitch();
 
-	//st_AnalyzeCource();
-
 	while(1)
 	{
 		st_ModeKind = (EnmModeKind)st_Swt->RL_Dif;
@@ -60,19 +58,21 @@ void MDE_SelectMode(void)
 			case CASE_SEARCH_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartSearchMode();
+					TRC_StartSearchMode(1.4);
 				}
 				break;
 			case CASE_TRACE_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartDriveMode();
+					TRC_StartSearchMode(1.5);
+					//TRC_StartDriveMode();
 				}
 				break;
 			case CASE_TRACE2_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartDriveMode2();
+					TRC_StartSearchMode(1.6);
+					//TRC_StartDriveMode2();
 				}
 				break;
 			case CASE_TEST_MODE:

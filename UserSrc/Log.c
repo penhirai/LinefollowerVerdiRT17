@@ -179,7 +179,7 @@ void LOG_RecordControl(void)
 	st_ControlLog.ControlSensor.MotorArray[index]         = *sensorDutyArray;
 
 	++st_ControlLog.Index;
-	if(st_CourceLog.Index >= LOG_CONTROL_MAX)
+	if(st_ControlLog.Index >= LOG_CONTROL_MAX)
 	{
 		st_ControlLog.Index = LOG_CONTROL_MAX - 1;
 	}

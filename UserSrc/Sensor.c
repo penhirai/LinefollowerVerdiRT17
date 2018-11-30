@@ -31,15 +31,20 @@
 #define GYRO_ADDR_GYRO_Z 0x47
 //#define GYRO_ADDR_GYRO_Z 0x41
 #define GYRO_ADDR_SIG_PATH_RESET 0x68
+#define GYRO_ADDR_USER_CTRL 0x6A
 #define GYRO_ADDR_PWR_MGMT_1 0x6B
 #define GYRO_ADDR_PWR_MGMT_2 0x6C
 #define GYRO_ADDR_WHO_AM_I 0x75
+
+#define GYRO_USER_CTRL_I2C_DIS 0x10
 
 #define GYRO_DATA_FULLSCALE_250		0x00
 #define GYRO_DATA_FULLSCALE_500		0x08
 #define GYRO_DATA_FULLSCALE_1000	0x10
 #define GYRO_DATA_FULLSCALE_2000	0x18
 #define GYRO_DATA_FULLSCALE			GYRO_DATA_FULLSCALE_2000
+
+
 
 #define JUDGE_MARKER_LENGTH	(0.010)	// [m]
 #define JUDGE_CROSS_LENGTH	(0.0404)	// Lj = Lm tan(φ) + ΔL
@@ -778,6 +783,18 @@ static void st_InitGyro(void)
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_WHO_AM_I, 0x00);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
+
+	// I2C IF DIS
+	rwFlag = WRITE;
+	data = 0x00 | GYRO_USER_CTRL_I2C_DIS;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
+	rwFlag = READ;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, 0x00);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
 
 	// レンジ変更
 	rwFlag = WRITE;
