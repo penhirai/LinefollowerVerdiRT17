@@ -25,12 +25,15 @@
 #define SEND_BUF_SIZE 50
 #define LOG_DISTANCE (0.01)	// 10mm 刻み
 
+#define CROSS_MARKER_ARRAY_MAX	(200)		// 30cm 刻み60m 換算
+#define RIGHT_MARKER_ARRAY_MAX	(10)		// 自宅コースが6m ，60m 換算
 
 typedef struct strCourceLogStoreParam
 {
 	float32_t StartDistance;
 	float32_t TempDistance;
 	float32_t DiffDistance;
+	float32_t OffsetDistance;
 	SSR_StrMarkerData MarkerData;
 	SSR_StrMarkerData MarkerDataLatched;
 }StrCourceLogStoreParam;
@@ -38,6 +41,7 @@ typedef struct strCourceLogStoreParam
 typedef struct strCourceLog
 {
 	uint32_t Index;
+	uint32_t IndexMax;
 	LOG_StrCourceLogArray *Pt_Array;
 }StrCourceLog;
 
@@ -48,6 +52,18 @@ typedef struct strCourceAnalysisParam
 	float32_t CentrifugalMax;		// [m/ss]
 }StrCourceAnalysisParam;
 
+typedef struct strCourceMarkerArray
+{
+	uint32_t LogIndex;
+	float32_t Distance;
+}StrCourceMarkerArray;
+
+typedef struct strCourceMarkerRecord
+{
+	uint32_t Index;
+	StrCourceMarkerArray *Pt_Array;
+}StrCourceMarkerRecord;
+
 static SWT_EnmDecision st_Decision;
 static uint8_t st_SendBuf[SEND_BUF_SIZE];
 static uint8_t st_BufSize;
@@ -55,18 +71,45 @@ static SSR_StrSensorData st_SensorData;
 static StrCourceLogStoreParam st_CourceLogStoreParam;
 static StrCourceLog st_CourceLog;
 static StrCourceAnalysisParam st_CourceAnalysisParam;
+static StrCourceMarkerArray st_CrossMarkerArray[CROSS_MARKER_ARRAY_MAX];
+static StrCourceMarkerArray st_RightMarkerArray[RIGHT_MARKER_ARRAY_MAX];
+static StrCourceMarkerRecord st_CrossMarkerRecord;
+static StrCourceMarkerRecord st_RightMarkerRecord;
+
 
 static void st_StartRecordCource(void);
 static SSR_StrMarkerData st_GetCourceMarker(void);
 //static void st_AnalyzeCource(void);
 static float32_t st_CalculateRadius(float32_t velocityBuff, float32_t angularBuff);
+static void st_ExecuteDriveMode(void);
 
 
 void TRC_Init(void)
 {
+	//
+	st_CourceLogStoreParam.OffsetDistance = 0.0;
+
 	st_CourceAnalysisParam.RadiusMax = 100.0;
-	st_CourceAnalysisParam.TargetVelocityMax = 5.0;
+	st_CourceAnalysisParam.TargetVelocityMax = 2.0;
 	st_CourceAnalysisParam.CentrifugalMax = 40.0;
+
+	// Cross Marker Array ポインタの登録，初期化
+	st_CrossMarkerRecord.Index = 0;
+	st_CrossMarkerRecord.Pt_Array = st_CrossMarkerArray;
+	for(uint32_t i = 0; i < CROSS_MARKER_ARRAY_MAX; ++i)
+	{
+		st_CrossMarkerRecord.Pt_Array[i].LogIndex = 0;
+		st_CrossMarkerRecord.Pt_Array[i].Distance = 0.0;
+	}
+
+	// Right Marker Array ポインタの登録，初期化
+	st_RightMarkerRecord.Index = 0;
+	st_RightMarkerRecord.Pt_Array = st_RightMarkerArray;
+	for(uint32_t i = 0; i < RIGHT_MARKER_ARRAY_MAX; ++i)
+	{
+		st_RightMarkerRecord.Pt_Array[i].LogIndex = 0;
+		st_RightMarkerRecord.Pt_Array[i].Distance = 0.0;
+	}
 }
 
 
@@ -245,7 +288,10 @@ void TRC_StartSearchMode(void)
 				{
 					++markerCount;
 					BZR_SetBeepCount(3);
+				}
 
+				if(markerCount >= 2)
+				{
 					CVL_SetTarget(0.0);
 
 					for(volatile int32_t i = 0; i < 10000000; ++i)	;
@@ -263,10 +309,15 @@ void TRC_StartSearchMode(void)
 					st_BufSize = sprintf(st_SendBuf, "\r\n start log analysis \r\n");
 					SCF_WriteData(st_SendBuf, st_BufSize);
 
+					// コース解析
 					st_AnalyzeCource();
 
+					// ログ出力
 					LOG_PrintCourceRecord();
 					LOG_PrintControlRecord();
+
+					// ドライブモード実行
+					//st_ExecuteDriveMode();
 				}
 			}
 		}
@@ -656,7 +707,38 @@ void TRC_RecordCourceTask(void)
 
 void TRC_PlayCourceTask(void)
 {
+	// 走行距離を計測
+	st_CourceLogStoreParam.TempDistance = CVL_GetDistance();
+	st_CourceLogStoreParam.DiffDistance = st_CourceLogStoreParam.TempDistance - st_CourceLogStoreParam.StartDistance + st_CourceLogStoreParam.OffsetDistance;
+	if(st_CourceLogStoreParam.DiffDistance >= st_CourceLog.Pt_Array[st_CourceLog.Index].Distance)
+	{
+		CVL_SetTarget(st_CourceLog.Pt_Array[st_CourceLog.Index].TargetVelocity);
+		++st_CourceLog.Index;
+		if(st_CourceLog.Index >= st_CourceLog.IndexMax)
+		{
+			st_CourceLog.Index = st_CourceLog.IndexMax;
+		}
+	}
 
+	// マーカーを検出
+	st_CourceLogStoreParam.MarkerData = SSR_GetCourceMarker();
+	switch(st_CourceLogStoreParam.MarkerData.MarkerKind)
+	{
+	case SSR_COURCE_MARKER_LEFT:
+		break;
+	case SSR_COURCE_MARKER_RIGHT:
+		st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+		st_CourceLogStoreParam.OffsetDistance = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
+		st_CourceLog.Index = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex;
+		++st_RightMarkerRecord.Index;
+		break;
+	case SSR_COURCE_MARKER_CROSS:
+		//st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+		st_CourceLogStoreParam.OffsetDistance = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
+		st_CourceLog.Index = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].LogIndex;
+		++st_CrossMarkerRecord.Index;
+		break;
+	}
 }
 
 
@@ -668,6 +750,9 @@ static void st_StartRecordCource(void)
 	st_CourceLogStoreParam.MarkerData.MarkerKind = SSR_COURCE_MARKER_NON;
 	st_CourceLogStoreParam.MarkerData.Distance   = 0.0;
 	st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+
+	st_RightMarkerRecord.Index = 0;
+	st_CrossMarkerRecord.Index = 0;
 }
 
 
@@ -694,6 +779,7 @@ static SSR_StrMarkerData st_GetCourceMarker(void)
 
 void st_AnalyzeCource(void)
 {
+	SSR_EnmCourceMarkerKind markerKind;
 	int32_t averageNum = 5;
 	int32_t averageOffset = 2;
 	float32_t velocityBuff;
@@ -713,25 +799,59 @@ void st_AnalyzeCource(void)
 
 	BZR_SetBeepCount(2);
 
+	// コースログindex 記録
+	st_CourceLog.IndexMax = st_CourceLog.Index;
+
 	// ラジアン変換
 	for(i = 0; i < st_CourceLog.Index; ++i)
 	{
 		st_CourceLog.Pt_Array[i].AngularVelocity *= K_ANGULAR_VELOCITY;
 	}
 
-	// 移動平均
-	/*
+	// 距離初期化
 	for(i = 0; i < st_CourceLog.Index; ++i)
 	{
-		velocityBuff = st_CourceLog.Pt_Array[i].Velocity;
-		angularBuff  = st_CourceLog.Pt_Array[i].AngularVelocity;
-		st_CourceLog.Pt_Array[i].Radius = st_CalculateRadius(velocityBuff, angularBuff);
+		st_CourceLog.Pt_Array[i].Distance -= st_CourceLog.Pt_Array[0].Distance;
+	}
 
-		st_BufSize = sprintf(st_SendBuf, "Radius[%d]: %.2f \r\n", i, st_CourceLog.Pt_Array[i].Radius);
+	// マーカー位置を記録
+	st_RightMarkerRecord.Index = 0;
+	st_CrossMarkerRecord.Index = 0;
+	for(i = 0; i < st_CourceLog.Index; ++i)
+	{
+		markerKind = st_CourceLog.Pt_Array[i].MarkerKind;
+		switch(markerKind)
+		{
+		case SSR_COURCE_MARKER_LEFT:
+			break;
+		case SSR_COURCE_MARKER_RIGHT:
+			st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex = i;
+			st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].Distance = st_CourceLog.Pt_Array[i].Distance;
+			++st_RightMarkerRecord.Index;
+			break;
+		case SSR_COURCE_MARKER_CROSS:
+			st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].LogIndex = i;
+			st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].Distance = st_CourceLog.Pt_Array[i].Distance;
+			++st_CrossMarkerRecord.Index;
+			break;
+		}
+	}
+
+	// マーカー位置表示
+	for(i = 0; i < st_RightMarkerRecord.Index; ++i)
+	{
+		st_BufSize = sprintf(st_SendBuf, "Right[%d], %d, %.4f \r\n", i, st_RightMarkerRecord.Pt_Array[i].LogIndex, st_RightMarkerRecord.Pt_Array[i].Distance);
 		SCF_WriteData(st_SendBuf, st_BufSize);
 	}
-	*/
 
+	for(i = 0; i < st_CrossMarkerRecord.Index; ++i)
+	{
+		st_BufSize = sprintf(st_SendBuf, "Right[%d], %d, %.4f \r\n", i, st_CrossMarkerRecord.Pt_Array[i].LogIndex, st_CrossMarkerRecord.Pt_Array[i].Distance);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+	}
+
+
+	// 移動平均
 	for(i = 0; i < averageOffset; ++i)
 	{
 		velocityBuff = 0.0;
@@ -878,4 +998,152 @@ static float32_t st_CalculateRadius(float32_t velocityBuff, float32_t angularBuf
 	}
 
 	return radiusBuff;
+}
+
+
+static void st_ExecuteDriveMode(void)
+{
+	float32_t vecTarget;
+	float32_t velocity;
+	float32_t vecError;
+	float32_t angTarget;
+	float32_t angular;
+	float32_t angError;
+	float32_t vecTargetTemp;
+	float32_t theta;
+	int32_t vecFlag = 0;
+	int32_t threshold = 3;
+
+//	SSR_CalibSensor();
+
+//	for(volatile int32_t i = 0; i < 1000000; ++i){
+//		st_Decision = SWT_GetCenterDecision();
+//	}
+
+	CSA_StartSensorMotor();
+	CSA_StartSensorTask();
+
+	while(1)
+	{
+		st_Decision = SWT_GetCenterDecision();
+		if(st_Decision == SWT_DECISION_TRUE)
+		{
+			for(volatile int32_t i = 0; i < 10000000; ++i)	;
+
+			for(int32_t i = 0; i < 3; ++i)
+			{
+				BZR_SetBeepCount(1);
+				for(volatile int32_t i = 0; i < 10000000; ++i)	;
+			}
+
+			CVL_Init();
+			CAV_Init();
+			TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
+			TSK_Start(TSK_TASK4_CONTROL_ANGULAR);
+
+			TSK_Start(TSK_TASKEACH1_ASSERT);
+			DAS_Init();
+
+			TSK_Start(TSK_TASK5_Judge_MARKER);
+
+			st_StartRecordCource();
+
+			vecTargetTemp = 0.0;
+			CVL_SetTarget(vecTargetTemp);
+
+			CVL_StartDriveMotor();
+			CAV_StartDriveMotor();
+
+//			TSK_Start(TSK_TASK6_RECORD_COURSE);
+//			TSK_Start(TSK_TASK9_RECORD_CONTROL);
+			TSK_Start(TSK_TASK7_PLAY_COURSE);
+
+			break;
+		}
+	}
+
+	while(1)
+	{
+		SSR_StrMarkerData markerData;
+		int32_t markerCount;
+		float32_t leftDuty;
+		float32_t rightDuty;
+		SSR_EnmMarkerKind kind;
+		SSR_EnmMarkerState leftMarker, rightMarker;
+
+		theta = CAV_GetVirtualThetaDeg();
+//		if(theta < 0.0)
+//		{
+//			theta *= -1.0;
+//		}
+//		if((theta < threshold) && (vecFlag == 0))
+//		{
+//			CVL_SetTarget(1.2 * vecTargetTemp);
+//			vecFlag = 1;
+//		}
+//		if((theta >= threshold) && (vecFlag == 1))
+//		{
+//			CVL_SetTarget(vecTargetTemp);
+//			vecFlag = 0;
+//		}
+
+//		st_SensorData = SSR_GetSensorData();
+
+		markerCount = 0;
+		markerData = st_GetCourceMarker();
+
+		if(markerData.MarkerKind == SSR_COURCE_MARKER_RIGHT)
+		{
+			++markerCount;
+			BZR_SetBeepCount(3);
+			while(1)
+			{
+//
+//				theta = CAV_GetVirtualThetaDeg();
+//				if(theta < 0.0)
+//				{
+//					theta *= -1.0;
+//				}
+//				if((theta < threshold) && (vecFlag == 0))
+//				{
+//					CVL_SetTarget(1.2 * vecTargetTemp);
+//					vecFlag = 1;
+//				}
+//				if((theta >= threshold) && (vecFlag == 1))
+//				{
+//					CVL_SetTarget(vecTargetTemp);
+//					vecFlag = 0;
+//				}
+
+				markerData = st_GetCourceMarker();
+				if(markerData.MarkerKind == SSR_COURCE_MARKER_RIGHT)
+				{
+					++markerCount;
+					BZR_SetBeepCount(3);
+				}
+
+				if(markerCount >= 2)
+				{
+					TSK_Stop(TSK_TASK7_PLAY_COURSE);
+
+					CVL_SetTarget(0.0);
+
+					for(volatile int32_t i = 0; i < 10000000; ++i)	;
+
+					CVL_StopDriveMotor();
+
+//					TSK_Stop(TSK_TASK9_RECORD_CONTROL);
+
+					for(volatile int32_t i = 0; i < 10000000; ++i)	;
+
+					CSA_StopSensorMotor();
+
+					for(volatile int32_t i = 0; i < 10000000; ++i)	;
+
+					// ドライブモード終了
+					break;
+				}
+			}
+		}
+	}
 }
