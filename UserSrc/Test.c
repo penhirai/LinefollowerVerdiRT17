@@ -476,7 +476,7 @@ static void st_GyroTest(void)
 	st_Decision = SWT_DECISION_FALSE;
 
 	//R_SCI2_Start();
-	SSR_Init();
+	//SSR_Init();
 
 	while(1)
 	{

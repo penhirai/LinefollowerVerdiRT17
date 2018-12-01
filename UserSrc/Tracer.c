@@ -25,12 +25,13 @@
 #define SEND_BUF_SIZE 50
 #define LOG_DISTANCE (0.01)	// 10mm 刻み
 
-#define CROSS_MARKER_ARRAY_MAX	(200)		// 30cm 刻み60m 換算
+#define LEFT_MARKER_ARRAY_MAX	(200)		// なんとなく
 #define RIGHT_MARKER_ARRAY_MAX	(10)		// 自宅コースが6m ，60m 換算
+#define CROSS_MARKER_ARRAY_MAX	(200)		// 30cm 刻み60m 換算
 
 #define MODE_KIND_MIN 0
 
-#define GOAL_COUNT (4)
+#define GOAL_COUNT (2)
 
 typedef struct strCourceLogStoreParam
 {
@@ -85,10 +86,13 @@ static SSR_StrSensorData st_SensorData;
 static StrCourceLogStoreParam st_CourceLogStoreParam;
 static StrCourceLog st_CourceLog;
 static StrCourceAnalysisParam st_CourceAnalysisParam;
-static StrCourceMarkerArray st_CrossMarkerArray[CROSS_MARKER_ARRAY_MAX];
+static StrCourceMarkerArray st_LeftMarkerArray[LEFT_MARKER_ARRAY_MAX];
 static StrCourceMarkerArray st_RightMarkerArray[RIGHT_MARKER_ARRAY_MAX];
-static StrCourceMarkerRecord st_CrossMarkerRecord;
+static StrCourceMarkerArray st_CrossMarkerArray[CROSS_MARKER_ARRAY_MAX];
+static StrCourceMarkerRecord st_LeftMarkerRecord;
 static StrCourceMarkerRecord st_RightMarkerRecord;
+static StrCourceMarkerRecord st_CrossMarkerRecord;
+
 
 static EnmModeDrive st_ModeKind;
 static SWT_StrSwitch *st_Swt;
@@ -138,6 +142,16 @@ void TRC_Init(void)
 	{
 		st_RightMarkerRecord.Pt_Array[i].LogIndex = 0;
 		st_RightMarkerRecord.Pt_Array[i].Distance = 0.0;
+	}
+
+	// Left Marker Array ポインタの登録，初期化
+	st_LeftMarkerRecord.Index = 0;
+	st_LeftMarkerRecord.IndexMax = 0;
+	st_LeftMarkerRecord.Pt_Array = st_LeftMarkerArray;
+	for(uint32_t i = 0; i < RIGHT_MARKER_ARRAY_MAX; ++i)
+	{
+		st_LeftMarkerRecord.Pt_Array[i].LogIndex = 0;
+		st_LeftMarkerRecord.Pt_Array[i].Distance = 0.0;
 	}
 }
 
@@ -834,6 +848,18 @@ void TRC_PlayCourceTask(void)
 	switch(st_CourceLogStoreParam.MarkerData.MarkerKind)
 	{
 	case SSR_COURCE_MARKER_LEFT:
+		indexDif = (int32_t)st_CourceLog.Index - (int32_t)st_LeftMarkerRecord.Pt_Array[st_LeftMarkerRecord.Index].LogIndex;
+		if((-50 < indexDif) & (indexDif < 50))
+		{
+			st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+			st_CourceLogStoreParam.OffsetDistance = st_LeftMarkerRecord.Pt_Array[st_LeftMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
+			st_CourceLog.Index = st_LeftMarkerRecord.Pt_Array[st_LeftMarkerRecord.Index].LogIndex;
+			++st_LeftMarkerRecord.Index;
+			if(st_LeftMarkerRecord.Index >= st_LeftMarkerRecord.IndexMax)
+			{
+				st_LeftMarkerRecord.Index = st_LeftMarkerRecord.IndexMax - 1;
+			}
+		}
 		break;
 	case SSR_COURCE_MARKER_RIGHT:
 		indexDif = (int32_t)st_CourceLog.Index - (int32_t)st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex;
@@ -940,6 +966,7 @@ static void st_PrepareCource(void)
 	}
 
 	// マーカー位置を記録
+	st_LeftMarkerRecord.Index = 0;
 	st_RightMarkerRecord.Index = 0;
 	st_CrossMarkerRecord.Index = 0;
 	for(i = 0; i < st_CourceLog.Index; ++i)
@@ -948,6 +975,9 @@ static void st_PrepareCource(void)
 		switch(markerKind)
 		{
 		case SSR_COURCE_MARKER_LEFT:
+			st_LeftMarkerRecord.Pt_Array[st_LeftMarkerRecord.Index].LogIndex = i;
+			st_LeftMarkerRecord.Pt_Array[st_LeftMarkerRecord.Index].Distance = st_CourceLog.Pt_Array[i].Distance;
+			++st_LeftMarkerRecord.Index;
 			break;
 		case SSR_COURCE_MARKER_RIGHT:
 			st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex = i;
@@ -961,6 +991,7 @@ static void st_PrepareCource(void)
 			break;
 		}
 	}
+	st_LeftMarkerRecord.IndexMax  = st_LeftMarkerRecord.Index;
 	st_RightMarkerRecord.IndexMax = st_RightMarkerRecord.Index;
 	st_CrossMarkerRecord.IndexMax = st_CrossMarkerRecord.Index;
 
@@ -1104,7 +1135,7 @@ static void st_AnalyzeCource(void)
 			do
 			{
 				s_BrakeCalc = -(powf(st_CourceLog.Pt_Array[i + 1].TargetVelocity, 2.0) - powf(st_CourceLog.Pt_Array[j].v_n, 2.0)) / (2.0 * downAccelBuff);
-				s_BrakeCalc *= 2.0;
+				s_BrakeCalc *= 3.0;
 				s_BrakeSum  = 0.0;
 				for(n = j; n < i; ++n)
 				{
@@ -1312,7 +1343,8 @@ static void st_ExecuteDriveMode(void)
 			BZR_SetBeepCount(3);
 		}
 
-		if((markerCount >= GOAL_COUNT) || (st_CourceLog.Index >= (st_CourceLog.IndexMax - 5)) || (assertFlag == DAS_ASSERTED))
+//		if((markerCount >= GOAL_COUNT) || (st_CourceLog.Index >= (st_CourceLog.IndexMax - 5)) || (assertFlag == DAS_ASSERTED))
+		if((markerCount >= GOAL_COUNT) || (assertFlag == DAS_ASSERTED))
 		{
 			TSK_Stop(TSK_TASK7_PLAY_COURSE);
 
@@ -1354,7 +1386,7 @@ static float32_t st_CalculateVelocityFromSensorAngle(float32_t sensorAngle, StrC
 
 	if(sensorAngle < 5.0)
 	{
-		velocity = param.TargetVelocityMax;
+		velocity = 0.8 * param.TargetVelocityMax;
 	}
 	else
 	{

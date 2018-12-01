@@ -45,6 +45,7 @@
 #define GYRO_DATA_FULLSCALE_2000	0x18
 #define GYRO_DATA_FULLSCALE			GYRO_DATA_FULLSCALE_2000
 
+#define GYRO_FCHOICE_B				(0x01)
 
 
 #define JUDGE_MARKER_LENGTH	(0.010)	// [m]
@@ -780,6 +781,18 @@ static void st_InitGyro(void)
 
 	R_RSPI0_Start();
 
+	// H RESET
+	rwFlag = WRITE;
+	data = 0x81;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_1, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
+	// Path Reset
+	rwFlag = WRITE;
+	data = 0x03;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_SIG_PATH_RESET, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
 	// MPU6500: 0x70
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_WHO_AM_I, 0x00);
@@ -799,7 +812,7 @@ static void st_InitGyro(void)
 
 	// レンジ変更
 	rwFlag = WRITE;
-	data = 0x00 | GYRO_DATA_FULLSCALE;
+	data = 0x00 | GYRO_DATA_FULLSCALE | GYRO_FCHOICE_B;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, data);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
@@ -807,22 +820,15 @@ static void st_InitGyro(void)
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_GYRO_CONFIG, 0x00);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
+
 	// 加速度，GYRO Enable
 	rwFlag = WRITE;
 	data = 0x00;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, data);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
-
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, 0x00);
-	for(volatile uint32_t i = 0; i < 100000; ++i) ;
-
-
-	// リセット
-	rwFlag = WRITE;
-	data = 0x03;
-	st_CommunicateGyro(rwFlag, GYRO_ADDR_SIG_PATH_RESET, data);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
 //	rwFlag = WRITE;
