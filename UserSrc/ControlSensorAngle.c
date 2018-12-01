@@ -68,7 +68,7 @@ void CSA_Init(void)
 	st_Theta.Gain.Factor.I  = 0.0;
 	st_Theta.Gain.Factor.D  = 0.6;
 
-	st_Theta.DutyOffset = 16.0;
+	st_Theta.DutyOffset = 14.0;
 
 	st_Theta.k_pot_to_theta = K_ANGLE;//0.06597; // theta / potentio
 	st_Theta.k_sensor_to_pot = 1.4 * K_POT;//0.005; // 200 / 2800

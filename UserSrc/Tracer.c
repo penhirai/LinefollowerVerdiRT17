@@ -100,6 +100,7 @@ static void st_PrepareCource(void);
 static void st_AnalyzeCource(void);
 static float32_t st_CalculateRadius(float32_t velocityBuff, float32_t angularBuff);
 static void st_ExecuteDriveMode(void);
+static float32_t st_CalculateVelocityFromSensorAngle(float32_t sensorAngle, float32_t centrifugalMax);
 
 
 void TRC_Init(void)
@@ -314,6 +315,10 @@ void TRC_StartSearchMode(float32_t velocity)
 
 			for(volatile int32_t i = 0; i < 10000000; ++i)	;
 
+			TSK_Stop(TSK_TASK2_CONTROL_SENSOR);
+			TSK_Stop(TSK_TASK3_CONTROL_VELOCITY);
+			TSK_Stop(TSK_TASK4_CONTROL_ANGULAR);
+
 			st_BufSize = sprintf(st_SendBuf, "\r\n start log analysis \r\n");
 			SCF_WriteData(st_SendBuf, st_BufSize);
 
@@ -360,6 +365,7 @@ void TRC_DriveMode(void)
 					analysisParam.CentrifugalMax = 30.0;
 					st_SetAnalysisParam(analysisParam);
 					st_ExecuteDriveMode();
+					BZR_SetBeepCount(5);
 				}
 				break;
 			case CASE_DRIVE_1:
@@ -370,6 +376,7 @@ void TRC_DriveMode(void)
 					analysisParam.CentrifugalMax = 30.0;
 					st_SetAnalysisParam(analysisParam);
 					st_ExecuteDriveMode();
+					BZR_SetBeepCount(5);
 				}
 				break;
 			case CASE_DRIVE_2:
@@ -380,6 +387,7 @@ void TRC_DriveMode(void)
 					analysisParam.CentrifugalMax = 30.0;
 					st_SetAnalysisParam(analysisParam);
 					st_ExecuteDriveMode();
+					BZR_SetBeepCount(5);
 				}
 				break;
 			case CASE_DRIVE_3:
@@ -390,6 +398,7 @@ void TRC_DriveMode(void)
 					analysisParam.CentrifugalMax = 30.0;
 					st_SetAnalysisParam(analysisParam);
 					st_ExecuteDriveMode();
+					BZR_SetBeepCount(5);
 				}
 				break;
 			default:
@@ -781,12 +790,23 @@ void TRC_RecordCourceTask(void)
 
 void TRC_PlayCourceTask(void)
 {
+	float32_t velocity;
+	int32_t indexDif;
+
 	// 走行距離を計測
 	st_CourceLogStoreParam.TempDistance = CVL_GetDistance();
 	st_CourceLogStoreParam.DiffDistance = st_CourceLogStoreParam.TempDistance - st_CourceLogStoreParam.StartDistance + st_CourceLogStoreParam.OffsetDistance;
 	if(st_CourceLogStoreParam.DiffDistance >= st_CourceLog.Pt_Array[st_CourceLog.Index].Distance)
 	{
-		CVL_SetTarget(st_CourceLog.Pt_Array[st_CourceLog.Index].TargetVelocity);
+		velocity = st_CalculateVelocityFromSensorAngle(st_CourceLog.Pt_Array[st_CourceLog.Index].SensorAngle, st_CourceAnalysisParam.CentrifugalMax);
+		if(st_CourceLog.Pt_Array[st_CourceLog.Index].TargetVelocity >= velocity)
+		{
+			CVL_SetTarget(velocity);
+		}
+		else
+		{
+			CVL_SetTarget(st_CourceLog.Pt_Array[st_CourceLog.Index].TargetVelocity);
+		}
 		++st_CourceLog.Index;
 		if(st_CourceLog.Index >= st_CourceLog.IndexMax)
 		{
@@ -801,23 +821,31 @@ void TRC_PlayCourceTask(void)
 	case SSR_COURCE_MARKER_LEFT:
 		break;
 	case SSR_COURCE_MARKER_RIGHT:
-		st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
-		st_CourceLogStoreParam.OffsetDistance = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
-		st_CourceLog.Index = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex;
-		++st_RightMarkerRecord.Index;
-		if(st_RightMarkerRecord.Index >= st_RightMarkerRecord.IndexMax)
+		indexDif = (int32_t)st_CourceLog.Index - (int32_t)st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex;
+		if((-20 < indexDif) & (indexDif < 20))
 		{
-			st_RightMarkerRecord.Index = st_RightMarkerRecord.IndexMax - 1;
+			st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+			st_CourceLogStoreParam.OffsetDistance = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
+			st_CourceLog.Index = st_RightMarkerRecord.Pt_Array[st_RightMarkerRecord.Index].LogIndex;
+			++st_RightMarkerRecord.Index;
+			if(st_RightMarkerRecord.Index >= st_RightMarkerRecord.IndexMax)
+			{
+				st_RightMarkerRecord.Index = st_RightMarkerRecord.IndexMax - 1;
+			}
 		}
 		break;
 	case SSR_COURCE_MARKER_CROSS:
-		st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
-		st_CourceLogStoreParam.OffsetDistance = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
-		st_CourceLog.Index = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].LogIndex;
-		++st_CrossMarkerRecord.Index;
-		if(st_CrossMarkerRecord.Index >= st_CrossMarkerRecord.IndexMax)
+		indexDif = (int32_t)st_CourceLog.Index - (int32_t)st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].LogIndex;
+		if((-20 < indexDif) & (indexDif < 20))
 		{
-			st_CrossMarkerRecord.Index = st_CrossMarkerRecord.Index - 1;
+			st_CourceLogStoreParam.MarkerDataLatched = st_CourceLogStoreParam.MarkerData;
+			st_CourceLogStoreParam.OffsetDistance = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].Distance - st_CourceLogStoreParam.DiffDistance;
+			st_CourceLog.Index = st_CrossMarkerRecord.Pt_Array[st_CrossMarkerRecord.Index].LogIndex;
+			++st_CrossMarkerRecord.Index;
+			if(st_CrossMarkerRecord.Index >= st_CrossMarkerRecord.IndexMax)
+			{
+				st_CrossMarkerRecord.Index = st_CrossMarkerRecord.Index - 1;
+			}
 		}
 		break;
 	}
@@ -1164,6 +1192,9 @@ static void st_ExecuteDriveMode(void)
 
 			CVL_Init();
 			CAV_Init();
+
+			CVL_SetTarget(0.0);
+
 			TSK_Start(TSK_TASK3_CONTROL_VELOCITY);
 			TSK_Start(TSK_TASK4_CONTROL_ANGULAR);
 
@@ -1174,16 +1205,19 @@ static void st_ExecuteDriveMode(void)
 
 			st_StartRecordCource();
 
+			CVL_StartDriveMotor();
+			CAV_StartDriveMotor();
+
 			vecTargetTemp = 0.0;
-			CVL_SetTarget(vecTargetTemp);
+			CVL_SetTarget(1.0);
 
 //			TSK_Start(TSK_TASK6_RECORD_COURSE);
 //			TSK_Start(TSK_TASK9_RECORD_CONTROL);
 			TSK_Start(TSK_TASK7_PLAY_COURSE);
 
-			CVL_StartDriveMotor();
-			CAV_StartDriveMotor();
-			CVL_SetTarget(1.0);
+//			CVL_StartDriveMotor();
+//			CAV_StartDriveMotor();
+//			CVL_SetTarget(1.0);
 
 			break;
 		}
@@ -1202,7 +1236,16 @@ static void st_ExecuteDriveMode(void)
 
 		vecTarget = CVL_GetTarget();
 		velocity = CVL_GetVelocity();
+
 		/*
+		st_BufSize = sprintf(st_SendBuf, "[%d, %d], vt:%.2f, v:%.2f \r\n"
+											, st_CourceLog.Index
+											, st_CourceLog.IndexMax
+											, vecTarget
+											, velocity);
+		SCF_WriteData(st_SendBuf, st_BufSize);
+		*/
+
 		st_BufSize = sprintf(st_SendBuf, "[%d, %d], tmp:%.4f, off:%.4f, str:%.4f, dif:%.4f, log:%.4f, vt:%.2f, v:%.2f \r\n"
 											, st_CourceLog.Index
 											, st_CourceLog.IndexMax
@@ -1214,7 +1257,7 @@ static void st_ExecuteDriveMode(void)
 											, vecTarget
 											, velocity);
 		SCF_WriteData(st_SendBuf, st_BufSize);
-		*/
+
 //		theta = CAV_GetVirtualThetaDeg();
 //		if(theta < 0.0)
 //		{
@@ -1265,8 +1308,24 @@ static void st_ExecuteDriveMode(void)
 
 			for(volatile int32_t i = 0; i < 10000000; ++i)	;
 
+			TSK_Stop(TSK_TASK2_CONTROL_SENSOR);
+			TSK_Stop(TSK_TASK3_CONTROL_VELOCITY);
+			TSK_Stop(TSK_TASK4_CONTROL_ANGULAR);
+
 			// ドライブモード終了
 			return;
 		}
 	}
+}
+
+
+static float32_t st_CalculateVelocityFromSensorAngle(float32_t sensorAngle, float32_t centrifugalMax)
+{
+	float32_t velocity;
+	float32_t radius;
+
+	radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * sensorAngle);
+	velocity = sqrtf(centrifugalMax * radius);
+
+	return velocity;
 }
