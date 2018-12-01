@@ -28,6 +28,7 @@
 #define SENSOR_CALIB_DONE 1
 
 #define GYRO_ADDR_GYRO_CONFIG 0x1B
+#define GYRO_ADDR_GYRO_Y 0x45
 #define GYRO_ADDR_GYRO_Z 0x47
 //#define GYRO_ADDR_GYRO_Z 0x41
 #define GYRO_ADDR_SIG_PATH_RESET 0x68
@@ -786,14 +787,14 @@ static void st_InitGyro(void)
 
 
 	// I2C IF DIS
-	rwFlag = WRITE;
-	data = 0x00 | GYRO_USER_CTRL_I2C_DIS;
-	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, data);
-	for(volatile uint32_t i = 0; i < 100000; ++i) ;
-
-	rwFlag = READ;
-	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, 0x00);
-	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+//	rwFlag = WRITE;
+//	data = 0x00 | GYRO_USER_CTRL_I2C_DIS;
+//	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, data);
+//	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+//
+//	rwFlag = READ;
+//	st_CommunicateGyro(rwFlag, GYRO_ADDR_USER_CTRL, 0x00);
+//	for(volatile uint32_t i = 0; i < 100000; ++i) ;
 
 
 	// レンジ変更
@@ -816,6 +817,14 @@ static void st_InitGyro(void)
 	rwFlag = READ;
 	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_2, 0x00);
 	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
+
+	// リセット
+	rwFlag = WRITE;
+	data = 0x03;
+	st_CommunicateGyro(rwFlag, GYRO_ADDR_SIG_PATH_RESET, data);
+	for(volatile uint32_t i = 0; i < 100000; ++i) ;
+
 //	rwFlag = WRITE;
 //	st_CommunicateGyro(rwFlag, GYRO_ADDR_PWR_MGMT_1, 0x81);
 

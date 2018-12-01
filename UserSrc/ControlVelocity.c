@@ -83,8 +83,8 @@ void CVL_Init(void)
 	st_Controller.InstantTarget = 0.0;
 	st_Controller.TargetStepAbs = 0.0;
 	st_Controller.TargetState   = NEUTRAL;
-	st_Controller.TargetUpAccel   = 10.0;
-	st_Controller.TargetDownAccel = 10.0;
+	st_Controller.TargetUpAccel   = 6.0;
+	st_Controller.TargetDownAccel = 6.0;
 	st_Controller.Error.Now  = 0.0;
 	st_Controller.Error.Past = 0.0;
 	st_Controller.Error.Sum  = 0.0;

@@ -51,11 +51,11 @@ typedef struct strController
 	float32_t Target;				// [deg/s]
 	float32_t InstantTarget;		// [deg/s]
 	float32_t TargetStepAbs;		// [deg/s]
-	EnmTargetState TargetState;
 	float32_t TargetUpAccel;		// [deg/ss]
 	float32_t TargetDownAccel;		// [deg/ss]
 	CST_StrError Error;
 	CST_StrGain Gain;
+	EnmTargetState TargetState;
 }StrController;
 
 static SSR_StrSensorData st_SensorData;
@@ -106,13 +106,15 @@ void CAV_Init(void)
 
 	st_Controller.Gain.Scale      = 1.0;
 	st_Controller.Gain.Factor.FF  = 1.0 / 1200.0;	// 30 / 1200 実働を見てざっくり
-	st_Controller.Gain.Factor.P   = 0.1;
-	st_Controller.Gain.Factor.I   = 0.01;
+	st_Controller.Gain.Factor.P   = 0.08;
+	st_Controller.Gain.Factor.I   = 0.008;
 	st_Controller.Gain.Factor.D   = 0.0;
 
 	//st_SensorData = SSR_GetSensorStructure();
 	//st_BodyOmega = SSR_GetGyroData();
+	st_BodyOmega = 0.0;
 	st_BodyAngle = 0.0;
+
 
 	st_VirtualGeometry.Theta = 0.0;
 	st_VirtualGeometry.ThetaDeg = 0.0;
@@ -265,7 +267,14 @@ static void st_CalcTarget(void)
 
 	st_VirtualGeometry.ThetaDeg = CSA_GetSensorTheta();
 	st_VirtualGeometry.Theta = K_ANGULAR_VELOCITY * st_VirtualGeometry.ThetaDeg;
-	radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
+	if(st_VirtualGeometry.Theta == 0.0)
+	{
+		radius = 100.0;
+	}
+	else
+	{
+		radius = 0.5 * LENGTH_SENSOR / sinf(0.5 * st_VirtualGeometry.Theta); // sin(theta/2)
+	}
 	st_VirtualGeometry.Radius = radius;
 //	if(radius < 0.0)
 //	{

@@ -121,6 +121,9 @@ void FTR_StartRightMotorTimer(void)
 	st_RightMotorDuty.TransitionDuty = 0.0;
 	st_RightMotorDuty.AngularDuty = 0.0;
 
+	st_SetRightDriveCw();
+	st_SetRightMotorDuty(st_RightMotorDuty.Base.Duty);
+
 	R_MTU3_C4_Start();
 }
 
@@ -167,6 +170,9 @@ void FTR_StartLeftMotorTimer(void)
 	st_LeftMotorDuty.Base.Duty = 0.0;
 	st_LeftMotorDuty.TransitionDuty = 0.0;
 	st_LeftMotorDuty.AngularDuty = 0.0;
+
+	st_SetRightDriveCw();
+	st_SetLeftMotorDuty(st_LeftMotorDuty.Base.Duty);
 
 	R_MTU3_C4_Start();
 }
