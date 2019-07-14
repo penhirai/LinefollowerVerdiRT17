@@ -346,8 +346,8 @@ void TRC_StartSearchMode(float32_t velocity)
 			st_AnalyzeCource();
 
 			// ログ出力
-			//LOG_PrintCourceRecord();
-			//LOG_PrintControlRecord();
+			LOG_PrintCourceRecord();
+			LOG_PrintControlRecord();
 
 			// ドライブモード実行
 			TRC_DriveMode();
