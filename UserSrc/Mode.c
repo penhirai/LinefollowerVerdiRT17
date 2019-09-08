@@ -58,21 +58,21 @@ void MDE_SelectMode(void)
 			case CASE_SEARCH_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartSearchMode(1.3);
+					TRC_StartSearchMode(1.4);
 				}
 				break;
 			case CASE_TRACE_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartSearchMode(1.4);
+					TRC_StartSearchMode(1.5);
 					//TRC_StartDriveMode();
 				}
 				break;
 			case CASE_TRACE2_MODE:
 				if(st_Decision == SWT_DECISION_TRUE)
 				{
-					TRC_StartSearchMode(1.5);
-					//TRC_StartDriveMode2();
+					TRC_StartSearchMode(1.6);
+					//TRC_StartDriveMode();
 				}
 				break;
 			case CASE_TEST_MODE:

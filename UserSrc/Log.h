@@ -13,6 +13,9 @@
 #include "Sensor.h"
 
 
+#define PLAN_MAX 300
+
+
 typedef struct strControlVelocityHeader
 {
 	CST_StrGain Gain;
