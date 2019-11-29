@@ -307,12 +307,12 @@ void LOG_PrintControlRecord(void)
 
 void LOG_PrintCourceRecord(void)
 {
-	st_BufSize = sprintf(st_SendBuf, "\r\n index, SensorAngle, Velocity, AngularVelocity, Distance, Radius, Target Velocity, s_n, v_n, a_n, MarkerKind \r\n");
+	st_BufSize = sprintf(st_SendBuf, "\r\n index, SensorAngle, Velocity, AngularVelocity, Distance, Radius, Target Velocity, s_n, v_n, a_n, brakeDistance, MarkerKind \r\n");
 	SCF_WriteData(st_SendBuf, st_BufSize);
 
 	for(uint32_t i = 0; i < st_CourceLog.Index; ++i)
 	{
-		st_BufSize = sprintf(st_SendBuf, "%d, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %d \r\n"
+		st_BufSize = sprintf(st_SendBuf, "%d, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %.4f, %d \r\n"
 											, i
 											, st_CourceLog.Array[i].SensorAngle
 											, st_CourceLog.Array[i].Velocity
@@ -323,6 +323,7 @@ void LOG_PrintCourceRecord(void)
 											, st_CourceLog.Array[i].s_n
 											, st_CourceLog.Array[i].v_n
 											, st_CourceLog.Array[i].a_n
+											, st_CourceLog.Array[i].BrakeDistance
 											, st_CourceLog.Array[i].MarkerKind);
 //											, st_CourceLog.Array[i].IsChangeFlag);
 		SCF_WriteData(st_SendBuf, st_BufSize);

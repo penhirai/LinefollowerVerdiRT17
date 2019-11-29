@@ -78,6 +78,7 @@ typedef struct strCourceLogArray
 	float32_t s_n;
 	float32_t v_n;
 	float32_t a_n;
+	float32_t BrakeDistance;
 	SSR_EnmCourceMarkerKind MarkerKind;
 	//LOG_EnmIsChange IsChangeFlag;
 }LOG_StrCourceLogArray;
