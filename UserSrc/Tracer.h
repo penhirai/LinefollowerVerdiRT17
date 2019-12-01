@@ -13,7 +13,7 @@
 void TRC_Init(void);
 
 //void TRC_StartSearchMode(void);
-void TRC_StartSearchMode(float32_t velocity);
+void TRC_StartSearchMode(float32_t velocity, float32_t rate);
 //void TRC_StartDriveMode(void);
 void TRC_DriveMode(void);
 
